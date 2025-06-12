@@ -1,0 +1,9 @@
+style{
+    .modal-backdrop.show{
+        z-index: 1040;
+    }
+
+    .modal.show{
+        z-index: 1050;
+    }
+}

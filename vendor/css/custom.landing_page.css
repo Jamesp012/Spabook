@@ -1,0 +1,124 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #C0967E;
+  /* overflow: hidden; */
+
+  /* background: url("../images/bannercardV2_background.jpg") rgba(0, 0, 0, 0.3);
+  background-blend-mode: multiply;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100vh; */
+}
+/* ::-webkit-scrollbar {
+  display: none;
+}*/
+/* ==================== Transition ==================== */
+.fade_page {
+  animation: fade 0.3s linear;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* ==================== nav_bar_container ==================== */
+@media (max-width: 991px) {
+  .sidebar_nav {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+  }
+  .sidebar_nav ul li a {
+    color: #f1fbff;
+  }
+}
+.nav_bar_container {
+  width: 100%;
+  background: #999999;
+  height: 100px;
+}
+.navbar {
+  height: 80px;
+  padding: 0.5rem;
+}
+.navbar-toggler {
+  border: none;
+  font-size: 1.25rem;
+}
+.navbar-toggler:focus,
+.btn-close:hover {
+  box-shadow: none;
+  outline: none;
+}
+.nav_link_custom {
+  color: #666777;
+  font-weight: 500;
+  position: relative;
+}
+.nav_link_custom:hover,
+.nav_link_custom.active {
+  color: #000000;
+}
+@media (min-width: 991px) {
+  .nav_link_custom::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background-color: rgb(198, 46, 46);
+    visibility: hidden;
+    transition: 0.3s ease-in-out;
+  }
+  .nav_link_custom:hover::before,
+  .nav_link_custom.active::before {
+    width: 100%;
+    visibility: visible;
+  }
+}
+
+/* ==================== Application Card Css ==================== */
+.app_card_container {
+  padding-top: 60px;
+  padding-left: 70px;
+}
+.app_card {
+  border-radius: 25px;
+  margin-bottom: 15px;
+}
+.app_card_bg {
+  height: 10rem;
+  border-radius: 25px;
+}
+.app_card_img img {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  display: block;
+  height: 180px;
+  width: 180px;
+  border-radius: 20px;
+  border: 5px solid rgb(105, 105, 105);
+  margin-top: -100px;
+}
+.app_card_main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.app_card_name {
+  font-size: 25px;
+}

@@ -1,0 +1,1009 @@
+/* Bannercard Logo */
+.bannercard_logo {
+  height: 4rem;
+}
+/* Bannercard Logo End */
+.app_sidebar_nav {
+  min-width: 350px;
+  max-width: 350px;
+  font-size: 18px;
+  transition: all 0.35s ease-in-out;
+}
+.app_sidebar_title {
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+.app_sidebar_nav .app_sidebar_item.active {
+  background: #eee;
+  border-radius: 8px;
+}
+.app_sidebar_nav li a {
+  color: #fff;
+}
+.app_sidebar_nav li.active a {
+  color: #000;
+}
+.app_sidebar_nav li a:hover {
+  color: #000;
+  background: #eee;
+  border-radius: 8px;
+}
+.app_sidebar_nav.active {
+  margin-left: -350px;
+  position: fixed;
+  min-height: 100vh;
+  z-index: 1;
+}
+.app_sidebar_link {
+  padding: 0.625rem 1.625rem;
+  position: relative;
+  text-decoration: none;
+  display: block;
+}
+.app_sidebar_link[data-bs-toggle="collapse"]::after {
+  border: solid;
+  border-width: 0 0.075rem 0.075rem 0;
+  content: "";
+  display: inline-block;
+  padding: 2px;
+  position: absolute;
+  right: 1.5rem;
+  top: 1.4rem;
+  transform: rotate(-135deg);
+  transition: all 0.2s ease-out;
+}
+.app_sidebar_link[data-bs-toggle="collapse"].collapsed::after {
+  transform: rotate(45deg);
+  transition: all 0.2s ease-out;
+}
+
+@media (max-width: 767px) {
+  .app_sidebar_nav {
+    margin-left: -350px;
+    position: fixed;
+    min-height: 100vh;
+    z-index: 1;
+  }
+  .app_sidebar_nav.active {
+    margin-left: 0;
+  }
+}
+.app_content_container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.app_content_body {
+  padding: 2rem;
+  z-index: 0;
+}
+/* =========== Sidebar notification Count =========== */
+.app_sidebar_nav li a:hover .inbox_notif_count {
+  color: #eee;
+  background: #ff0000;
+}
+.app_sidebar_nav li.active .inbox_notif_count {
+  color: #eee;
+  background: #ff0000;
+}
+.app_sidebar_nav li .inbox_notif_count {
+  color: #000000;
+  background: #ffffff;
+}
+/* =========== Custom Background =========== */
+.app_sidebar_bg_admin {
+  background: linear-gradient(to bottom left, #ff029e, #bf19ce);
+}
+.app_administrator {
+  background: linear-gradient(to bottom left, #ff029e, #bf19ce);
+}
+.customHeaderAdministrator {
+  --bs-table-color: #fff;
+  --bs-table-bg: #ff029e;
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_perso {
+  background: linear-gradient(to bottom right, #6a11fa, #7d85ce);
+}
+.app_perso_monitoring {
+  background: linear-gradient(to bottom left, #7d85ce, #6a11fa);
+}
+.customHeaderPersonalization {
+  --bs-table-color: #fff;
+  --bs-table-bg: #6a11fa;
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_card_form {
+  background: linear-gradient(to bottom right, #1f2f98, #4393df);
+}
+.app_card_and_form {
+  background: linear-gradient(to bottom left, #1f2f98, #4393df);
+}
+.customHeaderCardAndForm {
+  --bs-table-color: #fff;
+  --bs-table-bg: #1100ff;
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_info_sec {
+  background: linear-gradient(to bottom right, #1100ff, #ff0000);
+}
+.app_info_sec {
+  background: linear-gradient(to bottom left, #1100ff, #ff0000);
+}
+.customHeaderInfoSec {
+  --bs-table-color: #fff;
+  --bs-table-bg: rgb(43, 34, 170);
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_it_asset {
+  background: linear-gradient(to bottom right, #A1623F, #5e3118);
+}
+.app_it_asset {
+  background: linear-gradient(to bottom left, #fa3c3c, #aa0000);
+}
+.customHeaderItAsset {
+  --bs-table-color: #fff;
+  --bs-table-bg: #d32020;
+  /* --bs-table-bg: RGBA(var(--bs-danger-rgb)); */
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_phd {
+  background: linear-gradient(to top right, #b69b00, #ff7a00);
+}
+.app_phd {
+  background: linear-gradient(to bottom left, #b69b00, #ff7a00);
+}
+.customHeaderPhd {
+  --bs-table-color: #fff;
+  --bs-table-bg: #ff7a00;
+  color: var(--bs-table-color);
+}
+.app_sidebar_bg_human_resources {
+  background: linear-gradient(to top left, #4adede, #1f2f98);
+}
+.app_human_resources {
+  background: linear-gradient(to bottom right, #4adede, #1f2f98);
+}
+.customHeaderHumanResources {
+  --bs-table-color: #fff;
+  --bs-table-bg: #1f2f98;
+  color: var(--bs-table-color);
+}
+
+.app_sidebar_bg_prod {
+  background: linear-gradient(to top left, #4aa3de, #331c88);
+}
+.app_prod {
+  background: linear-gradient(to top left, #4aa3de, #331c88);
+}
+.customHeaderProd {
+  --bs-table-color: #fff;
+  --bs-table-bg: #331c88;
+  color: var(--bs-table-color);
+}
+
+.app_sidebar_bg_ims_express {
+  background: linear-gradient(to top left, #4adede, #1f2f98);
+}
+.app_ims_express {
+  background: linear-gradient(to bottom right, #4adede, #1f2f98);
+}
+.customHeaderImsExpress {
+  --bs-table-color: #fff;
+  --bs-table-bg: #1f2f98;
+  color: var(--bs-table-color);
+}
+/* =========== Custom DataTable Aligning =========== */
+/* =========== Align table body data to middle center =========== */
+table.dataTable tbody th.dt-body-middle-center,
+table.dataTable tbody td.dt-body-middle-center {
+  vertical-align: middle;
+  text-align: center;
+}
+/* =========== Align table body data to middle right =========== */
+table.dataTable tbody th.dt-body-middle-right,
+table.dataTable tbody td.dt-body-middle-right {
+  vertical-align: middle;
+  text-align: right;
+}
+/* =========== Align table body data to middle left =========== */
+table.dataTable tbody th.dt-body-middle-left,
+table.dataTable tbody td.dt-body-middle-left {
+  vertical-align: middle;
+  text-align: left;
+}
+/* =========== Align table body data no wrap =========== */
+table.dataTable th.dt-nowrap-center,
+table.dataTable td.dt-nowrap-center {
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+}
+/* =========== Hidden Column on DataTable Without removing DOM - Justine 03312023 =========== */
+.hide_column_datable {
+  display: none;
+}
+.modal-xxl {
+  max-width: 1440px;
+}
+.modal-md {
+  max-width: 576px;
+}
+/* =========== Custom Modal Size CSS =========== */
+.custom_modal_xxl {
+  max-width: 1440px;
+}
+/* =========== Custom Card Hover =========== */
+.custom_card_hover:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+.custom_card_hover.active {
+  box-shadow:0 4px 8px #000000 !important;
+  background-color: #AE7E62 !important;
+}
+/* =========== Custom Border Color =========== */
+.border-top-primary {
+  border-top: 0.3rem solid RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-primary {
+  border-left: 0.3rem solid RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-primary {
+  border-bottom: 0.3rem solid
+    RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-primary {
+  border-right: 0.3rem solid
+    RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-secondary {
+  border-top: 0.3rem solid
+    RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-secondary {
+  border-left: 0.3rem solid
+    RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-secondary {
+  border-bottom: 0.3rem solid
+    RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-secondary {
+  border-right: 0.3rem solid
+    RGBA(var(--bs-secondary-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-success {
+  border-top: 0.3rem solid RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-success {
+  border-left: 0.3rem solid RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-success {
+  border-bottom: 0.3rem solid
+    RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-success {
+  border-right: 0.3rem solid
+    RGBA(var(--bs-success-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-info {
+  border-top: 0.3rem solid RGBA(var(--bs-info-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-info {
+  border-left: 0.3rem solid RGBA(var(--bs-info-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-info {
+  border-bottom: 0.3rem solid RGBA(var(--bs-info-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-info {
+  border-right: 0.3rem solid RGBA(var(--bs-info-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-warning {
+  border-top: 0.3rem solid RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-warning {
+  border-left: 0.3rem solid RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-warning {
+  border-bottom: 0.3rem solid
+    RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-warning {
+  border-right: 0.3rem solid
+    RGBA(var(--bs-warning-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-danger {
+  border-top: 0.3rem solid RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-danger {
+  border-left: 0.3rem solid RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-danger {
+  border-bottom: 0.3rem solid
+    RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-danger {
+  border-right: 0.3rem solid RGBA(var(--bs-danger-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-light {
+  border-top: 0.3rem solid RGBA(var(--bs-light-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-light {
+  border-left: 0.3rem solid RGBA(var(--bs-light-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-light {
+  border-bottom: 0.3rem solid RGBA(var(--bs-light-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-light {
+  border-right: 0.3rem solid RGBA(var(--bs-light-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+/* --------------------------------- */
+.border-top-dark {
+  border-top: 0.3rem solid RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-left-dark {
+  border-left: 0.3rem solid RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-bottom-dark {
+  border-bottom: 0.3rem solid RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.border-right-dark {
+  border-right: 0.3rem solid RGBA(var(--bs-dark-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+.btn_back_to_top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: none;
+}
+/* =========== HUMAN RESOURCES USER PROFILE CSS =========== */
+.hr_applicant_image_container {
+  height: 250px;
+  width: 250px;
+  position: relative;
+  border: 3px solid #b811da;
+  /* border-radius: 50%; */
+  background-size: 100% 100%;
+  margin: 15px auto;
+  overflow: hidden;
+}
+.hr_applicant_image {
+  height: 250px;
+  width: 250px;
+  /* border-radius: 50%; */
+}
+/* =========== ADMINISTRATOR USER PROFILE CSS =========== */
+.admin_user_image_container {
+  height: 250px;
+  width: 250px;
+  position: relative;
+  border: 5px solid #b811da;
+  border-radius: 50%;
+  background-size: 100% 100%;
+  margin: 15px auto;
+  overflow: hidden;
+}
+
+.machine_image_container {
+  height: 200px;
+  width: 200px;
+  position: relative;
+  border: 5px solid #4a11da;
+  border-radius: 2%;
+  background-size: 100% 100%;
+  margin: 15px auto;
+  overflow: hidden;
+}
+
+.machine_upload_user_pic {
+  position: absolute;
+  bottom: 0;
+  outline: none;
+  color: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 102px;
+  cursor: pointer;
+  transition: 0.5s;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+.machine_upload_user_pic::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.machine_upload_user_pic::before {
+  font: var(--fa-font-solid);
+  content: "\f030";
+  color: #1f1f1f;
+  font-size: 40px;
+  display: inline-block;
+  user-select: none;
+}
+.machine_upload_user_pic::after {
+  content: "Upload";
+  font-family: "Arial Narrow";
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  top: 50px;
+  font-size: 14px;
+  position: absolute;
+}
+.machine_upload_user_pic:hover {
+  opacity: 1;
+}
+
+.admin_user_image {
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+}
+.admin_upload_user_pic {
+  position: absolute;
+  bottom: 0;
+  outline: none;
+  color: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 102px;
+  cursor: pointer;
+  transition: 0.5s;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+}
+.admin_upload_user_pic::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.admin_upload_user_pic::before {
+  font: var(--fa-font-solid);
+  content: "\f030";
+  color: #1f1f1f;
+  font-size: 40px;
+  display: inline-block;
+  user-select: none;
+}
+.admin_upload_user_pic::after {
+  content: "Upload";
+  font-family: "Arial Narrow";
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  top: 50px;
+  font-size: 14px;
+  position: absolute;
+}
+.admin_upload_user_pic:hover {
+  opacity: 1;
+}
+.admin_user_sign_container {
+  border: 1px solid;
+  border-color: #c0c0c0;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+}
+.admin_user_sign {
+  height: 57px;
+  width: 235px;
+  border-radius: 5px;
+}
+/* =========== Change Nav Link Custom Color in User administrator - Justine 09132023 =========== */
+.nav-tabs .nav-item .nav-link.custom_nav_link_user.active {
+  background: linear-gradient(
+    to bottom right,
+    #ff029e -22.01%,
+    #bf19ce 125.61%
+  );
+  color: #fff;
+}
+/* =========== Custom badge color - Justine 01162023 =========== */
+.badge.bg-blue {
+  background-color: #0d6efd;
+}
+
+.badge.bg-indigo {
+  background-color: #6610f2;
+}
+
+.badge.bg-purple {
+  background-color: #6f42c1;
+}
+
+.badge.bg-pink {
+  background-color: #d63384;
+}
+
+.badge.bg-red {
+  background-color: #dc3545;
+}
+
+.badge.bg-orange {
+  background-color: #fd7e14;
+}
+
+.badge.bg-yellow {
+  background-color: #ffc107;
+}
+
+.badge.bg-green {
+  background-color: #198754;
+}
+
+.badge.bg-teal {
+  background-color: #20c997;
+}
+
+.badge.bg-cyan {
+  background-color: #0dcaf0;
+}
+.badge.bg-white {
+  background-color: #ffffff;
+}
+
+/* =========== Custom Badge date color =========== */
+.badge.date-color1 {
+  background-color: #333333;
+}
+.badge.date-color2 {
+  background-color: #36b9cc;
+}
+.badge.date-color3 {
+  background-color: #4158d0;
+}
+.badge.date-color4 {
+  background-color: #6b6bf0;
+}
+.badge.date-color5 {
+  background-color: #198754;
+}
+.badge.date-color6 {
+  background-color: #1cc88a;
+}
+.badge.date-color7 {
+  background-color: #57b846;
+}
+.badge.date-color8 {
+  background-color: #5a5c69;
+}
+.badge.date-color9 {
+  background-color: #999999;
+}
+.badge.date-color10 {
+  background-color: #20b2aa;
+}
+.badge.date-color11 {
+  background-color: brown;
+}
+.badge.date-color12 {
+  background-color: darkgoldenrod;
+}
+.badge.date-color13 {
+  background-color: darksalmon;
+}
+.badge.date-color14 {
+  background-color: fuchsia;
+}
+.badge.date-color15 {
+  background-color: indianred;
+}
+.badge.date-color16 {
+  background-color: navy;
+}
+.badge.date-color17 {
+  background-color: dodgerblue;
+}
+.badge.date-color18 {
+  background-color: darkolivegreen;
+}
+.badge.date-color19 {
+  background-color: darkcyan;
+}
+.badge.date-color20 {
+  background-color: darkkhaki;
+}
+.badge.date-color21 {
+  background-color: #5f9ea0;
+}
+.badge.date-color22 {
+  background-color: midnightblue;
+}
+.badge.date-color23 {
+  background-color: sienna;
+}
+.badge.date-color24 {
+  background-color: rgb(31, 148, 136);
+}
+.badge.date-color25 {
+  background-color: rgb(134, 81, 134);
+}
+.badge.date-color26 {
+  background-color: tomato;
+}
+.badge.date-color27 {
+  background-color: firebrick;
+}
+.badge.date-color28 {
+  background-color: #836a49;
+}
+.badge.date-color29 {
+  background-color: peru;
+}
+.badge.date-color30 {
+  background-color: rgb(100, 69, 27);
+}
+.badge.date-color31 {
+  background-color: cornflowerblue;
+}
+.badge.date-color32 {
+  background-color: #6b6bf0;
+}
+/* IT REPAIR REQUEST DASHBOARD CSS */
+.it_repair_request_nav_link.active {
+  background-color: #dc3545 !important;
+}
+.it_repair_request_nav_link {
+  color: #dc3545;
+  border: 1px solid #dc3545 !important;
+}
+.it_repair_request_nav_link:hover {
+  color: #ff0019;
+}
+.it_repair_title {
+  border-bottom: 5px solid #dc3545;
+  width: fit-content;
+}
+/* Skeleton loading CSS */
+.skeleton_loading {
+  opacity: 0.7;
+  animation: skeleton-loading 1s linear infinite alternate;
+}
+@keyframes skeleton-loading {
+  0% {
+    background-color: hsl(200, 20%, 70%);
+  }
+  100% {
+    background-color: hsl(200, 20%, 95%);
+  }
+}
+.skeleton_text {
+  width: 100%;
+  height: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 0.125rem;
+}
+.skeleton_text:last-child {
+  width: 50%;
+  margin-bottom: 0;
+}
+
+.nav-pills .nav-item .nav-link.nav_link_custom_perso.active {
+  background: linear-gradient(
+    to bottom right,
+    #6a11fa -22.01%,
+    #7d85ce 125.61%
+  );
+  color: #fff;
+}
+.nav-pills .nav-item .nav-link.nav_link_custom_prod.active {
+  background: linear-gradient(
+    to bottom right,
+    #4aa3de -22.01%,
+    #331c88 125.61%
+  );
+  color: #fff;
+}
+/* =========== Dispatch Expected Courier Image container - Justine 01112024 =========== */
+.container_courier {
+  max-width: 1350px;
+  width: 100%;
+  padding: 40px 0;
+}
+.card_courier {
+  position: relative;
+  background: #e6e6e6;
+  border-radius: 20px;
+  margin: 20px 0;
+  width: 325px;
+}
+.card_courier::before {
+  content: "";
+  position: absolute;
+  height: 55%;
+  width: 100%;
+  background: #6a11fa;
+  border-radius: 20px 20px 0 0;
+}
+.card_courier .card_content_courier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  position: relative;
+  z-index: 100;
+}
+.section_courier .card_courier .image_courier {
+  height: 225px;
+  width: 225px;
+  border-radius: 50%;
+  padding: 3px;
+  background: #6a11fa;
+}
+.section_courier .card_courier .image_courier img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+.card_courier .authorize_courier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  color: #333;
+}
+.authorize_courier .authorize_name {
+  font-size: 23px;
+  font-weight: 600;
+}
+.authorize_courier .authorize_company,
+.authorize_courier .authorize_courier_type {
+  font-size: 15px;
+  font-weight: 500;
+}
+.authorize_courier .authorize_file_pickup {
+  font-size: 18px;
+  font-weight: 600;
+}
+.authorize_courier .authorize_dr_number {
+  font-size: 18px;
+  font-weight: 600;
+}
+/* Perso/Prod announcement CSS Justine 01152024 */
+.scrollable_dropdown_menu {
+  height: auto;
+  max-height: 261px;
+  overflow-x: hidden;
+}
+.announce_by_pic {
+  margin-right: 1.5rem;
+  margin-left: 0.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.announce_header {
+  font-size: 20px;
+  font-weight: bold;
+  white-space: normal;
+  word-break: break-all;
+}
+.announce_by_and_date {
+  font-size: 13px;
+  font-style: italic;
+}
+.announce_by {
+  margin-right: 15px;
+}
+.icon_check {
+  color: #00c717;
+}
+.custom_accordion_button:not(.collapsed) {
+  color: inherit;
+  background: rgb(35, 65, 100);
+  color: #e8e8e8;
+}
+.custom_accordion_button.collapsed {
+  color: inherit;
+  background: rgb(0, 0, 0);
+  color: #e8e8e8;
+}
+.custom_accordion_button.collapsed::after {
+  filter: brightness(0%) invert(100%);
+}
+.custom_accordion_button:not(.collapsed)::after {
+  filter: brightness(0%) invert(70%);
+}
+.custom_accordion_button:focus {
+  box-shadow: inherit;
+}
+
+/* =========== Added - Justine 01212023 =========== */
+.card-body-hover-pointer:hover {
+  cursor: pointer;
+  background-color: #c7c7c7;
+}
+
+/* ======= Custom switch ======*/
+.checkbox-wrapper-55 input[type="checkbox"] {
+  visibility: hidden;
+  display: none;
+}
+
+.checkbox-wrapper-55 *,
+.checkbox-wrapper-55 ::after,
+.checkbox-wrapper-55 ::before {
+  box-sizing: border-box;
+}
+
+.checkbox-wrapper-55 .rocker {
+  display: inline-block;
+  position: relative;
+  /*
+    SIZE OF SWITCH
+    ==============
+    All sizes are in em - therefore
+    changing the font-size here
+    will change the size of the switch.
+    See .rocker-small below as example.
+    */
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  color: #888;
+  width: 7em;
+  height: 4em;
+  overflow: hidden;
+  border-bottom: 0.5em solid #eee;
+}
+
+.checkbox-wrapper-55 .rocker-small {
+  font-size: 0.75em;
+}
+
+.checkbox-wrapper-55 .rocker::before {
+  content: "";
+  position: absolute;
+  top: 0.5em;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #999;
+  border: 0.5em solid #eee;
+  border-bottom: 0;
+}
+
+.checkbox-wrapper-55 .switch-left,
+.checkbox-wrapper-55 .switch-right {
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5em;
+  width: 3em;
+  transition: 0.2s;
+  user-select: none;
+}
+
+.checkbox-wrapper-55 .switch-left {
+  height: 2.4em;
+  width: 2.75em;
+  left: 0.85em;
+  bottom: 0.4em;
+  background-color: #ddd;
+  transform: rotate(15deg) skewX(15deg);
+}
+
+.checkbox-wrapper-55 .switch-right {
+  right: 0.5em;
+  bottom: 0;
+  background-color: #0084d0;
+  color: #fff;
+}
+
+.checkbox-wrapper-55 .switch-left::before,
+.checkbox-wrapper-55 .switch-right::before {
+  content: "";
+  position: absolute;
+  width: 0.4em;
+  height: 2.45em;
+  bottom: -0.45em;
+  background-color: #ccc;
+  transform: skewY(-65deg);
+}
+
+.checkbox-wrapper-55 .switch-left::before {
+  left: -0.4em;
+}
+
+.checkbox-wrapper-55 .switch-right::before {
+  right: -0.375em;
+  background-color: transparent;
+  transform: skewY(65deg);
+}
+
+.checkbox-wrapper-55 input:checked + .switch-left {
+  background-color: #57bd5c;
+  color: #fff;
+  bottom: 0px;
+  left: 0.5em;
+  height: 2.5em;
+  width: 3em;
+  transform: rotate(0deg) skewX(0deg);
+}
+
+.checkbox-wrapper-55 input:checked + .switch-left::before {
+  background-color: transparent;
+  width: 3.0833em;
+}
+
+.checkbox-wrapper-55 input:checked + .switch-left + .switch-right {
+  background-color: #ddd;
+  color: #888;
+  bottom: 0.4em;
+  right: 0.8em;
+  height: 2.4em;
+  width: 2.75em;
+  transform: rotate(-15deg) skewX(-15deg);
+}
+
+.checkbox-wrapper-55 input:checked + .switch-left + .switch-right::before {
+  background-color: #ccc;
+}
+
+/* Keyboard Users */
+.checkbox-wrapper-55 input:focus + .switch-left {
+  color: #333;
+}
+
+.checkbox-wrapper-55 input:checked:focus + .switch-left {
+  color: #fff;
+}
+
+.checkbox-wrapper-55 input:focus + .switch-left + .switch-right {
+  color: #fff;
+}
+
+.checkbox-wrapper-55 input:checked:focus + .switch-left + .switch-right {
+  color: #333;
+}
+/* ======= Custom switch ======*/
+
+/* ======= nav-bar design ====*/
+.nav-pills-perso .nav-link {
+  color: #007bff; /* Base color */
+  border: 2px solid #007bff; /* Outline border for each pill */
+  background-color: transparent; /* Transparent background by default */
+  padding: 10px 20px; /* Padding for each pill */
+  border-radius: 25px; /* Rounded corners for a pill-like appearance */
+  transition: all 0.3s ease-in-out; /* Smooth transitions for hover effects */
+  font-weight: bold;
+}
+
+.nav-pills-perso .nav-link:hover {
+  background: linear-gradient(
+    45deg,
+    #007bff,
+    #0056b3
+  ); /* Gradient background on hover */
+  color: white; /* White text on hover */
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2); /* Soft shadow on hover */
+}
+
+.nav-pills-perso .nav-link.active {
+  background-color: #007bff; /* Solid background for active pills */
+  color: white; /* White text for active pills */
+  border-color: #007bff; /* Keep the border same as background */
+}
+
+.nav-item {
+  margin: 5px; /* Margin between pills */
+}
+
+.small-font {
+  font-size: 12px;
+}
+/* ======= nav-bar design ====*/
+
