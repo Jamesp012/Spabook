@@ -3,7 +3,7 @@
         <!-- Calendar (left side) -->
         <div class="col-md-8 mb-3">
             <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
                     <button class="btn btn-sm btn-light" id="prev"><i class="bi bi-chevron-left"></i></button>
                     <h5 class="mb-0" id="calendar-month">June 2025</h5>
                     <button class="btn btn-sm btn-light" id="next"><i class="bi bi-chevron-right"></i></button>
@@ -30,7 +30,7 @@
 
             <!-- Recent Services (still on left side under calendar) -->
             <div class="card mt-4">
-                <div class="card-header bg-info text-white">
+                <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -82,6 +82,7 @@
 
 <!-- Calendar Script -->
 <script>
+function initializeCalendar() {
     const calendarBody = document.getElementById('calendar-body');
     const calendarMonth = document.getElementById('calendar-month');
     const appointmentDateInput = document.getElementById('date');
@@ -131,4 +132,5 @@
     });
 
     renderCalendar(currentDate);
+}
 </script>

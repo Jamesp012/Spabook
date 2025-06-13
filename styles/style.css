@@ -7,3 +7,19 @@ style{
         z-index: 1050;
     }
 }
+
+.brown{
+    color: #5e3118 ;
+}
+
+.bg-brown{
+    background-color: #5e3118 ;
+}
+
+.light-brown{
+    color: #A1623F ;
+}
+
+.bg-light-brown{
+    background-color: #A1623F ;
+}
