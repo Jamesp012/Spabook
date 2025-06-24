@@ -5,9 +5,6 @@
     <div class="app_sidebar_container d-flex">
         <?php include '../helper/user_apps.php'; ?>
 
-        <!-- <div class="app_content_body">
-            Dynamic content will load here
-         </div> --> 
     </div>
 </div>
 
