@@ -14,8 +14,7 @@
     <link rel="stylesheet" type="text/css" href="../vendor/css/util.css" />
     <link rel="stylesheet" type="text/css" href="../vendor/SweetAlert/sweetalert2.min.css" />
     <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-icons-1.13.1/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="/styles/style.css">
-    
+
     <title>SpaBook</title>
 </head>
 

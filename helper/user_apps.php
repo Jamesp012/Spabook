@@ -1,4 +1,4 @@
-<nav class="app_sidebar_nav app_sidebar_bg_it_asset d-flex flex-column justify-content-between" id="app_sidebar_nav" style="height: 100vh; overflow: hidden;">
+<nav class="app_sidebar_nav app_sidebar_bg_it_asset d-flex flex-column justify-content-between" id="app_sidebar_nav" style="height: 100vh;">
     <div>
         <div class="header-box px-4 pt-3 pb-4 d-flex justify-content-between">
             <img src="../vendor/images/spabookwithtitle.png" alt="SpaBook Logo" class="app_sidebar_logo" style="height:50px;">
@@ -25,7 +25,7 @@
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
-        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" onclick="window.location.href='../index.php';">
+        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" id="logout-btn">
             <i class="bi bi-box-arrow-left"></i> Logout
         </button>
     </div>
@@ -42,7 +42,7 @@
     </nav>
 
     <!-- 🔷 Page content will be injected here -->
-    <div class="app_content_body p-4" id="app_content_body" style="height: calc(100vh - 100px); overflow: hidden;">
+    <div class="app_content_body p-4" id="app_content_body">
         <!-- AJAX-loaded content will appear here -->
     </div>
 </div>
@@ -66,5 +66,12 @@
     // Sidebar close on small screen
     $('.app_close_sidebar_btn').on('click', function() {
         $('.app_sidebar_nav').removeClass('active');
+    });
+</script>
+<script type="module">
+
+    $('#logout-btn').on('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '../index.php';
     });
 </script>
