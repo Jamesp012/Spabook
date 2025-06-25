@@ -1,7 +1,7 @@
 <?php include_once '../include/header.php'; 
 ?>
 
-<div class="content_wrapper">
+<div class="content_wrapper" style="overflow: hidden;">
     <div class="app_sidebar_container d-flex">
         <?php include '../helper/user_apps.php'; ?>
 

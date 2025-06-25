@@ -1,21 +1,33 @@
 <div class="container-fluid">
     <div class="row">
         
-        <div class="col-md-8 mb-3">
-            <div class="card" id="cardView">
+        <div class="col-md-8 mb-1">
+            <div class="card " id="cardView" style="height: calc(100vh - 300px)">
                 
             </div>
 
             <!-- Recent Services (still on left side under calendar) -->
-            <div class="card mt-4">
+            <div class="card mt-2">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                    <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                    <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                </ul>
+                <div class="recent-services-scroll" >
+                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: 120px;">
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                    <!-- Add more to test scroll -->
+                    </ul>
+                </div>
             </div>
         </div>
 

@@ -8,6 +8,10 @@ style{
     }
 }
 
+body{
+    overflow: hidden;
+}
+
 .brown{
     color: #5e3118 ;
 }

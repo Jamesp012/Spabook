@@ -19,7 +19,7 @@
     <title>SpaBook</title>
 </head>
 
-<body>
+<body style="overflow: hidden;">
     <div class="container-fluid p-0 m-0 vh-100">
         <div class="row g-0 h-100">
             <!-- Left: Image with overlay -->
