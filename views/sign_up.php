@@ -258,30 +258,30 @@
 
             if (valid) {
                 // 1. Try logging in first to check if email already exists
-                const {
-                    error: loginError
-                } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
+                // const {
+                //     error: loginError
+                // } = await supabase.auth.signInWithPassword({
+                //     email,
+                //     password
+                // });
 
-                if (loginError && loginError.message === 'Invalid login credentials') {
-                    Swal.fire({
-                        title: 'Already Registered?',
-                        text: 'This email may be registered with Google or already exists. Would you like to sign in with Google?',
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonText: 'Go to Login',
-                    }).then(result => {
-                        if (result.isConfirmed) {
-                            // Redirect to login page
-                            window.location.href = '../index.php';
-                        }
-                    });
-                    return;
-                }
+                // if (loginError && loginError.message === 'Invalid login credentials') {
+                //     Swal.fire({
+                //         title: 'Already Registered?',
+                //         text: 'This email may be registered with Google or already exists. Would you like to sign in with Google?',
+                //         icon: 'info',
+                //         showCancelButton: true,
+                //         confirmButtonText: 'Go to Login',
+                //     }).then(result => {
+                //         if (result.isConfirmed) {
+                //             // Redirect to login page
+                //             window.location.href = '../index.php';
+                //         }
+                //     });
+                //     return;
+                // }
                 // 2. If login fails (invalid credentials), attempt signup
-                if (loginError.message.toLowerCase() != 'invalid login credentials') {
+                // if (loginError.message.toLowerCase() != 'invalid login credentials') {
                     const {
                         data,
                         error: signupError
@@ -322,10 +322,10 @@
                             });
                     }
 
-                } else {
-                    // Other login error (network, etc.)
-                    Swal.fire('Error', loginError.message, 'error');
-                }
+                // } else {
+                //     // Other login error (network, etc.)
+                //     Swal.fire('Error', loginError.message, 'error');
+                // }
             }
 
         });
