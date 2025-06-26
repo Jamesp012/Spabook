@@ -1,75 +1,81 @@
 <div class="container-fluid">
     <div class="row">
-        <!-- Calendar (left side) -->
-        <div class="col-md-8 mb-3">
-            <div class="card">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <button class="btn btn-sm btn-light" id="prev"><i class="bi bi-chevron-left"></i></button>
-                    <h5 class="mb-0" id="calendar-month">June 2025</h5>
-                    <button class="btn btn-sm btn-light" id="next"><i class="bi bi-chevron-right"></i></button>
-                </div>
-                <div class="card-body p-0">
-                    <table class="table table-bordered text-center mb-0">
-                        <thead>
-                            <tr>
-                                <th>Sun</th>
-                                <th>Mon</th>
-                                <th>Tue</th>
-                                <th>Wed</th>
-                                <th>Thu</th>
-                                <th>Fri</th>
-                                <th>Sat</th>
-                            </tr>
-                        </thead>
-                        <tbody id="calendar-body">
-                            <!-- Calendar will render here -->
-                        </tbody>
-                    </table>
-                </div>
+        
+        <div class="col-md-8 mb-1">
+            <div class="card " id="cardView" style="height: calc(100vh - 300px)">
+                
             </div>
 
             <!-- Recent Services (still on left side under calendar) -->
-            <div class="card mt-4">
-                <div class="card-header bg-info text-white">
+            <div class="card mt-2">
+                <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                    <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                    <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                </ul>
+                <div class="recent-services-scroll" >
+                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: 120px;">
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
+                    <!-- Add more to test scroll -->
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Appointment Form (right side) -->
         <div class="col-md-4 mb-3">
-            <div class="card">
+            <div class="card h-100">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Book an Appointment</h5>
                 </div>
-                <div class="card-body">
+
+                <!-- Add style to limit height and enable scroll -->
+                <div class="card-body p-3" style="max-height: 70vh; overflow-y: auto;">
                     <form id="appointment-form">
                         <div class="mb-3">
-                            <label for="fullname" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullname" placeholder="Enter your full name" required>
+                            <label for="service" class="form-label">Select Services</label>
+                            <input type="text" class="form-control" id="service" data-content="user_booking-view_services.php" placeholder="Click to choose services" readonly required>
                         </div>
                         <div class="mb-3">
-                            <label for="service" class="form-label">Service</label>
-                            <select class="form-select" id="service" required>
-                                <option selected disabled value="">Choose a service</option>
-                                <option>Swedish Massage</option>
-                                <option>Shiatsu</option>
-                                <option>Facial Treatment</option>
-                                <option>Body Scrub</option>
-                            </select>
+                            <label for="firstname" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstname" placeholder="Enter first name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastname" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastname" placeholder="Enter last name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control" id="contact" placeholder="Enter contact number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter email address" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="Enter your age" required>
                         </div>
                         <div class="mb-3">
                             <label for="date" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="date" required>
+                            <input type="date" class="form-control" id="date" data-content="user_booking-view_calendar.php" required readonly>
                         </div>
                         <div class="mb-3">
                             <label for="time" class="form-label">Time</label>
                             <input type="time" class="form-control" id="time" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Complete Address</label>
+                            <textarea class="form-control" id="address" rows="2" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Book Now</button>
                     </form>
@@ -80,8 +86,49 @@
 </div>
 
 
-<!-- Calendar Script -->
 <script>
+// Views Script
+$(document).ready(function () {
+    // Load calendar view on page load
+    loadCardView('user_booking-view_calendar.php');
+
+    // When the service input is focused or clicked
+    $('#service').on('focus click', function () {
+        loadCardView('user_booking-view_services.php');
+    });
+
+    // When the date input is focused or clicked
+    $('#date').on('focus click', function () {
+        loadCardView('user_booking-view_calendar.php');
+    });
+
+    // Back to calendar view button
+    $(document).on('click', '#back-to-calendar', function () {
+        loadCardView('user_booking-view_calendar.php');
+    });
+
+    // AJAX loader function for calendar/services view
+    function loadCardView(viewFile) {
+        $('#cardView').fadeOut(200, function () {
+            $.ajax({
+                url: `/SpaBook/views/user/user_booking-view/${viewFile}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#cardView').html(data).fadeIn(200);
+                    if (viewFile === 'user_booking-view_calendar.php') {
+                        initializeCalendar();
+                    }
+                },
+                error: function () {
+                    $('#cardView').html('<div class="alert alert-danger">Failed to load view.</div>').fadeIn(200);
+                }
+            });
+        });
+    }
+});
+
+// Calendar Script
+function initializeCalendar() {
     const calendarBody = document.getElementById('calendar-body');
     const calendarMonth = document.getElementById('calendar-month');
     const appointmentDateInput = document.getElementById('date');
@@ -131,4 +178,5 @@
     });
 
     renderCalendar(currentDate);
+}
 </script>

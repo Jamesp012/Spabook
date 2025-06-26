@@ -1,5 +1,4 @@
-<?php
-include_once '../include/header.php'; ?>
+<?php include_once '../include/header.php'; ?>
 
 <div class="content_wrapper">
     <div class="app_sidebar_container d-flex">

@@ -25,7 +25,7 @@
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
-        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" onclick="window.location.href='../index.php';">
+        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" id="logout-btn">
             <i class="bi bi-box-arrow-left"></i> Logout
         </button>
     </div>
@@ -66,5 +66,12 @@
     // Sidebar close on small screen
     $('.app_close_sidebar_btn').on('click', function() {
         $('.app_sidebar_nav').removeClass('active');
+    });
+</script>
+<script type="module">
+
+    $('#logout-btn').on('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '../index.php';
     });
 </script>

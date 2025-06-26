@@ -2,7 +2,7 @@
   <div class="row g-3 align-items-center">
     <!-- Image -->
     <div class="col-12 col-md-auto text-center">
-      <img class="rounded" width="70" height="70" src="../assets/icon.png" alt="Icon">
+      <i class="bi bi-person-circle" style="font-size: 70px;"></i>
     </div>
 
     <!-- Info Text -->
@@ -22,4 +22,3 @@
     </div>
   </div>
 </div>
-

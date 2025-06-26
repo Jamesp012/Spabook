@@ -1,12 +1,10 @@
-<?php include_once '../include/header.php'; ?>
+<?php include_once '../include/header.php'; 
+?>
 
-<div class="content_wrapper">
+<div class="content_wrapper" style="overflow: hidden;">
     <div class="app_sidebar_container d-flex">
         <?php include '../helper/user_apps.php'; ?>
 
-        <!-- <div class="app_content_body">
-            <!-- Dynamic content will load here -->
-        </div> -->
     </div>
 </div>
 
@@ -47,6 +45,12 @@
                 method: 'GET',
                 success: function (response) {
                     $('.app_content_body').html(response);
+
+                    if (page === 'user_booking-appointment.php') {
+                        if (typeof initializeCalendar === 'function') {
+                            initializeCalendar();
+                        }
+                    }
                 },
                 error: function () {
                     $('.app_content_body').html('<div class="alert alert-danger">Failed to load content.</div>');

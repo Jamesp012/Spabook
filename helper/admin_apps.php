@@ -24,7 +24,7 @@
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
-        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" onclick="window.location.href='../index.php';">
+        <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" id="logout-btn">
             <i class=" bi bi-box-arrow-left"></i> Logout
         </button>
     </div>
@@ -51,34 +51,40 @@
     <script src="../vendor/js/jquery.min.js"></script>
     <script src="../vendor/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
-    $(document).ready(function () {
-        function loadPage(section) {
-            $('.app_content_body').load(`pages/${section}.html`);
-        }
+        $(document).ready(function() {
+            function loadPage(section) {
+                $('.app_content_body').load(`pages/${section}.html`);
+            }
 
-        // Load default section (Dashboard)
-        loadPage('dashboard');
+            // Load default section (Dashboard)
+            loadPage('dashboard');
 
-        $('.app_sidebar_nav ul li').on('click', function () {
-            // Update active item
-            $('.app_sidebar_nav ul li.active').removeClass('active');
-            $(this).addClass('active');
+            $('.app_sidebar_nav ul li').on('click', function() {
+                // Update active item
+                $('.app_sidebar_nav ul li.active').removeClass('active');
+                $(this).addClass('active');
 
-            // Update title
-            $('.app_content_title').text($(this).text().trim());
+                // Update title
+                $('.app_content_title').text($(this).text().trim());
 
-            // Load content dynamically
-            const section = $(this).data('content');
-            loadPage(section);
+                // Load content dynamically
+                const section = $(this).data('content');
+                loadPage(section);
+            });
+
+            // Sidebar toggling
+            document.querySelector('.app_open_sidebar_btn').addEventListener('click', function() {
+                document.querySelector('.app_sidebar_nav').classList.toggle('active');
+            });
+
+            $('.app_close_sidebar_btn').on('click', function() {
+                $('.app_sidebar_nav').removeClass('active');
+            });
         });
-
-        // Sidebar toggling
-        document.querySelector('.app_open_sidebar_btn').addEventListener('click', function () {
-            document.querySelector('.app_sidebar_nav').classList.toggle('active');
+    </script>
+    <script type="module">
+        $('#logout-btn').on('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = '../index.php';
         });
-
-        $('.app_close_sidebar_btn').on('click', function () {
-            $('.app_sidebar_nav').removeClass('active');
-        });
-    });
-</script>
+    </script>
