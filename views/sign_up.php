@@ -48,6 +48,49 @@
                 <div class="w-100" style="max-width: 420px; margin: 32px;">
                     <form id="signup-form">
                         <p class="lead fw-bold mb-3">Sign up</p>
+                        <div class="row mb-3">
+                            <div class="col-5">
+                                <div class="form-outline">
+                                    <label class="form-label text-secondary" for="signup_ln">Last Name</label>
+                                    <input type="text" id="signup_ln" maxlength="15" pattern="[A-Za-z\s]+" style="text-transform: uppercase;" class="form-control shadow-sm" required oninput="this.value=this.value.replace(/[^A-Za-z\s]/g,'');" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="form-outline">
+                                    <label class="form-label text-secondary" for="signup_fn">First Name</label>
+                                    <input type="text" id="signup_fn" maxlength="30" pattern="[A-Za-z\s]+" style="text-transform: uppercase;" class="form-control shadow-sm" required oninput="this.value=this.value.replace(/[^A-Za-z\s]/g,'');" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class="form-outline">
+                                    <label class="form-label text-secondary" for="signup_mi">M.I.</label>
+                                    <input type="text" id="signup_mi" maxlength="1" pattern="[A-Za-z\s]+" style="text-transform: uppercase;" class="form-control shadow-sm" required oninput="this.value=this.value.replace(/[^A-Za-z\s]/g,'');" />
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-3">
+                            <label class="form-label text-secondary" for="signup_contact">Contact Number</label>
+                            <div class="input-group">
+                                <select class="form-select shadow-sm" id="signup_region" style="max-width: 110px;">
+                                    <option value="+63" selected>PH +63</option>
+                                    <option value="+1">US +1</option>
+                                    <option value="+44">UK +44</option>
+                                    <option value="+61">AU +61</option>
+                                    <option value="+65">SG +65</option>
+                                    <!-- Add more regions as needed -->
+                                </select>
+                                <input type="tel" id="signup_contact" class="form-control shadow-sm" maxlength="10" pattern="[0-9]{7,15}" placeholder="9123456789" required oninput="this.value=this.value.replace(/[^0-9]/g,'');" />
+                            </div>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                        <div class="form-outline mb-3">
+                            <label class="form-label text-secondary" for="signup_address">Current address</label>
+                            <input type="text" id="signup_address" class="form-control shadow-sm" required />
+                            <div class="invalid-feedback"></div>
+                        </div>
                         <div class="form-outline mb-3">
                             <label class="form-label text-secondary" for="signup_email">Email address</label>
                             <input type="email" id="signup_email" class="form-control shadow-sm" required />
@@ -142,6 +185,42 @@
             // At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
             return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(password);
         }
+        const regionMaxLength = {
+            "+63": 10, // PH: 10 digits (e.g., 9123456789)
+            "+1": 10, // US/CA: 10 digits (e.g., 4151234567)
+            "+44": 10, // UK: 10 digits (varies, but 10 is common for local)
+            "+61": 9, // AU: 9 digits (e.g., 412345678)
+            "+65": 8 // SG: 8 digits (e.g., 91234567)
+            // Add more as needed
+        };
+
+        const regionPlaceholders = {
+            "+63": "9123456789", // PH
+            "+1": "4151234567", // US/CA
+            "+44": "7123456789", // UK
+            "+61": "412345678", // AU
+            "+65": "91234567" // SG
+            // Add more as needed
+        };
+
+
+        $('#signup_region').on('change', function() {
+            const region = $(this).val();
+            const max = regionMaxLength[region] || 15;
+            const placeholder = regionPlaceholders[region] || "Enter number";
+            $('#signup_contact').attr('maxlength', max);
+            $('#signup_contact').attr('placeholder', placeholder);
+            $('#signup_contact').val(''); // Optionally clear input on region change
+        });
+
+        // Set initial maxlength and placeholder on page load
+        $(document).ready(function() {
+            const region = $('#signup_region').val();
+            const max = regionMaxLength[region] || 15;
+            const placeholder = regionPlaceholders[region] || "Enter number";
+            $('#signup_contact').attr('maxlength', max);
+            $('#signup_contact').attr('placeholder', placeholder);
+        });
 
         // Real-time email validation
         $('#signup_email').on('input', function() {
@@ -215,13 +294,22 @@
             }
         });
 
+
+
         $('#signup-btn').on('click', async function() {
+            const user_fullname = $('#signup_fn').val().trim() + ' ' + $('#signup_mi').val().trim() + ' ' + $('#signup_ln').val().trim();
+            const user_address = $('#signup_address').val().trim();
+            const contact = $('#signup_region').val() + $('#signup_contact').val();
             const email = $('#signup_email').val();
             const password = $('#signup_password').val();
             const passwordConfirm = $('#signup_password_confirm').val();
             const termsChecked = $('#termsCheck').is(':checked');
             let valid = true;
 
+
+            if (inputValidation('signup_fn', 'signup_ln', 'signup_mi', 'signup_contact', 'signup_address')) {
+                valid = true;
+            }
             // Email validation
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
@@ -257,70 +345,143 @@
             }
 
             if (valid) {
-                // 1. Try logging in first to check if email already exists
-                // const {
-                //     error: loginError
-                // } = await supabase.auth.signInWithPassword({
-                //     email,
-                //     password
-                // });
-
-                // if (loginError && loginError.message === 'Invalid login credentials') {
-                //     Swal.fire({
-                //         title: 'Already Registered?',
-                //         text: 'This email may be registered with Google or already exists. Would you like to sign in with Google?',
-                //         icon: 'info',
-                //         showCancelButton: true,
-                //         confirmButtonText: 'Go to Login',
-                //     }).then(result => {
-                //         if (result.isConfirmed) {
-                //             // Redirect to login page
-                //             window.location.href = '../index.php';
-                //         }
-                //     });
-                //     return;
-                // }
-                // 2. If login fails (invalid credentials), attempt signup
-                // if (loginError.message.toLowerCase() != 'invalid login credentials') {
-                    const {
-                        data,
-                        error: signupError
-                    } = await supabase.auth.signUp({
-                        email,
-                        password,
-                    });
-
-                    if (signupError) {
-                        const msg = signupError.message.toLowerCase();
-                        if (
-                            msg.includes('already registered') ||
-                            msg.includes('duplicate') ||
-                            msg.includes('already exists')
-                        ) {
+                $.ajax({
+                    url: '../controller/user_contr.php',
+                    type: 'POST',
+                    data: {
+                        action: 'check_email_exists',
+                        email: email,
+                    },
+                    success: async result => {
+                        if (result == 'exists') {
                             Swal.fire({
-                                title: 'Email Already Registered',
-                                text: 'This email may be registered with Google. Would you like to sign in with Google?',
+                                title: 'Email Already Exists',
+                                text: 'This email is already registered.',
                                 icon: 'warning',
                                 showCancelButton: true,
-                                confirmButtonText: 'Sign in with Google'
-                            }).then(result => {
-                                if (result.isConfirmed) {
-                                    supabase.auth.signInWithOAuth({
-                                        provider: 'google'
-                                    });
-                                }
                             });
                         } else {
-                            Swal.fire('Error', signupError.message, 'error');
-                        }
-                    } else if (!data.user) {
-                        Swal.fire('Error', 'Could not create account. Please try again.', 'error');
-                    } else {
-                        Swal.fire('Success', 'Check your email for a confirmation link!', 'success')
-                            .then(() => {
-                                window.location.href = '../index.php';
+                            // Proceed with sign up
+                            const {
+                                data,
+                                error: signupError
+                            } = await supabase.auth.signUp({
+                                email,
+                                password,
                             });
-                    }
+
+                            if (signupError) {
+                                const msg = signupError.message.toLowerCase();
+                                if (
+                                    msg.includes('already registered') ||
+                                    msg.includes('duplicate') ||
+                                    msg.includes('already exists')
+                                ) {
+                                    Swal.fire({
+                                        title: 'Email Already Registered',
+                                        text: 'This email may be registered with Google. Would you like to sign in with Google?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Sign in with Google'
+                                    }).then(result => {
+                                        if (result.isConfirmed) {
+                                            supabase.auth.signInWithOAuth({
+                                                provider: 'google'
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire('Error', signupError.message, 'error');
+                                }
+                            } else if (!data.user) {
+                                Swal.fire('Error', 'Could not create account. Please try again.', 'error');
+                            } else {
+                                // Get the Supabase user UUID
+                                const supabase_uuid = data.user.id;
+
+                                // Save user to your own database with the uuid
+                                $.ajax({
+                                    url: '../controller/user_contr.php',
+                                    type: 'POST',
+                                    data: {
+                                        action: 'sign_up_user',
+                                        email: email,
+                                        user_fullname: user_fullname,
+                                        user_address: user_address,
+                                        contact: contact,
+                                        password: password,
+                                        supabase_uuid: supabase_uuid // Pass the uuid here
+                                    },
+                                    success: function(response) {
+                                        console.log('Database test response:', response);
+                                        if (response === 'success') {
+                                            Swal.fire('Success', 'Check your email for a confirmation link!', 'success')
+                                                .then(() => {
+                                                    window.location.href = '../index.php';
+                                                });
+                                        } else {
+                                            Swal.fire('Error', response, 'error');
+                                        }
+                                    },
+                                });
+                            }
+                        }
+                    },
+                });
+
+                // $.ajax({
+                //     url: '../cotroller/user_contr.php',
+                //     type: 'POST',
+                //     data: {
+                //         action: 'sign_up_user',
+                //         email: email,
+                //         user_fullname: user_fullname,
+                //         user_address: user_address,
+                //         contact: contact,
+                //     },
+                //     success: function(response) {
+                //         console.log('Database test response:', response);
+                //     },
+                // });
+                // const {
+                //     data,
+                //     error: signupError
+                // } = await supabase.auth.signUp({
+                //     email,
+                //     password,
+                // });
+
+                // if (signupError) {
+                //     const msg = signupError.message.toLowerCase();
+                //     if (
+                //         msg.includes('already registered') ||
+                //         msg.includes('duplicate') ||
+                //         msg.includes('already exists')
+                //     ) {
+                //         Swal.fire({
+                //             title: 'Email Already Registered',
+                //             text: 'This email may be registered with Google. Would you like to sign in with Google?',
+                //             icon: 'warning',
+                //             showCancelButton: true,
+                //             confirmButtonText: 'Sign in with Google'
+                //         }).then(result => {
+                //             if (result.isConfirmed) {
+                //                 supabase.auth.signInWithOAuth({
+                //                     provider: 'google'
+                //                 });
+                //             }
+                //         });
+                //     } else {
+                //         Swal.fire('Error', signupError.message, 'error');
+                //     }
+                // } else if (!data.user) {
+                //     Swal.fire('Error', 'Could not create account. Please try again.', 'error');
+                // } else {
+                //     Swal.fire('Success', 'Check your email for a confirmation link!', 'success')
+                //         .then(() => {
+                //             window.location.href = '../index.php';
+                //         });
+                // }
 
                 // } else {
                 //     // Other login error (network, etc.)

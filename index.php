@@ -73,7 +73,7 @@
                         <div id="login-error" class="alert alert-danger d-none py-2 px-3 mb-3" role="alert" style="font-size: 0.95rem;"></div>
                         <!-- Your existing email/password form -->
                         <div class="form-outline mb-3">
-                            <label class="form-label text-secondary" for="user_email_address">User name or email address</label>
+                            <label class="form-label text-secondary" for="user_email_address">Email address</label>
                             <input type="email" id="user_email_address" class="form-control shadow-sm" />
                             <div class="invalid-feedback"></div>
                         </div>
@@ -153,7 +153,11 @@
         window.LogIn = async () => {
             const email = document.getElementById('user_email_address').value;
             const password = document.getElementById('user_password').value;
-            let valid = inputValidation('user_email_address', 'user_password');
+            let valid = false;
+
+            if (inputValidation('user_email_address', 'user_password')) {
+                valid = true;
+            }
 
             $('#user_email_address').on('input', function() {
                 $(this).removeClass('is-invalid');
@@ -206,8 +210,8 @@
                 } else {
                     window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
                 }
+                clearAttributes();
             }
-            clearAttributes();
 
         };
 
