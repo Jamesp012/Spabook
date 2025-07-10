@@ -10,7 +10,7 @@ class User
 
         if (is_array($existingUser) && isset($existingUser[0]['email'])) {
             // Email exists
-            return $existingUser[0]['email'];
+            return 'exists';
         } else {
             // Email does not exist
             return 'not_exist';

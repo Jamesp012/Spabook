@@ -135,10 +135,7 @@
 
             if (session) {
                 // User is signed in, redirect to user home page
-                console.log('User is already logged in:', session.user);
                 window.location.href = './views/user_home_page';
-            } else {
-                console.log('No user session found');
             }
         });
 

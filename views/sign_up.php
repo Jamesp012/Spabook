@@ -352,13 +352,42 @@
                         action: 'check_email_exists',
                         email: email,
                     },
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: 'Loading...',
+                            html: `
+                                    <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
+                                        <img src="../vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
+                                    </div>
+                                    <style>
+                                        .custom-spinner-glow {
+                                            animation: spin 1.2s linear infinite, glow 1.2s ease-in-out infinite alternate;
+                                            filter: drop-shadow(0 0 16px #a1623f);
+                                        }
+                                        @keyframes spin {
+                                            100% { transform: rotate(360deg); }
+                                        }
+                                        @keyframes glow {
+                                            0% { filter: drop-shadow(0 0 8px #a1623f); }
+                                            100% { filter: drop-shadow(0 0 32px #a1623f); }
+                                        }
+                                    </style>
+                                `,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            backdrop: true,
+                        });
+                    },
                     success: async result => {
-                        if (result == 'exists') {
+                        if (result === 'exists') {
                             Swal.fire({
                                 title: 'Email Already Exists',
                                 text: 'This email is already registered.',
                                 icon: 'warning',
-                                showCancelButton: true,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
                             });
                         } else {
                             // Proceed with sign up
@@ -369,31 +398,8 @@
                                 email,
                                 password,
                             });
-
-                            if (signupError) {
-                                const msg = signupError.message.toLowerCase();
-                                if (
-                                    msg.includes('already registered') ||
-                                    msg.includes('duplicate') ||
-                                    msg.includes('already exists')
-                                ) {
-                                    Swal.fire({
-                                        title: 'Email Already Registered',
-                                        text: 'This email may be registered with Google. Would you like to sign in with Google?',
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Sign in with Google'
-                                    }).then(result => {
-                                        if (result.isConfirmed) {
-                                            supabase.auth.signInWithOAuth({
-                                                provider: 'google'
-                                            });
-                                        }
-                                    });
-                                } else {
-                                    Swal.fire('Error', signupError.message, 'error');
-                                }
-                            } else if (!data.user) {
+                            console.log(data.user);
+                            if (!data.user) {
                                 Swal.fire('Error', 'Could not create account. Please try again.', 'error');
                             } else {
                                 // Get the Supabase user UUID
@@ -413,7 +419,6 @@
                                         supabase_uuid: supabase_uuid // Pass the uuid here
                                     },
                                     success: function(response) {
-                                        console.log('Database test response:', response);
                                         if (response === 'success') {
                                             Swal.fire('Success', 'Check your email for a confirmation link!', 'success')
                                                 .then(() => {
