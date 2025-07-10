@@ -1,9 +1,9 @@
 <div class="container-fluid">
     <div class="row">
-
+        
         <div class="col-md-8 mb-1">
             <div class="card " id="cardView" style="height: calc(100vh - 300px)">
-
+                
             </div>
 
             <!-- Recent Services (still on left side under calendar) -->
@@ -39,7 +39,7 @@
                 </div>
 
                 <!-- Add style to limit height and enable scroll -->
-                <div class="card-body p-3" style="max-height: 70vh; overflow-y: auto;">
+                <div class="card-body p-3" style="max-height: 75vh; overflow-y: auto;">
                     <form id="appointment-form">
                         <div class="mb-3">
                             <label for="service" class="form-label">Select Services</label>

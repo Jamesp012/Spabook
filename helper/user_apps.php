@@ -55,6 +55,11 @@
         $('.app_sidebar_nav ul li.active').removeClass('active');
         $(this).addClass('active');
         $('.app_content_title').text($(this).text().trim());
+
+        // Auto-hide sidebar on mobile when navigating
+        if (window.innerWidth < 768) {
+            $('.app_sidebar_nav').removeClass('active');
+        }
     });
 
     // Sidebar toggle open
@@ -69,7 +74,6 @@
     });
 </script>
 <script type="module">
-
     $('#logout-btn').on('click', async () => {
         await supabase.auth.signOut();
         window.location.href = '../index.php';
