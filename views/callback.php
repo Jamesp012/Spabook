@@ -123,6 +123,7 @@
         }
     </style>
 </body>
+<script type="text/javascript" src="../vendor/js/jquery.min.js"></script>
 <script type="module">
     import {
         createClient
@@ -130,43 +131,77 @@
 
     const supabase = createClient('https://rijeyetpxumyxzggihre.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpamV5ZXRweHVteXh6Z2dpaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzOTExNDEsImV4cCI6MjA2NDk2NzE0MX0.91YGOX7RfmqeC7rJK3qVMA1GKydvmEaeW61VNwasjVk');
 
-    const {
-        data: {
-            session
-        },
-        error
-    } = await supabase.auth.getSession();
+    (async () => {
+        const {
+            data: {
+                session
+            },
+            error
+        } = await supabase.auth.getSession();
 
-    if (session) {
-        const jwt = session.access_token;
+        if (session) {
+            const jwt = session.access_token;
 
-        // Send to your backend via PHP
-        fetch('../config/auth.php', {
-                method: 'POST',
-                dataType: 'json',
-                headers: {
-                    'Authorization': `Bearer ${jwt}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    action: 'google_login'
+            // Send to your backend via PHP
+            fetch('../config/auth.php', {
+                    method: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'Authorization': `Bearer ${jwt}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'google_login'
+                    })
                 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                // console.log(data.user);
-                if (data.user) {
-                    if (data.user.email === 'spa.book19@gmail.com') {
-                        window.location.href = '../views/admin_home_page';
-                    } else {
-                        window.location.href = '../views/user_home_page';
+                .then(res => res.json())
+                .then(async data => {
+                    // console.log('User data:', data.user);
+                    let email = data.user.email;
+                    let supabase_uuid = data.user.id;
+                    let user_fullname = data.user.user_metadata.full_name;
+                    let email_verified = data.user.user_metadata.email_verified;
+                    let update_at = data.user.updated_at;
+                    let created_at = data.user.created_at;
+                    async function fetchProfileImageAsBase64(url) {
+                        const response = await fetch(url);
+                        const blob = await response.blob();
+                        return new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result.split(',')[1]); // base64 string only
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
                     }
-                } else {
-                    document.body.innerHTML = 'User verification failed.';
-                }
-            });
-    } else {
-        window.location.href = '../index.php';
+                    const profileImageUrl = data.user.user_metadata.avatar_url;
+                    const base64Image = await fetchProfileImageAsBase64(profileImageUrl);
+                    $.ajax({
+                        url: '../controller/user_contr.php',
+                        type: 'POST',
+                        data: {
+                            action: 'save_google_login',
+                            email: email,
+                            user_fullname: user_fullname,
+                            supabase_uuid: supabase_uuid,
+                            email_verified: email_verified,
+                            created_at: created_at,
+                            update_at: update_at,
+                            profile_image: base64Image // Pass the base64 image
+                        }
+                    });
 
-    }
+                    if (data.user) {
+                        if (data.user.email === 'spa.book19@gmail.com') {
+                            window.location.href = '../views/admin_home_page';
+                        } else {
+                            window.location.href = '../views/user_home_page';
+                        }
+                    } else {
+                        document.body.innerHTML = 'User verification failed.';
+                    }
+                });
+        } else {
+            window.location.href = '../index.php';
+        }
+    })();
 </script>

@@ -1,9 +1,9 @@
 <div class="container-fluid">
     <div class="row">
-
-        <div class="col-md-8 mb-1 d-none d-lg-block">
-            <div class="card" id="cardView">
-                <!-- Load Calendar and Services View -->
+        
+        <div class="col-md-8 mb-1">
+            <div class="card " id="cardView" style="height: calc(100vh - 300px)">
+                
             </div>
 
             <!-- Recent Services (still on left side under calendar) -->
