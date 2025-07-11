@@ -11,6 +11,9 @@
                 <a href="#" class="app_sidebar_link" data-content="user_booking-appointment.php"><i class="pe-2 bi bi-calendar4-week"></i>Book appointment</a>
             </li>
             <li class="app_sidebar_item">
+                <a href="#" class="app_sidebar_link" data-content="user_profile.php"><i class="pe-2 fa-solid fa-user"></i>Profile</a>
+            </li>
+            <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_progress-tracker.php"><i class="pe-2 fa-solid fa-arrow-up-right-dots"></i>Progress Tracker</a>
             </li>
             <li class="app_sidebar_item">
@@ -22,6 +25,7 @@
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_notification.php"><i class="pe-2 bi bi-bell"></i>Notification</a>
             </li>
+            
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
