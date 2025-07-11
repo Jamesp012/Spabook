@@ -73,7 +73,7 @@
                         <div id="login-error" class="alert alert-danger d-none py-2 px-3 mb-3" role="alert" style="font-size: 0.95rem;"></div>
                         <!-- Your existing email/password form -->
                         <div class="form-outline mb-3">
-                            <label class="form-label text-secondary" for="user_email_address">User name or email address</label>
+                            <label class="form-label text-secondary" for="user_email_address">Email address</label>
                             <input type="email" id="user_email_address" class="form-control shadow-sm" />
                             <div class="invalid-feedback"></div>
                         </div>
@@ -135,10 +135,7 @@
 
             if (session) {
                 // User is signed in, redirect to user home page
-                console.log('User is already logged in:', session.user);
                 window.location.href = './views/user_home_page';
-            } else {
-                console.log('No user session found');
             }
         });
 
@@ -153,7 +150,11 @@
         window.LogIn = async () => {
             const email = document.getElementById('user_email_address').value;
             const password = document.getElementById('user_password').value;
-            let valid = inputValidation('user_email_address', 'user_password');
+            let valid = false;
+
+            if (inputValidation('user_email_address', 'user_password')) {
+                valid = true;
+            }
 
             $('#user_email_address').on('input', function() {
                 $(this).removeClass('is-invalid');
@@ -204,10 +205,32 @@
                     errorDiv.textContent = 'Invalid email or password.';
                     errorDiv.classList.remove('d-none');
                 } else {
-                    window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
+                    $.ajax({
+                        url: './controller/user_contr.php',
+                        type: 'POST',
+                        data: {
+                            action: 'login',
+                            id: data.user.id
+                        },
+                        success: result => {
+                            console.log('Login result:', result);
+                            // if (result.error) {
+                            //     Swal.fire('Error', result.error, 'error');
+                            // } else {
+                            //     const user = JSON.parse(result);
+                            //     if (result === 'Admin') {
+                            //         window.location.href = './views/admin_home_page';
+                            //     } else {
+                            //         window.location.href = './views/user_home_page';
+                            //     }
+                            // }
+                        }
+                    });
+                    console.log('Login successful:', data.user.id);
+                    // window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
                 }
+                clearAttributes();
             }
-            clearAttributes();
 
         };
 
