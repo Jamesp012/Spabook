@@ -205,7 +205,29 @@
                     errorDiv.textContent = 'Invalid email or password.';
                     errorDiv.classList.remove('d-none');
                 } else {
-                    window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
+                    $.ajax({
+                        url: './controller/user_contr.php',
+                        type: 'POST',
+                        data: {
+                            action: 'login',
+                            id: data.user.id
+                        },
+                        success: result => {
+                            console.log('Login result:', result);
+                            // if (result.error) {
+                            //     Swal.fire('Error', result.error, 'error');
+                            // } else {
+                            //     const user = JSON.parse(result);
+                            //     if (result === 'Admin') {
+                            //         window.location.href = './views/admin_home_page';
+                            //     } else {
+                            //         window.location.href = './views/user_home_page';
+                            //     }
+                            // }
+                        }
+                    });
+                    console.log('Login successful:', data);
+                    // window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
                 }
                 clearAttributes();
             }

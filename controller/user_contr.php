@@ -10,6 +10,12 @@ if (isset($_POST['action'])) {
     $timestamp = new DateTime('now');
     $current_datetimestamp = $timestamp->format('Y-m-d H:i:s');
     switch ($action) {
+
+        case 'login':
+            $id = trim($_POST['id']);
+            echo $User->login($php_fetch, 'users', $id);
+            break;
+            
         case 'check_email_exists':
             $email = trim($_POST['email']);
             echo $User->validEmailAdd($php_fetch, 'users', $email);

@@ -3,6 +3,20 @@
 class User
 {
 
+    public function login($php_fetch, $table, $id)
+    {
+        // Fetch user data by ID
+        $user = $php_fetch($table, ['select' => 'role', 'user_id' => $id]);
+
+        if (is_array($user) && isset($user[0]['role'])) {
+            // User found, return user data
+            return json_encode($user[0]['role']);
+        } else {
+            // User not found
+            return json_encode(['error' => 'User not found']);
+        }
+    }
+
     public function validEmailAdd($php_fetch, $table, $email)
     {
         // Check if email already exists
@@ -54,7 +68,6 @@ class User
                 'updated_at' => $update_at,
                 'agreed_to_terms' => true,
                 'profile_picture' => $profile_image
-
             ]);
         }
     }
