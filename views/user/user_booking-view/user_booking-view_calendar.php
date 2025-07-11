@@ -4,7 +4,7 @@
     <button class="btn btn-sm btn-light" id="next"><i class="bi bi-chevron-right"></i></button>
 </div>
 <div class="card-body p-0">
-    <table class="table table-bordered text-center mb-0">
+    <table class="calendar-table table table-bordered text-center mb-0">
         <thead>
             <tr>
                 <th>Sun</th>
@@ -21,3 +21,10 @@
         </tbody>
     </table>
 </div>
+<style>
+    .calendar-table td {
+        width: 14.28%;
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
