@@ -8,7 +8,6 @@
 
     // Initialize Supabase client
     window.supabase = createClient('https://rijeyetpxumyxzggihre.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpamV5ZXRweHVteXh6Z2dpaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzOTExNDEsImV4cCI6MjA2NDk2NzE0MX0.91YGOX7RfmqeC7rJK3qVMA1GKydvmEaeW61VNwasjVk');
-    let user_id;
     const {
         data: {
             session
@@ -17,8 +16,8 @@
 
     if (session) {
         // User is signed in, redirect to user home page
-        user_id = session.user.id;
-        console.log('User is already logged in:', session.user);
+        let user_id = session.user.id;
+        console.log('User is already logged in:', user_id);
 
     } else {
         await supabase.auth.signOut();
