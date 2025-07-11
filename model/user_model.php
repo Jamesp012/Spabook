@@ -8,12 +8,12 @@ class User
         // Fetch user data by ID
         $user = $php_fetch($table, ['select' => 'role', 'user_id' => $id]);
 
-        if (is_array($user) && isset($user[0]['role'])) {
-            // User found, return user data
-            return json_encode($user[0]['role']);
+        if (isset($user[0]['role'])) {
+            // User found, return role as string
+            return $user[0]['role'];
         } else {
             // User not found
-            return json_encode(['error' => 'User not found']);
+            return null; // or return ''; or return 'not_found';
         }
     }
 

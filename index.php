@@ -226,7 +226,7 @@
                             // }
                         }
                     });
-                    console.log('Login successful:', data);
+                    console.log('Login successful:', data.user.id);
                     // window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
                 }
                 clearAttributes();

@@ -15,7 +15,7 @@ if (isset($_POST['action'])) {
             $id = trim($_POST['id']);
             echo $User->login($php_fetch, 'users', $id);
             break;
-            
+
         case 'check_email_exists':
             $email = trim($_POST['email']);
             echo $User->validEmailAdd($php_fetch, 'users', $email);
