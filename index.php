@@ -265,6 +265,5 @@
     </script>
 </body>
 
-<!-- bobo si bandolf -->
 
 </html>
