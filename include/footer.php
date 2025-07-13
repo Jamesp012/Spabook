@@ -16,11 +16,20 @@
 
     if (session) {
         // User is signed in, redirect to user home page
-        let user_id = session.user.id;
-        console.log('User is already logged in:', user_id);
+        window.user_id = session.user.id;
+        sessionStorage.setItem('user_id', session.user.id);
+        // console.log('User is already logged in:', user_id);
 
     } else {
         await supabase.auth.signOut();
         window.location.href = '../index.php';
     }
+
+    window.dispatchEvent(new Event('user_id_ready'));
+</script>
+<script>
+    window.addEventListener('user_id_ready', function() {
+        const user_id = sessionStorage.getItem('user_id');
+        // Now user_id is guaranteed to be set
+    });
 </script>

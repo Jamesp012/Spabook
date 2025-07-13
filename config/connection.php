@@ -38,10 +38,20 @@ function supabaseRequest($method, $endpoint, $data = null)
     return json_decode($response, true);
 }
 
+// Fetch (GET)
 $php_fetch = function ($table, $select = '*', $filters = []) {
-    $params = array_merge(['select' => $select], $filters);
-    return supabaseRequest('GET', $table, $params);
+    $query = ['select' => $select];
+    foreach ($filters as $key => $value) {
+        if (!str_contains($value, '.')) {
+            $query[$key] = "eq.$value";
+        } else {
+            $query[$key] = $value;
+        }
+    }
+    // $params = array_merge(['select' => $select], $filters);
+    return supabaseRequest('GET', $table, $query);
 };
+
 
 // Insert (POST)
 $php_insert = function ($table, $data) {

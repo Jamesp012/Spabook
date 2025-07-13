@@ -16,6 +16,10 @@ if (isset($_POST['action'])) {
             echo $User->login($php_fetch, 'users', $id);
             break;
 
+        case 'get_user_profile':
+            $id = trim($_POST['id']);
+            echo $User->getUserProfile($php_fetch, 'users', $id);
+            break;
         case 'check_email_exists':
             $email = trim($_POST['email']);
             echo $User->validEmailAdd($php_fetch, 'users', $email);
