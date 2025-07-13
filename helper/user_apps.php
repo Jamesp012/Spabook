@@ -25,7 +25,7 @@
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_notification.php"><i class="pe-2 bi bi-bell"></i>Notification</a>
             </li>
-            
+
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
@@ -60,7 +60,6 @@
         <!-- AJAX-loaded content will appear here -->
     </div>
 </div>
-
 <script src="../vendor/js/jquery.min.js"></script>
 <script src="../vendor/Bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>

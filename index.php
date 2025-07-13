@@ -213,20 +213,19 @@
                             id: data.user.id
                         },
                         success: result => {
-                            console.log('Login result:', result);
-                            // if (result.error) {
-                            //     Swal.fire('Error', result.error, 'error');
-                            // } else {
-                            //     const user = JSON.parse(result);
-                            //     if (result === 'Admin') {
-                            //         window.location.href = './views/admin_home_page';
-                            //     } else {
-                            //         window.location.href = './views/user_home_page';
-                            //     }
-                            // }
+                            // console.log(result);
+                            if (result.error) {
+                                Swal.fire('Error', result.error, 'error');
+                            } else {
+                                if (result === 'Admin') {
+                                    window.location.href = './views/admin_home_page';
+                                } else if (result === 'User') {
+                                    window.location.href = './views/user_home_page';
+                                }
+                            }
                         }
                     });
-                    console.log('Login successful:', data.user.id);
+                    // console.log('Login successful:', data.user.id);
                     // window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
                 }
                 clearAttributes();
