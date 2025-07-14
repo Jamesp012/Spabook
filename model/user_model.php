@@ -2,6 +2,7 @@
 
 class User
 {
+    //! ============================================================ USER SECTION ============================================================
 
     public function login($php_fetch, $table, $id)
     {
@@ -19,17 +20,10 @@ class User
     public function getUserProfile($php_fetch, $table, $id)
     {
         // Fetch user profile by ID
-        $user = $php_fetch($table, 'full_name,email,address,contact_number,encode(profile_picture,\'base64\')', ['user_id' => $id]);
+        $user = $php_fetch($table, '*', ['user_id' => $id]);
         // var_dump($user); // Uncomment to debug
 
         if (is_array($user) && isset($user[0])) {
-            // if (isset($user[0]['profile_picture'])) {
-
-            //     $images = stripcslashes($user[0]['profile_picture']);
-            //     $clean = trim($images, "\"/");
-            //     // Convert binary data to escaped string (like PostgreSQL's 'escape')
-            //     $user[0]['profile_picture_base64'] = stripcslashes($clean);
-            // }
             return json_encode($user[0]);
         } else {
             return null;
@@ -89,4 +83,36 @@ class User
             ]);
         }
     }
+    //! ============================================================ USER SECTION END ============================================================
+
+    //! ============================================================ ADMIN SECTION ============================================================
+    public function getUserProfileData($php_fetch, $table)
+    {
+        // Fetch user data by ID
+        $item_data = array();
+        $user_data = $php_fetch($table, 'full_name, email, role, user_id, profile_picture');
+        if (!empty($user_data)) {
+
+            // Encode the first row only
+            return json_encode($user_data);
+        } else {
+            // No rows found; return null or an empty object
+            return json_encode('pogi');
+        }
+    }
+
+    public function updateUserRole($php_update, $table, $id, $role)
+    {
+        // Update user role
+        $update_role = $php_update($table, ['role' => $role], ['user_id' => $id]);
+        if (isset($update_role['error'])) {
+            // Handle error
+            return 'error';
+        } else {
+            // User signed up successfully
+            return 'success';
+        }
+    }
+    //! ============================================================ ADMIN SECTION ============================================================
+
 }

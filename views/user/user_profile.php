@@ -41,6 +41,7 @@
 
 <script>
   $(document).ready(function() {
+    $('#userProfileForm').hide();
     let editing = false;
 
     $('#editProfileBtn').on('click', function() {
@@ -116,17 +117,17 @@
     },
     success: function(response) {
       Swal.close(); // Close the loading spinner
-
-
-      console.log('Profile data loaded:', response);
-      // $('#profile_picture').attr(
-      //   'src',
-      //   base64 ? `data:image/png;base64,${base64}` : '../vendor/images/default_profile.png'
-      // );
-      $('#profileName').val(response.full_name);
-      $('#profileEmail').val(response.email);
-      $('#profilePhone').val(response.contact_number);
-      $('#profileAddress').val(response.address);
+      $('#userProfileForm').show();
+      $('#profile_picture').attr(
+        'src',
+        response.profile_picture ? `data:image/png;base64,${response.profile_picture}` : '../vendor/images/default_profile.png'
+      );
+      let contactNumber = response.contact_number || 'N/A';
+      let address = response.address || 'N/A';
+      $('#profileNameDisplay').text(response.full_name);
+      $('#profileEmailDisplay').text(response.email);
+      $('#profilePhone').val(contactNumber);
+      $('#profileAddress').val(address);
     },
     error: function() {
       alert('Failed to load profile data.');
