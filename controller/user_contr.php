@@ -50,5 +50,16 @@ if (isset($_POST['action'])) {
             // echo ($email . ' | ' . $user_fullname . ' | ' . $supabase_uuid . ' | ' . $email_verified . ' | ' . $created_at . ' | ' . $update_at . ' | ' . $profile);
             echo $User->signUpWithGoogle($php_fetch, $php_insert, 'users', $email, $user_fullname, $supabase_uuid, $email_verified, $created_at, $update_at, $profile_image);
             break;
+
+
+        case 'fetch_user_data':
+            echo $user_data = $User->getUserProfileData($php_fetch, 'users');
+            break;
+
+        case 'update_role':
+            $id = trim($_POST['id']);
+            $role = trim($_POST['role']);
+            echo $User->updateUserRole($php_update, 'users', $id, $role);
+            break;
     }
 }
