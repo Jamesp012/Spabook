@@ -191,11 +191,26 @@
                     });
 
                     if (data.user) {
-                        if (data.user.email === 'spa.book19@gmail.com') {
-                            window.location.href = '../views/admin_home_page';
-                        } else {
-                            window.location.href = '../views/user_home_page';
-                        }
+                        $.ajax({
+                            url: '../controller/user_contr.php',
+                            type: 'POST',
+                            data: {
+                                action: 'login',
+                                id: data.user.id
+                            },
+                            success: result => {
+                                // console.log(result);
+                                if (result.error) {
+                                    Swal.fire('Error', result.error, 'error');
+                                } else {
+                                    if (result === 'Admin') {
+                                        window.location.href = '../views/admin_home_page';
+                                    } else if (result === 'User') {
+                                        window.location.href = '../views/user_home_page';
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         document.body.innerHTML = 'User verification failed.';
                     }
@@ -204,7 +219,4 @@
             window.location.href = '../index.php';
         }
     })();
-
-
-    
 </script>
