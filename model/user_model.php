@@ -92,9 +92,18 @@ class User
         $item_data = array();
         $user_data = $php_fetch($table, 'full_name, email, role, user_id, profile_picture');
         if (!empty($user_data)) {
+            foreach ($user_data as $row) {
+                $item_data[] = array(
+                    'full_name' => $row['full_name'],
+                    'email' => $row['email'],
+                    'role' => $row['role'],
+                    'user_id' => $row['user_id'],
+                    'profile_picture' => $row['profile_picture']
+                );
+            }
 
             // Encode the first row only
-            return json_encode($user_data);
+            return json_encode($item_data);
         } else {
             // No rows found; return null or an empty object
             return json_encode('pogi');

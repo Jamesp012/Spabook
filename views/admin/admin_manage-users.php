@@ -16,7 +16,40 @@
     </table>
   </div>
 </div>
-
+<div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editAdminModalLabel">Edit User</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="editUserForm">
+        <div class="modal-body">
+          <input type="hidden" id="editUserId" value="${id}">
+          <div class="mb-3">
+            <label for="editUserName" class="form-label">Name</label>
+            <input type="text" class="form-control" id="editUserName" value="${name}" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="editUserEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" id="editUserEmail" value="${email}" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="editUserRole" class="form-label">Role</label>
+            <select class="form-select" id="editUserRole">
+              <option value="user" ${role==='user' ? 'selected' : '' }>User</option>
+              <option value="admin" ${role==='admin' ? 'selected' : '' }>Admin</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 <script>
   renderUserTable();
 
@@ -42,7 +75,6 @@
       },
       success: result => {
         Swal.close(); // Close the loading spinner
-        console.log('Users loaded:', result);
 
         const tbody = $('#userTableBody');
         tbody.empty();
@@ -81,52 +113,10 @@
   };
 
   function openEditUser(id, name, email, role) {
-    // 🧹 Clear previous modal
-    $('#modalContainer').empty();
-    $('.modal-backdrop').remove();
-    $('body').removeClass('modal-open').css('padding-right', '');
 
-    // 🧱 Modal HTML
-    const modalHTML = `
-    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editAdminModalLabel">Edit User</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form id="editUserForm">
-            <div class="modal-body">
-              <input type="hidden" id="editUserId" value="${id}">
-              <div class="mb-3">
-                <label for="editUserName" class="form-label">Name</label>
-                <input type="text" class="form-control" id="editUserName" value="${name}" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="editUserEmail" class="form-label">Email</label>
-                <input type="email" class="form-control" id="editUserEmail" value="${email}" readonly>
-              </div>
-              <div class="mb-3">
-                <label for="editUserRole" class="form-label">Role</label>
-                <select class="form-select" id="editUserRole">
-                  <option value="user" ${role === 'user' ? 'selected' : ''}>User</option>
-                  <option value="admin" ${role === 'admin' ? 'selected' : ''}>Admin</option>
-                </select>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Save Changes</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>`;
 
-    $('#modalContainer').html(modalHTML);
+    $('#editAdminModal').modal('show');
 
-    const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
-    modal.show();
 
     $('#editUserForm').on('submit', function(e) {
       console.log(id + ' | ' + $('#editUserRole').val());
@@ -184,11 +174,7 @@
 
     });
 
-    $('#editAdminModal').on('hidden.bs.modal', function() {
-      $('#editAdminModal').remove();
-      $('.modal-backdrop').remove();
-      $('body').removeClass('modal-open').css('padding-right', '');
-    });
+
   }
 </script>
 
