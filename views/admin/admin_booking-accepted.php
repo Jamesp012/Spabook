@@ -40,6 +40,19 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).ready(function () {
+    // Handle View button click
+    $(document).on('click', '.btn-view', function (e) {
+      e.preventDefault();
+      const id = $(this).data('id');
+      showGlobalModal('modal/admin_modal-booking-details.php', { id: id }); // ✅ Correct path
+    });
+  });
+</script>
+
+
 <style>
   .user-avatar-compact {
     font-size: 2.2rem;
