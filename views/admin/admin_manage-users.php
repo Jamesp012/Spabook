@@ -16,167 +16,120 @@
     </table>
   </div>
 </div>
-<div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editAdminModalLabel">Edit User</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="editUserForm">
-        <div class="modal-body">
-          <input type="hidden" id="editUserId" value="${id}">
-          <div class="mb-3">
-            <label for="editUserName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="editUserName" value="${name}" readonly>
-          </div>
-          <div class="mb-3">
-            <label for="editUserEmail" class="form-label">Email</label>
-            <input type="email" class="form-control" id="editUserEmail" value="${email}" readonly>
-          </div>
-          <div class="mb-3">
-            <label for="editUserRole" class="form-label">Role</label>
-            <select class="form-select" id="editUserRole">
-              <option value="user" ${role==='user' ? 'selected' : '' }>User</option>
-              <option value="admin" ${role==='admin' ? 'selected' : '' }>Admin</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+
 <script>
-  renderUserTable();
+$(document).ready(function() {
+  let users = [
+    {id: 1, name: 'Juan Dela Cruz', email: 'juan@email.com', role: 'user'},
+    {id: 2, name: 'Maria Santos', email: 'maria@email.com', role: 'admin'},
+    {id: 3, name: 'Pedro Reyes', email: 'pedro@email.com', role: 'user'}
+  ];
 
   function renderUserTable() {
-    $.ajax({
-      url: '../controller/user_contr.php',
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        action: 'fetch_user_data',
-      },
-      beforeSend: function() {
-        Swal.fire({
-          title: 'Loading Users...',
-          html: `
-            <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
-              <div class="spinner-border text-primary" role="status"></div>
-            </div>
-          `,
-          showConfirmButton: false,
-          allowOutsideClick: false
-        });
-      },
-      success: result => {
-        Swal.close(); // Close the loading spinner
-
-        const tbody = $('#userTableBody');
-        tbody.empty();
-        result.forEach((user) => {
-          let action
-          if (user.role === 'Admin') {
-            action = `<span class="badge bg-primary text-white px-2 py-1">${user.role}</span>`;
-          } else {
-            action = `<button class='btn btn-sm btn-primary me-1' onclick="openEditUser('${user.user_id}','${user.full_name}','${user.email}','${user.role}');">Modify</button>
-            <button class='btn btn-sm btn-danger' onclick='deleteUser(${user.user_id})'>Delete</button>`;
-          }
-          tbody.append(`
+    const tbody = $('#userTableBody');
+    tbody.empty();
+    users.forEach((user) => {
+      tbody.append(`
         <tr class="user-row">
-          <td class="text-center">
-            <img src="data:image/png;base64,${user.profile_picture}" alt="Profile Picture" class="rounded-circle mb-2" style="width: 40px; height: 40px; object-fit: cover;">
-          </td>
-          <td><div class="fw-semibold user-name">${user.full_name}</div></td>
+          <td class="text-center"><i class="bi bi-person-circle user-avatar" style="font-size:2.5rem; color:#bdbdbd;"></i></td>
+          <td><div class="fw-semibold user-name">${user.name}</div></td>
           <td><span class="badge bg-light text-dark border px-2 py-1">${user.email}</span></td>
-          <td><span class="badge ${user.role === 'Admin' ? 'bg-primary' : 'bg-secondary'} text-white px-2 py-1">${user.role}</span></td>
+          <td><span class="badge ${user.role === 'admin' ? 'bg-primary' : 'bg-secondary'} text-white px-2 py-1">${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span></td>
           <td>
-          ${action}
+            <button class='btn btn-sm btn-primary me-1' onclick='openEditUser(${user.id})'>Modify</button>
+            <button class='btn btn-sm btn-danger' onclick='deleteUser(${user.id})'>Delete</button>
           </td>
         </tr>
       `);
-        });
-
-      },
     });
   }
 
-  function deleteUser(id) {
+  window.openEditUser = function(id) {
+    const user = users.find(u => u.id === id);
+    if (!user) return;
+
+    // 🧹 Clear previous modal
+    $('#modalContainer').empty();
+    $('#adminModal').remove();
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open').css('padding-right', '');
+
+    // 🧱 Modal HTML
+    const modalHTML = `
+    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editAdminModalLabel">Edit User</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="editUserForm">
+            <div class="modal-body">
+              <input type="hidden" id="editUserId" value="${user.id}">
+              <div class="mb-3">
+                <label for="editUserName" class="form-label">Name</label>
+                <input type="text" class="form-control" id="editUserName" value="${user.name}" required>
+              </div>
+              <div class="mb-3">
+                <label for="editUserEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="editUserEmail" value="${user.email}" required>
+              </div>
+              <div class="mb-3">
+                <label for="editUserRole" class="form-label">Role</label>
+                <select class="form-select" id="editUserRole">
+                  <option value="user" ${user.role === 'user' ? 'selected' : ''}>User</option>
+                  <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>`;
+
+    $('#modalContainer').html(modalHTML);
+
+    const modal = new bootstrap.Modal(document.getElementById('editAdminModal'));
+    modal.show();
+
+    $('#editUserForm').on('submit', function(e) {
+      e.preventDefault();
+      const updatedUser = {
+        id: user.id,
+        name: $('#editUserName').val(),
+        email: $('#editUserEmail').val(),
+        role: $('#editUserRole').val()
+      };
+      const idx = users.findIndex(u => u.id === updatedUser.id);
+      if (idx !== -1) {
+        users[idx] = updatedUser;
+        renderUserTable();
+        bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
+      }
+    });
+
+    $('#editAdminModal').on('hidden.bs.modal', function () {
+      $('#editAdminModal').remove();
+      $('.modal-backdrop').remove();
+      $('body').removeClass('modal-open').css('padding-right', '');
+    });
+  };
+
+  window.deleteUser = function(id) {
     if (confirm('Are you sure you want to delete this user?')) {
       users = users.filter(u => u.id !== id);
       renderUserTable();
     }
   };
 
-  function openEditUser(id, name, email, role) {
-
-
-    $('#editAdminModal').modal('show');
-
-
-    $('#editUserForm').on('submit', function(e) {
-      console.log(id + ' | ' + $('#editUserRole').val());
-      // e.preventDefault();
-      // $.ajax({
-      //   url: '../controller/user_contr.php',
-      //   type: 'POST',
-      //   dataType: 'json',
-      //   data: {
-      //     action: 'update_role',
-      //     id: id,
-      //     role: $('#editUserRole').val()
-      //   },
-      //   beforeSend: function() {
-      //     Swal.fire({
-      //       title: 'Saving Data...',
-      //       html: `
-      //         <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
-      //             <img src="../vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
-      //         </div>
-      //         <style>
-      //             .custom-spinner-glow {
-      //                 animation: spin 1.2s linear infinite, glow 1.2s ease-in-out infinite alternate;
-      //                 filter: drop-shadow(0 0 16px #a1623f);
-      //             }
-      //             @keyframes spin {
-      //                 100% { transform: rotate(360deg); }
-      //             }
-      //             @keyframes glow {
-      //                 0% { filter: drop-shadow(0 0 8px #a1623f); }
-      //                 100% { filter: drop-shadow(0 0 32px #a1623f); }
-      //             }
-      //         </style>
-      //       `,
-      //       showConfirmButton: false,
-      //       allowOutsideClick: false,
-      //       allowEscapeKey: false,
-      //       backdrop: true,
-      //     });
-      //   },
-      //   success: function(response) {
-      //     if (response.status === 'success') {
-      //       alert('User updated successfully!');
-      //       renderUserTable();
-      //       modal.hide();
-      //       bootstrap.Modal.getInstance(document.getElementById('editAdminModal')).hide();
-      //     } else {
-      //       alert('Failed to update user.');
-      //     }
-      //   },
-      //   error: function() {
-      //     alert('Error updating user.');
-      //   }
-      // });
-
-    });
-
-
-  }
+  renderUserTable();
+});
 </script>
+
 
 <style>
   .user-avatar {
