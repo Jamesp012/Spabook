@@ -89,11 +89,6 @@
                 $('.app_content_body').load(`admin/${section}.php`);
             }
 
-            // Load default section (Dashboard)
-            loadPage('dashboard');
-
-
-
             $('.app_sidebar_nav ul li').on('click', function() {
                 // Hide the sidebar on mobile
                 $('.app_sidebar_nav ul li.active').removeClass('active');
