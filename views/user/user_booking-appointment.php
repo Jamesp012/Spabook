@@ -27,8 +27,10 @@
                             <div class="responsive-col p-2">
                                 <div class="card flex-md-column flex-row-reverse">
                                     <!-- Image -->
-                                    <img src="<?= $service['image']; ?>" class="img-fluid rounded-start d-none d-sm-block" alt="Service Image" style="object-fit: cover; height: 100px; width: 100%;">
-                                    <img src="<?= $service['image']; ?>" class="img-fluid rounded-start d-sm-none me-3" alt="Service Image" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="service-img-wrapper">
+                                        <img src="<?= $service['image']; ?>" class="img-fluid service-img" alt="Service Image">
+                                    </div>
+
 
                                     <!-- Card Body -->
                                     <div class="card-body p-3">
@@ -220,27 +222,48 @@
     flex: 0 0 100%;
     }
 
+    .service-img-wrapper {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .service-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     @media (min-width: 576px) {
     .responsive-col {
         flex: 0 0 50%;
     }
+    /* .service-img-wrapper {
+        height: 100%;
+    } */
     }
+    
 
     @media (min-width: 768px) {
     .responsive-col {
         flex: 0 0 33.3333%;
     }
+    /* .service-img-wrapper {
+        height: 100%
+    } */
     }
+    
 
     @media (min-width: 992px) {
     .responsive-col {
-        flex: 0 0 25%;
+        flex: 0 0 33.3333%;
     }
     }
 
     @media (min-width: 1200px) {
     .responsive-col {
-        flex: 0 0 20%;
+        flex: 0 0 33.3333%;
     }
     }
 </style>
