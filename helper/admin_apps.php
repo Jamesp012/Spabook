@@ -63,7 +63,7 @@
         </div>
     </nav>
     <!-- Notification Modal -->
-<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+<div class="modal" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
  <div class="modal-content">
       <div class="modal-header">
@@ -87,11 +87,11 @@
 
         $(document).ready(function() {
             function loadPage(section) {
-                $('.app_content_body').load(`pages/${section}.html`);
+                $('.app_content_body').load(`admin/${section}.php`);
             }
 
-            // Load default section (Dashboard)
-            loadPage('dashboard');
+            // // Load default section (Dashboard)
+            loadPage('admin_dashboard');
 
             
 
@@ -110,10 +110,6 @@
                 if (window.innerWidth < 768) {  
                     $('.app_sidebar_nav').removeClass('active');
                 }
-
-                // Load content dynamically
-                const section = $(this).data('content');
-                loadPage(section);
             });
 
             // Sidebar toggling
