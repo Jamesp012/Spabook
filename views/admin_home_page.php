@@ -34,10 +34,6 @@
 
         function loadContent(page) {
             // 🧹 Remove previous modal/backdrop before loading new page
-            $('#modalContainer').empty();
-            $('#adminModal').remove();
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open').css('padding-right', '');
 
             $.ajax({
                 url: `../views/admin/${page}`,
@@ -50,37 +46,6 @@
                 }
             });
         }
-
-        // Global modal handler to avoid stacking
-        $(document).on('click', '.btn-view', function (e) {
-            e.preventDefault();
-
-            const bookingId = $(this).data('id');
-
-            // 🧹 Full cleanup
-            $('#modalContainer').empty();
-            $('#adminModal').remove();
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open').css('padding-right', '');
-
-            // Load the modal
-            $.get('admin/admin_modal.php', { id: bookingId }, function (data) {
-                $('#modalContainer').html(data);
-
-                const modalEl = document.getElementById('adminModal');
-                const modal = new bootstrap.Modal(modalEl);
-                modal.show();
-
-                // 🧹 Cleanup after modal is closed
-                $(modalEl).on('hidden.bs.modal', function () {
-                    $('#adminModal').remove();
-                    $('.modal-backdrop').remove();
-                    $('body').removeClass('modal-open').css('padding-right', '');
-                });
-            }).fail(function () {
-                alert('Failed to load modal.');
-            });
-        });
 
         // Dashboard-specific behavior
         window.loadDashboardData = function (type) {
