@@ -1,10 +1,10 @@
 <!-- Global Modal Template -->
 <div class="modal fade" id="globalModal" tabindex="-1" aria-labelledby="globalModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- You can change to modal-md or modal-sm -->
-    <div class="modal-content" id="globalModalContent">
-      <!-- Content will be injected here by JS -->
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- You can change to modal-md or modal-sm -->
+        <div class="modal-content" id="globalModalContent">
+            <!-- Content will be injected here by JS -->
+        </div>
     </div>
-  </div>
 </div>
 
 <script type="text/javascript" src="../vendor/js/jquery.min.js"></script>

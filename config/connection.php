@@ -42,7 +42,10 @@ function supabaseRequest($method, $endpoint, $data = null)
 $php_fetch = function ($table, $select = '*', $filters = []) {
     $query = ['select' => $select];
     foreach ($filters as $key => $value) {
-        if (!str_contains($value, '.')) {
+        if (str_contains($key, '!=')) {
+            $field = trim(str_replace('!=', '', $key));
+            $query[$field] = "neq.$value";
+        } elseif (!str_contains($value, '.')) {
             $query[$key] = "eq.$value";
         } else {
             $query[$key] = $value;
