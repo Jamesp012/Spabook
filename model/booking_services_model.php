@@ -6,7 +6,7 @@ class BookingServices
     public function fetchServices($php_fetch, $table)
     {
         $item_data = array();
-        $ervice_data = $php_fetch($table, 'id,service_name, description, price, per_minute, service_picture');
+        $ervice_data = $php_fetch($table, 'id,service_name, description, price, per_minute, service_picture', ['order' => 'service_name.asc']);
         if (!empty($ervice_data)) {
             foreach ($ervice_data as $row) {
                 $item_data[] = array(
@@ -80,30 +80,48 @@ class BookingServices
     public function updateService($php_fetch, $php_update, $table, $serviceid, $image, $name, $description, $price, $duration)
     {
         // Check if service exists
-        $check_service = $php_fetch($table, 'id', [
-            'service_name' => $name,
-            'id !=' => $serviceid
-        ]);
-        if (is_array($check_service) && isset($check_service[0]['id'])) {
-            // Update service
-            $update_service = $php_update($table, [
-                'service_name' => $name,
-                'description' => $description,
-                'price' => $price,
-                'per_minute' => $duration,
-                'service_picture' => $image
-            ], ['id' => $serviceid]);
-            if (isset($update_service['error'])) {
-                // Handle error
-                return json_encode('error');
-            } else {
-                // Service updated successfully
-                return json_encode('success');
-            }
-        } else {
-            // Service does not exist
-            return json_encode('notfound');
+        $existing = $php_fetch($table, 'id', ['id' => $serviceid]);
+
+        if (!is_array($existing) || !isset($existing[0]['id'])) {
+            return json_encode('notfound'); // service doesn't exist
         }
+
+        // Check for name conflict (duplicate name in other services)
+        $conflict = $php_fetch($table, 'id', [
+            'service_name' => $name,
+            'id!=' => $serviceid
+        ]);
+
+        if (is_array($conflict) && isset($conflict[0]['id'])) {
+            return json_encode('duplicate'); // another service with same name exists
+        }
+
+        // Proceed with update
+        $update_service = $php_update($table, ['id' => $serviceid], [
+            'service_name' => $name,
+            'description' => $description,
+            'price' => $price,
+            'per_minute' => $duration,
+            'service_picture' => $image
+        ]);
+
+        if (isset($update_service['error'])) {
+            return json_encode('error');
+        }
+
+        return json_encode('success');
+    }
+
+    function deleteService($php_delete, $table, $serviceid)
+    {
+        // Proceed with deletion
+        $delete_service = $php_delete($table, $serviceid);
+
+        if (isset($delete_service['error'])) {
+            return json_encode('error');
+        }
+
+        return json_encode('success');
     }
 
     //! ============================================================ SERVICES SECTION END ============================================================

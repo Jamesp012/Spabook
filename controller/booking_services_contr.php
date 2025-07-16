@@ -33,6 +33,10 @@ if (isset($_POST['action'])) {
             echo $bookingServices->updateService($php_fetch, $php_update, 'services', $serviceid, $image, $name, $description, $price, $duration);
             break;
 
+        case 'delete_service':
+            $serviceid = $_POST['serviceid'];
+            echo $bookingServices->deleteService($php_delete, 'services', $serviceid);
+            break;
         case 'get_service_by_id':
             $serviceid = $_POST['serviceid'];
             echo $bookingServices->getServiceById($php_fetch, 'services', $serviceid);

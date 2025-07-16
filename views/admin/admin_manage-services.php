@@ -81,4 +81,36 @@
     function editService(id) {
         showGlobalModal('modal/admin_modal-manage-services.php?serviceid=' + id);
     }
+
+    function deleteService(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This service will be permanently deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Delete'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controller/booking_services_contr.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'delete_service',
+                        serviceid: id
+                    },
+                    success: function(response) {
+                        if (response === 'success') {
+                            Swal.fire('Deleted!', 'The service has been deleted.', 'success');
+                            loadServices();
+                        } else {
+                            Swal.fire('Error!', 'Failed to delete the service.', 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
 </script>

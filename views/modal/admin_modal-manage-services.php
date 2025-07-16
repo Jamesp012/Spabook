@@ -74,14 +74,14 @@
                     $('#serviceDescription').val(result.description);
                     $('#servicePrice').val(result.price);
                     $('#serviceDuration').val(result.per_minute);
-                    $('.service_image_container').html('<img src="data:image/png;base64,' + result.service_picture + '" class="service_image img-fluid rounded-3 border" id="service_image" style="height: 200px; object-fit: cover;" alt="Preview">');
+                    $('.service_image_container').html('<img src="data:image/png;base64,' + result.service_picture + '" value="' + result.service_picture + '" class="service_image img-fluid rounded-3 border" id="service_image" style="height: 200px; object-fit: cover;" alt="Preview">');
                 }
             }
         });
 
 
         function updateServices() {
-            if (inputValidation('serviceImage', 'serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration')) {
+            if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration')) {
                 $.ajax({
                     url: '../controller/booking_services_contr.php',
                     type: 'POST',

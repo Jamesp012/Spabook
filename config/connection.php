@@ -62,8 +62,12 @@ $php_insert = function ($table, $data) {
 };
 
 // Update (PATCH)
-$php_update = function ($table, $id, $data) {
-    $endpoint = "$table?id=eq.$id";
+$php_update = function ($table, $filters = [], $data) {
+    $query = [];
+    foreach ($filters as $key => $value) {
+        $query[] = "$key=eq.$value";
+    }
+    $endpoint = "$table?" . implode('&', $query);
     return supabaseRequest('PATCH', $endpoint, $data);
 };
 
