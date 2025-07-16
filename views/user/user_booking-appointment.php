@@ -4,28 +4,7 @@
         <div class="col-md-12 mb-1">
 
             <div class="container-fluid h-100" style="max-height: calc(100vh - 310px); overflow-y: auto;">
-                <div class="row g-3">
-                    <div class="row g-3">
-                        <div class="responsive-col p-2">
-                            <div id="services_container">
-                                <div class="card flex-md-column flex-row-reverse">
-                                    <!-- Image -->
-                                    <div class="service-img-wrapper">
-                                        <img src="../vendor/images/headMassage.png" class="img-fluid service-img" alt="Service Image">
-                                    </div>
-                                    <!-- Card Body -->
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title mb-2">Service 1</h5>
-                                        <p class="card-text small">This is the description for Service 1 Relax and enjoy!</p>
-                                        <p class="card-text fw-bold text-primary mb-0">₱ 305 / 30 min</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
+                <div class="row g-3 mt-2" id="services_container"></div>
             </div>
             <div class="card mt-2">
                 <div class="card-header bg-secondary text-white">
@@ -115,8 +94,42 @@
             },
             success: result => {
                 console.log(result);
-                const response = result === 'nodata' ? '<p>No services available</p>' : result;
-                // $('#services_container').html(response);
+                if (result === 'nodata') {
+                    $('#services_container').html(`
+                        <div class="card text-center border-0 shadow-sm p-4 rounded-4 bg-light">
+                            <div class="card-body">
+                                <i class="bi bi-info-circle text-secondary mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title mb-2">No Services Available</h5>
+                                <p class="card-text text-muted">Please check back later or contact support for assistance.</p>
+                            </div>
+                        </div>
+                    `);
+                    return;
+
+                } else {
+                    let html = '';
+                    result.forEach(service => {
+                        html += `
+                            <div class="col-md-4 p-2">
+                                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
+                                    <img src="data:image/png;base64,${service.service_picture}"
+                                         class="card-img-top img-fluid"
+                                         style="height: 200px; object-fit: cover;"
+                                         alt="${service.service_name}">
+
+                                    <div class="card-body bg-white">
+                                        <h5 class="card-title">${service.service_name}</h5>
+                                        <p class="card-text small mb-2">${service.description}</p>
+                                        <p class="card-text fw-bold text-primary mb-0">
+                                            ₱ ${service.price} / ${service.per_minute} min
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    $('#services_container').html(html);
+                }
             },
         });
     }
