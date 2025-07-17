@@ -32,10 +32,15 @@
         <ul class="list-unstyled px-2">
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
-                    <span class="profile-img-nav rounded-circle me-2" style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img src="../path/to/default-profile.jpg" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
+                    <span class="profile-img-nav rounded-circle me-2"
+                        style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
+                        <img id="navProfileImage" src="../path/to/default-profile.jpg"
+                            alt="Profile"
+                            style="width:100%; height:100%; object-fit:cover;">
                     </span>
-                    <span class="profile-name-nav fw-semibold" style="font-size:1rem;">John Doe</span>
+                    <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;">
+                        John Doe
+                    </span>
                 </a>
             </li>
         </ul>

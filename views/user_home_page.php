@@ -14,6 +14,47 @@
 <?php include_once '../include/footer.php'; ?>
 
 <script>
+    window.addEventListener('user_id_ready', function () {
+        const user_id = sessionStorage.getItem('user_id');
+        if (!user_id) {
+            console.error("user_id not found in sessionStorage");
+            return;
+        }
+
+        // Safe to do AJAX now
+        $.ajax({
+            type: 'POST',
+            url: '../controller/user_contr.php',
+            data: {
+                action: 'get_user_profile',
+                id: user_id
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                $('#user_fullname').text(data.user_fullname);
+                $('#user_email').text(data.email);
+                $('#user_address').text(data.user_address);
+                $('#user_contact').text(data.contact);
+                $('#role').text(data.role);
+
+                if (data.profile_image && data.profile_image !== "") {
+                    $('#profile_img').attr('src', data.profile_image);
+                } else {
+                    $('#profile_img').attr('src', '../vendor/images/default.png');
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'AJAX error: ' + error,
+                });
+            }
+        });
+    });
+
+
     $(document).ready(function () {
         // Load default content
         loadUserContent('user_booking-appointment.php');
@@ -45,12 +86,6 @@
                 method: 'GET',
                 success: function (response) {
                     $('.app_content_body').html(response);
-
-                    if (page === 'user_booking-appointment.php') {
-                        if (typeof initializeCalendar === 'function') {
-                            initializeCalendar();
-                        }
-                    }
                 },
                 error: function () {
                     $('.app_content_body').html('<div class="alert alert-danger">Failed to load content.</div>');

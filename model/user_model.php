@@ -19,14 +19,13 @@ class User
 
     public function getUserProfile($php_fetch, $table, $id)
     {
-        // Fetch user profile by ID
+        // Fetch user profile using the provided fetch function
         $user = $php_fetch($table, '*', ['user_id' => $id]);
-        // var_dump($user); // Uncomment to debug
 
         if (is_array($user) && isset($user[0])) {
             return json_encode($user[0]);
         } else {
-            return null;
+            return json_encode(['error' => 'User not found']);
         }
     }
 
@@ -83,6 +82,18 @@ class User
             ]);
         }
     }
+
+    public function updateUserProfile($php_update, $table, $id, $contact, $address)
+    {
+        $data = [
+            'contact_number' => $contact,
+            'user_address' => $address
+        ];
+        $where = ['user_id' => $id];
+
+        return $php_update($table, $data, $where) ? 'success' : 'fail';
+    }
+
     //! ============================================================ USER SECTION END ============================================================
 
     //! ============================================================ ADMIN SECTION ============================================================
@@ -125,3 +136,4 @@ class User
     //! ============================================================ ADMIN SECTION ============================================================
 
 }
+
