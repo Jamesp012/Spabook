@@ -12,16 +12,19 @@
         </div>
 
         <ul class="list-unstyled px-2">
-            <li class="app_sidebar_item  active" data-content="admin_dashboard.php">
+            <li class="app_sidebar_item  active" data-content="admin_dashboard.php" id="admin_dashboard">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-columns-gap"></i>Dashboard</a>
             </li>
-            <li class="app_sidebar_item" data-content="admin_booking-request.php">
+            <li class="app_sidebar_item" data-content="admin_booking-request.php" id="admin_booking_request">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 fa-solid fa-file-pen"></i>Booking Request</a>
             </li>
-            <li class="app_sidebar_item" data-content="admin_booking-accepted.php">
+            <li class="app_sidebar_item" data-content="admin_booking-accepted.php" id="admin_booking_accepted">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-check2-square"></i>Booking Accepted</a>
             </li>
-            <li class="app_sidebar_item" data-content="admin_manage-users.php">
+            <li class="app_sidebar_item" data-content="admin_manage-services.php" id="admin_manage_services">
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-leaf"></i>Manage Services</a>
+            </li>
+            <li class="app_sidebar_item" data-content="admin_manage-users.php" id="admin_manage_users">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people"></i>Manage Users</a>
             </li>
         </ul>
@@ -63,24 +66,24 @@
         </div>
     </nav>
     <!-- Notification Modal -->
-<div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
- <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-0">
-        <ul class="list-group list-group-flush" id="notificationListModal">
-          <!-- Notifications will be injected here -->
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-danger btn-sm" id="clearReadBtnModal">Clear Read Messages</button>
-      </div>
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <ul class="list-group list-group-flush" id="notificationListModal">
+                        <!-- Notifications will be injected here -->
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger btn-sm" id="clearReadBtnModal">Clear Read Messages</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>   
     <script src="../vendor/js/jquery.min.js"></script>
     <script src="../vendor/Bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
