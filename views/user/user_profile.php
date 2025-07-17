@@ -70,9 +70,6 @@
         address: $('#profileAddress').val()
       };
 
-      // 🔄 Simulate save to server
-      console.log('Saving profile...', updatedData);
-
       // After save
       $('#editProfileBtn').click(); // Simulate clicking cancel to exit edit mode
       alert('Profile updated successfully!');
@@ -132,17 +129,5 @@
     error: function() {
       alert('Failed to load profile data.');
     }
-
-
-
   });
-
-  function postgresByteaToBase64(bytea) {
-    if (!bytea) return '';
-    const hex = bytea.startsWith('\\x') ? bytea.slice(2) : bytea; // strip \x
-    const binary = hex.match(/.{1,2}/g) // 2 hex chars → byte
-      .map(h => String.fromCharCode(parseInt(h, 16)))
-      .join('');
-    return btoa(binary);
-  }
 </script>
