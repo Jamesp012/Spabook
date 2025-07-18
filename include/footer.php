@@ -43,3 +43,33 @@
         // Now user_id is guaranteed to be set
     });
 </script>
+<script>
+  window.addEventListener('user_id_ready', async function () {
+    const user_id = sessionStorage.getItem('user_id');
+
+    if (!user_id) return;
+
+    try {
+      const response = await fetch('/Spabook/controller/user_contr.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `action=get_user_profile&id=${user_id}`
+      });
+
+      const user = await response.json();
+
+      // Optional fallback image
+      const defaultProfile = '../path/to/default-profile.jpg';
+
+      // Update image and name
+      document.getElementById('navProfileImage').src =
+        user.profile_picture ? `data:image/jpeg;base64,${user.profile_picture}` : defaultProfile;
+
+      document.getElementById('navProfileName').textContent =
+        user.full_name || 'Guest';
+
+    } catch (err) {
+      console.error('Failed to load profile info:', err);
+    }
+  });
+</script>

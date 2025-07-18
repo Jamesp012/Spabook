@@ -9,15 +9,20 @@
         <!-- Profile Picture Section -->
         <div class="text-center mb-4">
           <img id="profile_picture" src="#" alt="Profile Picture" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover;">
-          <h5 class="mb-0" id="profileNameDisplay">Full Name</h5>
-          <p class="text-muted small" id="profileEmailDisplay">email@example.com</p>
         </div>
 
-        <!-- Hidden fields for form submission -->
-        <input type="text" class="form-control d-none" id="profileName" readonly>
-        <input type="email" class="form-control d-none" id="profileEmail" readonly>
+        <!-- Editable fields -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="profileName" readonly>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" id="profileEmail" readonly>
+          </div>
+        </div>
 
-        <!-- Info Section -->
         <div class="row mb-3">
           <div class="col-md-6">
             <label class="form-label">Phone Number</label>
@@ -35,30 +40,55 @@
         </div>
       </form>
     </div>
-
   </div>
 </div>
 
 <script>
-  $(document).ready(function() {
-    $('#userProfileForm').hide();
-    let editing = false;
+  let editing = false;
 
-    $('#editProfileBtn').on('click', function() {
-      editing = !editing;
+  $('#editProfileBtn').on('click', function () {
+    editing = !editing;
+    $('#userProfileForm input').prop('readonly', !editing);
+    $('#saveBtnWrapper').toggleClass('d-none', !editing);
+    $(this).text(editing ? 'Cancel' : 'Edit Profile');
 
-      $('#userProfileForm input').prop('readonly', !editing);
+    if (!editing) {
+      // Reload original values if canceled
+      loadUserProfile();
+    }
+  });
 
-      if (editing) {
-        $('#saveBtnWrapper').removeClass('d-none');
-        $(this).text('Cancel Edit').removeClass('btn-outline-primary').addClass('btn-outline-secondary');
-      } else {
-        $('#saveBtnWrapper').addClass('d-none');
-        $(this).text('Edit Profile').removeClass('btn-outline-secondary').addClass('btn-outline-primary');
+  $('#userProfileForm').on('submit', function (e) {
+    e.preventDefault();
 
-        // Optionally reset form fields here
+    const updatedData = {
+      action: 'update_user_profile',
+      id: user_id,
+      name: $('#profileName').val(),
+      email: $('#profileEmail').val(),
+      contact: $('#profilePhone').val(),
+      address: $('#profileAddress').val(),
+    };
+
+    $.ajax({
+      url: '../controller/user_contr.php',
+      type: 'POST',
+      data: updatedData,
+      success: function (response) {
+        if (response === 'success') {
+          Swal.fire('Saved!', 'Your profile has been updated.', 'success');
+          $('#editProfileBtn').click(); // Switch back to readonly mode
+        } else {
+          Swal.fire('Error', 'Failed to update profile.', 'error');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'Something went wrong!', 'error');
       }
     });
+<<<<<<< HEAD
+=======
 
     $('#userProfileForm').on('submit', function(e) {
       e.preventDefault();
@@ -74,21 +104,22 @@
       $('#editProfileBtn').click(); // Simulate clicking cancel to exit edit mode
       alert('Profile updated successfully!');
     });
+>>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
   });
 
-  // console.log('User ID:', user_id); // Access the user_id variable
-  $.ajax({
-    url: '../controller/user_contr.php',
-    type: 'POST',
-    dataType: 'json',
-    data: {
-      action: 'get_user_profile',
-      id: user_id
-    },
-    beforeSend: function() {
-      Swal.fire({
-        title: 'Logging in...',
-        html: `
+  function loadUserProfile() {
+    $.ajax({
+      url: '../controller/user_contr.php',
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        action: 'get_user_profile',
+        id: user_id
+      },
+      beforeSend: function () {
+        Swal.fire({
+          title: 'Loading Profile...',
+          html: `
               <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
                   <img src="../vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
               </div>
@@ -105,6 +136,41 @@
                       100% { filter: drop-shadow(0 0 32px #a1623f); }
                   }
               </style>
+<<<<<<< HEAD
+        `,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          backdrop: true,
+        });
+      },
+      success: function (response) {
+        Swal.close();
+
+        $('#userProfileForm').show();
+        $('#profile_picture').attr(
+          'src',
+          response.profile_picture
+            ? `data:image/png;base64,${response.profile_picture}`
+            : '../vendor/images/default_profile.png'
+        );
+        $('#profileName').val(response.full_name || 'N/A');
+        $('#profileEmail').val(response.email || 'N/A');
+        $('#profilePhone').val(response.contact_number || 'N/A');
+        $('#profileAddress').val(response.address || 'N/A');
+      },
+      error: function () {
+        alert('Failed to load profile data.');
+      }
+    });
+  }
+
+  // Initialize on load
+  $(document).ready(function () {
+    loadUserProfile();
+  });
+</script>
+=======
        `,
         showConfirmButton: false,
         allowOutsideClick: false,
@@ -131,3 +197,4 @@
     }
   });
 </script>
+>>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739

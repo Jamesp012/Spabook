@@ -29,6 +29,11 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
+    </div>
+</div>
+
+=======
 
         <!-- Appointment Form (right side) -->
         <!-- <div class="col-md-4 mb-3">
@@ -135,6 +140,7 @@
     }
 </script>
 
+>>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
 <style>
     .responsive-col {
         flex: 0 0 100%;
