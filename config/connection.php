@@ -42,7 +42,10 @@ function supabaseRequest($method, $endpoint, $data = null)
 $php_fetch = function ($table, $select = '*', $filters = []) {
     $query = ['select' => $select];
     foreach ($filters as $key => $value) {
-        if (!str_contains($value, '.')) {
+        if (str_contains($key, '!=')) {
+            $field = trim(str_replace('!=', '', $key));
+            $query[$field] = "neq.$value";
+        } elseif (!str_contains($value, '.')) {
             $query[$key] = "eq.$value";
         } else {
             $query[$key] = $value;
@@ -59,8 +62,12 @@ $php_insert = function ($table, $data) {
 };
 
 // Update (PATCH)
-$php_update = function ($table, $id, $data) {
-    $endpoint = "$table?id=eq.$id";
+$php_update = function ($table, $filters = [], $data) {
+    $query = [];
+    foreach ($filters as $key => $value) {
+        $query[] = "$key=eq.$value";
+    }
+    $endpoint = "$table?" . implode('&', $query);
     return supabaseRequest('PATCH', $endpoint, $data);
 };
 

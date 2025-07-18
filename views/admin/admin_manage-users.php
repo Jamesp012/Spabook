@@ -94,8 +94,7 @@
 
     renderUserTable();
 
-    $(document).on('click', '.btn-view', function(e) {
-      e.preventDefault();
+    $(document).on('click', '.btn-view', function() {
       const id = $(this).data('id');
       const name = $(this).data('name');
       const email = $(this).data('email');

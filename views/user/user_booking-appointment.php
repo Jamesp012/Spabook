@@ -1,57 +1,17 @@
-<?php
-    $services = [];
-
-    for ($i = 1; $i <= 12; $i++) {
-        $services[] = [
-            'title' => "Service $i",
-            'description' => "This is the description for Service $i. Relax and enjoy!",
-            'price' => "₱" . (300 + $i * 5) . " / 30 min",
-            'image' => "../vendor/images/headMassage.png"
-        ];
-    }
-?>
-
 <div class="container-fluid">
     <div class="row">
-        
+
         <div class="col-md-12 mb-1">
-            <div class="card " id="cardView">
-                
-            </div>
 
             <div class="container-fluid h-100" style="max-height: calc(100vh - 310px); overflow-y: auto;">
-                <div class="row g-3">
-
-                    <div class="row g-3">
-                        <?php foreach ($services as $service): ?>
-                            <div class="responsive-col p-2">
-                                <div class="card flex-md-column flex-row-reverse">
-                                    <!-- Image -->
-                                    <div class="service-img-wrapper">
-                                        <img src="<?= $service['image']; ?>" class="img-fluid service-img" alt="Service Image">
-                                    </div>
-
-
-                                    <!-- Card Body -->
-                                    <div class="card-body p-3">
-                                        <h5 class="card-title mb-2"><?= $service['title']; ?></h5>
-                                        <p class="card-text small"><?= $service['description']; ?></p>
-                                        <p class="card-text fw-bold text-primary mb-0"><?= $service['price']; ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-
-                </div>
+                <div class="row g-3 mt-2" id="services_container"></div>
             </div>
             <div class="card mt-2">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
                 <div class="recent-services-scroll">
-                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: 120px;">
+                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: 180px;">
                         <li class="list-group-item">Swedish Massage - June 9, 2025</li>
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
                         <li class="list-group-item">Shiatsu - June 2, 2025</li>
@@ -69,19 +29,128 @@
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     </div>
 </div>
 
+=======
+
+        <!-- Appointment Form (right side) -->
+        <!-- <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Book an Appointment</h5>
+                </div> -->
+
+        <!-- Add style to limit height and enable scroll -->
+        <!-- <div class="card-body p-3" style="max-height: 75vh; overflow-y: auto;">
+                    <form id="appointment-form">
+                        <div class="mb-3">
+                            <label for="firstname" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstname" placeholder="Enter first name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastname" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastname" placeholder="Enter last name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact" class="form-label">Contact Number</label>
+                            <input type="text" class="form-control" id="contact" placeholder="Enter contact number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter email address" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" placeholder="Enter your age" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" data-content="user_booking-view_calendar.php" required readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            <input type="time" class="form-control" id="time" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Complete Address</label>
+                            <textarea class="form-control" id="address" rows="2" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Book Now</button>
+                    </form>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+
+<script>
+    loadServices();
+    // Views Script
+    function loadServices() {
+        $.ajax({
+            url: '../controller/booking_services_contr.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'fetch_services'
+            },
+            success: result => {
+                console.log(result);
+                if (result === 'nodata') {
+                    $('#services_container').html(`
+                        <div class="card text-center border-0 shadow-sm p-4 rounded-4 bg-light">
+                            <div class="card-body">
+                                <i class="bi bi-info-circle text-secondary mb-2" style="font-size: 2rem;"></i>
+                                <h5 class="card-title mb-2">No Services Available</h5>
+                                <p class="card-text text-muted">Please check back later or contact support for assistance.</p>
+                            </div>
+                        </div>
+                    `);
+                    return;
+
+                } else {
+                    let html = '';
+                    result.forEach(service => {
+                        html += `
+                            <div class="col-md-4 p-2">
+                                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
+                                    <img src="data:image/png;base64,${service.service_picture}"
+                                         class="card-img-top img-fluid"
+                                         style="height: 200px; object-fit: cover;"
+                                         alt="${service.service_name}">
+
+                                    <div class="card-body bg-white">
+                                        <h5 class="card-title">${service.service_name}</h5>
+                                        <p class="card-text small mb-2">${service.description}</p>
+                                        <p class="card-text fw-bold text-primary mb-0">
+                                            ₱ ${service.price} / ${service.per_minute} min
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    $('#services_container').html(html);
+                }
+            },
+        });
+    }
+</script>
+
+>>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
 <style>
     .responsive-col {
-    flex: 0 0 100%;
+        flex: 0 0 100%;
     }
 
     .service-img-wrapper {
-    width: 100%;
-    height: 150px;
-    overflow: hidden;
-    border-radius: 0.5rem 0.5rem 0 0;
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 0.5rem 0.5rem 0 0;
     }
 
     .service-img {
@@ -91,34 +160,36 @@
     }
 
     @media (min-width: 576px) {
-    .responsive-col {
-        flex: 0 0 50%;
-    }
-    /* .service-img-wrapper {
+        .responsive-col {
+            flex: 0 0 50%;
+        }
+
+        /* .service-img-wrapper {
         height: 100%;
     } */
     }
-    
+
 
     @media (min-width: 768px) {
-    .responsive-col {
-        flex: 0 0 33.3333%;
-    }
-    /* .service-img-wrapper {
+        .responsive-col {
+            flex: 0 0 33.3333%;
+        }
+
+        /* .service-img-wrapper {
         height: 100%
     } */
     }
-    
+
 
     @media (min-width: 992px) {
-    .responsive-col {
-        flex: 0 0 33.3333%;
-    }
+        .responsive-col {
+            flex: 0 0 33.3333%;
+        }
     }
 
     @media (min-width: 1200px) {
-    .responsive-col {
-        flex: 0 0 33.3333%;
-    }
+        .responsive-col {
+            flex: 0 0 33.3333%;
+        }
     }
 </style>
