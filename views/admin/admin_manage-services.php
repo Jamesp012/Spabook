@@ -1,6 +1,5 @@
 <div class="container-fluid">
     <div class="row">
-
         <div class="col-md-12 mb-1">
             <div class="col-12 col-sm col-md col-lg mb-2">
                 <button type="button" class="btn btn-light col-3 fs-18 rounded-3" id="add_location" onclick="addServices();"><i class="fa-solid fa-square-plus p-r-8"></i>Add Services</button>
@@ -13,7 +12,9 @@
 </div>
 
 <script>
-    loadServices();
+    $(document).ready(function() {
+        loadServices();
+    });
     // Views Script
     function loadServices() {
         $.ajax({
@@ -24,6 +25,7 @@
                 action: 'fetch_services'
             },
             success: result => {
+
                 if (result === 'nodata') {
                     $('#services_container').html(`
                         <div class="card text-center border-0 shadow-sm p-4 rounded-4 bg-light">
