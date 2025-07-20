@@ -87,8 +87,7 @@
         Swal.fire('Error', 'Something went wrong!', 'error');
       }
     });
-<<<<<<< HEAD
-=======
+
 
     $('#userProfileForm').on('submit', function(e) {
       e.preventDefault();
@@ -104,7 +103,6 @@
       $('#editProfileBtn').click(); // Simulate clicking cancel to exit edit mode
       alert('Profile updated successfully!');
     });
->>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
   });
 
   function loadUserProfile() {
@@ -136,7 +134,6 @@
                       100% { filter: drop-shadow(0 0 32px #a1623f); }
                   }
               </style>
-<<<<<<< HEAD
         `,
           showConfirmButton: false,
           allowOutsideClick: false,
@@ -170,31 +167,3 @@
     loadUserProfile();
   });
 </script>
-=======
-       `,
-        showConfirmButton: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        backdrop: true,
-      });
-    },
-    success: function(response) {
-      Swal.close(); // Close the loading spinner
-      $('#userProfileForm').show();
-      $('#profile_picture').attr(
-        'src',
-        response.profile_picture ? `data:image/png;base64,${response.profile_picture}` : '../vendor/images/default_profile.png'
-      );
-      let contactNumber = response.contact_number || 'N/A';
-      let address = response.address || 'N/A';
-      $('#profileNameDisplay').text(response.full_name);
-      $('#profileEmailDisplay').text(response.email);
-      $('#profilePhone').val(contactNumber);
-      $('#profileAddress').val(address);
-    },
-    error: function() {
-      alert('Failed to load profile data.');
-    }
-  });
-</script>
->>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
