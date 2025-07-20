@@ -46,7 +46,6 @@
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
                     <span class="profile-img-nav rounded-circle me-2"
-<<<<<<< HEAD
                         style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
                         <img id="navProfileImage" src="../path/to/default-profile.jpg"
                             alt="Profile"
@@ -55,15 +54,6 @@
                     <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;">
                         John Doe
                     </span>
-=======
-                        style="width:32px;height:32px;display:inline-block;overflow:hidden;background:#fff;">
-                        <img id="profile_picture_1"
-                            src="../vendor/images/default_profile.png"
-                            alt="Profile"
-                            style="width:100%;height:100%;object-fit:cover;">
-                    </span>
-                    <span id="profile_name" class="fw-semibold" style="font-size:1rem;"></span>
->>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
                 </a>
             </li>
         </ul>

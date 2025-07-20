@@ -50,7 +50,7 @@
     if (!user_id) return;
 
     try {
-      const response = await fetch('/Spabook/controller/user_contr.php', {
+      const response = await fetch('./controller/user_contr.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: `action=get_user_profile&id=${user_id}`

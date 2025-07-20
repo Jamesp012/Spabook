@@ -13,7 +13,6 @@
 <?php include_once '../include/footer.php'; ?>
 
 <script>
-<<<<<<< HEAD
     window.addEventListener('user_id_ready', function () {
         const user_id = sessionStorage.getItem('user_id');
         if (!user_id) {
@@ -56,11 +55,6 @@
 
 
     $(document).ready(function () {
-=======
-    $(document).ready(function() {
-
-
->>>>>>> dc65bf2a864c30ab6de3eb87310f94dea05f2739
         // Load default content
         loadUserContent('user_booking-appointment.php');
 
