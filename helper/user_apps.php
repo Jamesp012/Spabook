@@ -47,7 +47,8 @@
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
                     <span class="profile-img-nav rounded-circle me-2"
                         style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img id="navProfileImage" src="../vendor/images/default_profile.png"
+                        <img id="navProfileImage" 
+                            src=""
                             alt="Profile"
                             style="width:100%; height:100%; object-fit:cover;">
                     </span>
