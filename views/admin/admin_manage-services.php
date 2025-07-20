@@ -12,7 +12,9 @@
 </div>
 
 <script>
-    loadServices();
+    $(document).ready(function () {
+        loadServices();
+    });
     // Views Script
     function loadServices() {
         $.ajax({
@@ -23,6 +25,7 @@
                 action: 'fetch_services'
             },
             success: result => {
+
                 if (result === 'nodata') {
                     $('#services_container').html(`
                         <div class="card text-center border-0 shadow-sm p-4 rounded-4 bg-light">

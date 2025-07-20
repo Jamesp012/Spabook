@@ -64,7 +64,7 @@
         const user = await response.json();
 
         // Optional fallback image
-        const defaultProfile = '../path/to/default-profile.jpg';
+        // const defaultProfile = '../path/to/default-profile.jpg';
 
         // Update image and name
         document.getElementById('navProfileImage').src =
