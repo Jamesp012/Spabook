@@ -47,13 +47,14 @@
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
                     <span class="profile-img-nav rounded-circle me-2"
                         style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img id="navProfileImage" src="../path/to/default-profile.jpg"
+                        <img id="navProfileImage" src="../vendor/images/default_profile.png"
                             alt="Profile"
                             style="width:100%; height:100%; object-fit:cover;">
                     </span>
                     <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;">
                         John Doe
                     </span>
+
                 </a>
             </li>
         </ul>
@@ -74,7 +75,7 @@
     </nav>
 
     <!-- 🔷 Page content will be injected here -->
-    <div class="app_content_body p-4" id="app_content_body">
+    <div class="app_content_body p-4 overflow-hidden" id="app_content_body">
         <!-- AJAX-loaded content will appear here -->
     </div>
 </div>
@@ -104,7 +105,7 @@
         $('.app_sidebar_nav').removeClass('active');
     });
     const user_id = sessionStorage.getItem('user_id');
-    console.log('User ID:', user_id); // Access the user_id variable
+    // console.log('User ID:', user_id); // Access the user_id variable
     $('#profileSkeleton').removeClass('d-none');
     $('#profileItem').addClass('d-none');
 

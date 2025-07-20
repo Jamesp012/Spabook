@@ -13,6 +13,7 @@
 <?php include_once '../include/footer.php'; ?>
 
 <script>
+    
     window.addEventListener('user_id_ready', function () {
         const user_id = sessionStorage.getItem('user_id');
         if (!user_id) {
@@ -30,7 +31,7 @@
             },
             dataType: 'json',
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 $('#user_fullname').text(data.user_fullname);
                 $('#user_email').text(data.email);
                 $('#user_address').text(data.user_address);

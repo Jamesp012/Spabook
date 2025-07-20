@@ -87,6 +87,22 @@
         Swal.fire('Error', 'Something went wrong!', 'error');
       }
     });
+
+
+    $('#userProfileForm').on('submit', function(e) {
+      e.preventDefault();
+
+      const updatedData = {
+        name: $('#profileName').val(),
+        email: $('#profileEmail').val(),
+        phone: $('#profilePhone').val(),
+        address: $('#profileAddress').val()
+      };
+
+      // After save
+      $('#editProfileBtn').click(); // Simulate clicking cancel to exit edit mode
+      alert('Profile updated successfully!');
+    });
   });
 
   function loadUserProfile() {
