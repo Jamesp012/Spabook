@@ -8,7 +8,7 @@
       <form id="userProfileForm">
         <!-- Profile Picture Section -->
         <div class="text-center mb-4">
-          <img id="profile_picture" src="../vendor/images/default_profile.png" alt="Profile Picture" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover;">
+          <img id="profile_picture" src="#" alt="Profile Picture" class="rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover;">
         </div>
 
         <!-- Editable fields -->
@@ -44,8 +44,10 @@
 </div>
 
 <script>
+  let editing = false;
+
   $('#editProfileBtn').on('click', function() {
-    let editing = !editing;
+    editing = !editing;
     $('#userProfileForm input').prop('readonly', !editing);
     $('#saveBtnWrapper').toggleClass('d-none', !editing);
     $(this).text(editing ? 'Cancel' : 'Edit Profile');
@@ -110,7 +112,7 @@
       dataType: 'json',
       data: {
         action: 'get_user_profile',
-        id: sessionStorage.getItem('user_id')
+        id: user_id
       },
       beforeSend: function() {
         Swal.fire({
