@@ -46,7 +46,7 @@
 <script>
   let editing = false;
 
-  $('#editProfileBtn').on('click', function () {
+  $('#editProfileBtn').on('click', function() {
     editing = !editing;
     $('#userProfileForm input').prop('readonly', !editing);
     $('#saveBtnWrapper').toggleClass('d-none', !editing);
@@ -58,7 +58,7 @@
     }
   });
 
-  $('#userProfileForm').on('submit', function (e) {
+  $('#userProfileForm').on('submit', function(e) {
     e.preventDefault();
 
     const updatedData = {
@@ -74,7 +74,7 @@
       url: '../controller/user_contr.php',
       type: 'POST',
       data: updatedData,
-      success: function (response) {
+      success: function(response) {
         if (response === 'success') {
           Swal.fire('Saved!', 'Your profile has been updated.', 'success');
           $('#editProfileBtn').click(); // Switch back to readonly mode
@@ -82,7 +82,7 @@
           Swal.fire('Error', 'Failed to update profile.', 'error');
         }
       },
-      error: function (xhr, status, error) {
+      error: function(xhr, status, error) {
         console.error('Error:', error);
         Swal.fire('Error', 'Something went wrong!', 'error');
       }
@@ -114,7 +114,7 @@
         action: 'get_user_profile',
         id: user_id
       },
-      beforeSend: function () {
+      beforeSend: function() {
         Swal.fire({
           title: 'Loading Profile...',
           html: `
@@ -141,29 +141,29 @@
           backdrop: true,
         });
       },
-      success: function (response) {
+      success: function(response) {
         Swal.close();
 
         $('#userProfileForm').show();
         $('#profile_picture').attr(
           'src',
-          response.profile_picture
-            ? `data:image/png;base64,${response.profile_picture}`
-            : '../vendor/images/default_profile.png'
+          response.profile_picture ?
+          `data:image/png;base64,${response.profile_picture}` :
+          '../vendor/images/default_profile.png'
         );
         $('#profileName').val(response.full_name || 'N/A');
         $('#profileEmail').val(response.email || 'N/A');
         $('#profilePhone').val(response.contact_number || 'N/A');
         $('#profileAddress').val(response.address || 'N/A');
       },
-      error: function () {
+      error: function() {
         alert('Failed to load profile data.');
       }
     });
   }
 
   // Initialize on load
-  $(document).ready(function () {
+  $(document).ready(function() {
     loadUserProfile();
   });
 </script>

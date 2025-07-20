@@ -134,8 +134,27 @@
             } = await supabase.auth.getSession();
 
             if (session) {
-                // User is signed in, redirect to user home page
-                window.location.href = './views/user_home_page';
+                // console.log('User is already logged in:', session.user.id);
+                $.ajax({
+                    url: './controller/user_contr.php',
+                    type: 'POST',
+                    data: {
+                        action: 'login',
+                        id: session.user.id
+                    },
+                    success: result => {
+                        // console.log(result);
+                        if (result.error) {
+                            Swal.fire('Error', result.error, 'error');
+                        } else {
+                            if (result === 'Admin') {
+                                window.location.href = './views/admin_home_page';
+                            } else if (result === 'User') {
+                                window.location.href = './views/user_home_page';
+                            }
+                        }
+                    }
+                });
             }
         });
 
