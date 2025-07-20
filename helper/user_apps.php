@@ -51,10 +51,10 @@
                             src=""
                             alt="Profile"
                             style="width:100%; height:100%; object-fit:cover;">
-                    <span class="profile-img-nav rounded-circle me-2" style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img id="navProfileImage" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
                     </span>
-                    <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;"></span>
+                    <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;">
+                        John Doe
+                    </span>
 
                 </a>
             </li>
@@ -104,6 +104,39 @@
     // Sidebar close on small screen
     $('.app_close_sidebar_btn').on('click', function() {
         $('.app_sidebar_nav').removeClass('active');
+    });
+    const user_id = sessionStorage.getItem('user_id');
+    // console.log('User ID:', user_id); // Access the user_id variable
+    $('#profileSkeleton').removeClass('d-none');
+    $('#profileItem').addClass('d-none');
+
+    $.ajax({
+        url: '../controller/user_contr.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'get_user_profile',
+            id: user_id
+        },
+        success: function(response) {
+            // Inject data
+            $('#profile_name').text(response.full_name);
+            $('#profile_picture_1').attr(
+                'src',
+                response.profile_picture ?
+                `data:image/png;base64,${response.profile_picture}` :
+                '../vendor/images/default_profile.png'
+            );
+
+            // Swap: hide skeleton, show real profile
+            $('#profileSkeleton').addClass('d-none');
+            $('#profileItem').removeClass('d-none');
+        },
+        error: function() {
+            alert('Failed to load profile data.');
+            // Even on error, hide skeleton so UI isn’t stuck
+            $('#profileSkeleton').addClass('d-none');
+        }
     });
 </script>
 <script type="module">
