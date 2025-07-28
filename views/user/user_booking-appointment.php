@@ -8,12 +8,13 @@
 
         <!-- Right Side: Recent Services Card -->
         <div class="col-lg-4 col-md-5 col-sm-12">
+            <button class="btn btn-primary w-100 mb-3">Check-out</button>
             <div class="card mt-4 mt-md-0" style="background-color: transparent; border: none;">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
                 <div class="recent-services-scroll">
-                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: calc(100vh - 230px);">
+                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: calc(100vh - 250px);">
                         <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
                         <li class="list-group-item">Shiatsu - June 2, 2025</li> 
@@ -53,8 +54,8 @@
                     </ul>
                 </div>
             </div>
+            
         </div>
-
     </div>
 </div>
 

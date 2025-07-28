@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-icons-1.13.1/bootstrap-icons.min.css" />
 
     <title>SpaBook</title>
+    
 </head>
 
 <body>
