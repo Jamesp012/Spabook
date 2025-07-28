@@ -54,16 +54,20 @@
         id: user_id
       },
       success: function(data) {
-        // Update profile image and name in the navbar
+        if (data.role === 'User') {
+          // Update profile image and name in the navbar
+          document.getElementById('navProfileImage').src = data.profile_picture ?
+            `data:image/png;base64,${data.profile_picture}` :
+            '../vendor/images/default_profile.png';
+          document.getElementById('navProfileName').textContent = data.full_name || 'Guest';
 
+          $('#profileSkeleton').addClass('d-none');
+          $('#profileItem').removeClass('d-none');
+        } else {
+          $('#navProfileImage').src = '../vendor/images/default_profile.png';
+          $('#navProfileName').textContent = 'Guest';
+        }
 
-        document.getElementById('navProfileImage').src = data.profile_picture ?
-          `data:image/png;base64,${data.profile_picture}` :
-          '../vendor/images/default_profile.png';
-        document.getElementById('navProfileName').textContent = data.full_name || 'Guest';
-
-        $('#profileSkeleton').addClass('d-none');
-        $('#profileItem').removeClass('d-none');
       }
     })
 
