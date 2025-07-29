@@ -108,7 +108,18 @@
 </script>
 <script type="module">
     $('#logout-btn').on('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = '../index.php';
+        const {
+            data: sessionData,
+            error
+        } = await supabase.auth.getSession();
+
+        if (sessionData.session) {
+            await supabase.auth.refreshSession(); // refresh if needed
+            await supabase.auth.signOut();
+            window.location.href = '../index.php';
+        } else {
+            console.warn('No active session');
+            window.location.href = '../index.php';
+        }
     });
 </script>

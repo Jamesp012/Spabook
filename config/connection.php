@@ -76,3 +76,52 @@ $php_delete = function ($table, $id) {
     $endpoint = "$table?id=eq.$id";
     return supabaseRequest('DELETE', $endpoint);
 };
+
+
+function uploadProfileImage($base64Image, $uuid, $folder, $bucket = 'services-images')
+{
+    global $baseUrl, $serviceRoleKey;
+
+    $imageData = base64_decode($base64Image);
+    if ($imageData === false) {
+        return false;
+    }
+
+    // Detect MIME type
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mimeType = $finfo->buffer($imageData);
+
+    // Determine file extension
+    $extension = match ($mimeType) {
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        default => 'bin', // fallback
+    };
+
+    $filename = "$folder/$uuid.$extension";
+    $url = "$baseUrl/storage/v1/object/$bucket/$filename";
+
+    $headers = [
+        "Authorization: Bearer $serviceRoleKey",
+        "Content-Type: $mimeType"
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $imageData,
+        CURLOPT_HTTPHEADER => $headers
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    if ($httpCode >= 200 && $httpCode < 300) {
+        return "$baseUrl/storage/v1/object/public/$bucket/$filename";
+    }
+
+    return false;
+}

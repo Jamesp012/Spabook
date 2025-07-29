@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="vendor/images/SpaBook.ico" sizes="16x16" type="image/png" />
-
     <link rel="stylesheet" href="vendor/Bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="vendor/Fontawesome/css/all.min.css" />
     <link rel="stylesheet" href="vendor/SweetAlert/sweetalert2.min.css" />
@@ -26,15 +25,7 @@
             <div class="col-12 col-lg-6 d-flex align-items-stretch position-relative" style="min-height: 100vh; overflow: hidden;">
                 <img src="./vendor/images/background.png" class="w-100 h-100 position-absolute top-0 start-0"
                     style="object-fit: cover; min-height: 100vh; z-index: 1;" alt="Sample image" />
-                <div style="
-                    position: relative;
-                    z-index: 2;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.4);
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: flex-start;">
+                <div style=" position: relative; z-index: 2;width: 100%;height: 100%;background: rgba(0,0,0,0.4);display: flex;align-items: flex-start;justify-content: flex-start;">
                     <div class="d-flex flex-column align-items-start justify-content-center h-100"
                         style="padding: 48px 48px 48px 64px;">
                         <img src="./vendor/images/spabookwithtitle.png" alt="SpaBook Logo"
@@ -88,7 +79,6 @@
                             <div class="input-group">
                                 <input type="password" id="user_password" class="form-control shadow-sm" />
                                 <div class="invalid-feedback"></div>
-
                             </div>
                         </div>
 
@@ -118,7 +108,6 @@
         import {
             createClient
         } from 'https://esm.sh/@supabase/supabase-js';
-
         // Initialize Supabase client
         const supabase = createClient('https://rijeyetpxumyxzggihre.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJpamV5ZXRweHVteXh6Z2dpaHJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkzOTExNDEsImV4cCI6MjA2NDk2NzE0MX0.91YGOX7RfmqeC7rJK3qVMA1GKydvmEaeW61VNwasjVk');
 
@@ -134,16 +123,17 @@
             } = await supabase.auth.getSession();
 
             if (session) {
-                // console.log('User is already logged in:', session.user.id);
+                console.log('User is already logged in:', session.user.id);
                 $.ajax({
                     url: './controller/user_contr.php',
                     type: 'POST',
+                    dataType: 'json',
                     data: {
                         action: 'login',
                         id: session.user.id
                     },
                     success: result => {
-                        // console.log(result);
+                        console.log(result);
                         if (result.error) {
                             Swal.fire('Error', result.error, 'error');
                         } else {
@@ -165,10 +155,22 @@
 
         });
 
+        $("#user_email_address").keypress(function(event) {
+            var keycode = event.keyCode ? event.keyCode : event.which;
+            if (keycode == "13") {
+                LogIn();
+            }
+        });
+        $("#user_password").keypress(function(event) {
+            var keycode = event.keyCode ? event.keyCode : event.which;
+            if (keycode == "13") {
+                LogIn();
+            }
+        });
         // Example for email/password sign-in (optional)
         window.LogIn = async () => {
-            const email = document.getElementById('user_email_address').value;
-            const password = document.getElementById('user_password').value;
+            const email = $('#user_email_address').val().trim();
+            const password = $('#user_password').val().trim();
             let valid = false;
 
             if (inputValidation('user_email_address', 'user_password')) {
@@ -185,31 +187,31 @@
 
 
             if (valid) {
-                // Swal.fire({
-                //     title: 'Logging in...',
-                //     html: `
-                //         <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
-                //             <img src="./vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
-                //         </div>
-                //         <style>
-                //             .custom-spinner-glow {
-                //                 animation: spin 1.2s linear infinite, glow 1.2s ease-in-out infinite alternate;
-                //                 filter: drop-shadow(0 0 16px #a1623f);
-                //             }
-                //             @keyframes spin {
-                //                 100% { transform: rotate(360deg); }
-                //             }
-                //             @keyframes glow {
-                //                 0% { filter: drop-shadow(0 0 8px #a1623f); }
-                //                 100% { filter: drop-shadow(0 0 32px #a1623f); }
-                //             }
-                //         </style>
-                //  `,
-                //     showConfirmButton: false,
-                //     allowOutsideClick: false,
-                //     allowEscapeKey: false,
-                //     backdrop: true,
-                // });
+                Swal.fire({
+                    title: 'Logging in...',
+                    html: `
+                        <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
+                            <img src="./vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
+                        </div>
+                        <style>
+                            .custom-spinner-glow {
+                                animation: spin 1.2s linear infinite, glow 1.2s ease-in-out infinite alternate;
+                                filter: drop-shadow(0 0 16px #a1623f);
+                            }
+                            @keyframes spin {
+                                100% { transform: rotate(360deg); }
+                            }
+                            @keyframes glow {
+                                0% { filter: drop-shadow(0 0 8px #a1623f); }
+                                100% { filter: drop-shadow(0 0 32px #a1623f); }
+                            }
+                        </style>
+                 `,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    backdrop: true,
+                });
                 const {
                     data,
                     error
@@ -217,22 +219,23 @@
                     email,
                     password,
                 });
-
                 if (error) {
+                    Swal.close();
                     // Show error message at the top of the form
-                    const errorDiv = document.getElementById('login-error');
-                    errorDiv.textContent = 'Invalid email or password.';
-                    errorDiv.classList.remove('d-none');
+                    $('#login-error').text('Invalid email or password').removeClass('d-none');
                 } else {
+                    $('#login-error').addClass('d-none');
                     $.ajax({
                         url: './controller/user_contr.php',
                         type: 'POST',
+                        dataType: 'json',
                         data: {
                             action: 'login',
                             id: data.user.id
                         },
                         success: result => {
-                            // console.log(result);
+                            console.log(result);
+                            Swal.close();
                             if (result.error) {
                                 Swal.fire('Error', result.error, 'error');
                             } else {
@@ -240,12 +243,16 @@
                                     window.location.href = './views/admin_home_page';
                                 } else if (result === 'User') {
                                     window.location.href = './views/user_home_page';
+                                } else {
+                                    Swal.fire('Error', 'Unexpected response: ' + result, 'error');
                                 }
                             }
+                        },
+                        error: (xhr, status, error) => {
+                            console.error('AJAX Error:', error);
                         }
                     });
-                    // console.log('Login successful:', data.user.id);
-                    // window.location.href = email.toLowerCase() === 'spa.book19@gmail.com' ? './views/admin_home_page' : './views/user_home_page';
+
                 }
                 clearAttributes();
             }
@@ -270,7 +277,7 @@
                 const {
                     error
                 } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + '/Spabook/views/reset_password.php' // or your callback page
+                    redirectTo: window.location.origin + '../views/reset_password.php' // or your callback page
                 });
                 if (error) {
                     Swal.fire('Error', error.message, 'error');
@@ -279,13 +286,13 @@
                 }
             }
         });
-
         // Toggle password visibility
         $(document).ready(function() {
             // Toggle password visibility
             $('#togglePassword').on('click', function() {
                 const passwordField = $('#user_password');
                 const toggleIcon = $('#togglePasswordIcon');
+
                 if (passwordField.attr('type') === 'password') {
                     passwordField.attr('type', 'text');
                     toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
@@ -299,11 +306,13 @@
         });
 
         function clearAttributes() {
+
             $('input').removeClass('is-valid is-invalid');
+
             $('select').removeClass('is-valid is-invalid');
+
         }
     </script>
 </body>
-
 
 </html>
