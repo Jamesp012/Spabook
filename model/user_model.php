@@ -11,7 +11,10 @@ class User
         // var_dump($user); // Uncomment to debug
 
         if (is_array($user) && isset($user[0]['role'])) {
-            return $user[0]['role'];
+            foreach ($user as $row) {
+                // Return the role of the user
+                return json_encode($row['role']);
+            }
         } else {
             return null;
         }
@@ -136,4 +139,3 @@ class User
     //! ============================================================ ADMIN SECTION ============================================================
 
 }
-

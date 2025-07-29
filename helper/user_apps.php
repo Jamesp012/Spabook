@@ -45,6 +45,12 @@
         <ul class="list-unstyled px-2 d-none" id="profileItem">
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
+                    <span class="profile-img-nav rounded-circle me-2"
+                        style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
+                        <img id="navProfileImage" 
+                            src=""
+                            alt="Profile"
+                            style="width:100%; height:100%; object-fit:cover;">
                     <span class="profile-img-nav rounded-circle me-2" style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
                         <img id="navProfileImage" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
                     </span>
@@ -104,7 +110,18 @@
 </script>
 <script type="module">
     $('#logout-btn').on('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = '../index.php';
+        const {
+            data: sessionData,
+            error
+        } = await supabase.auth.getSession();
+
+        if (sessionData.session) {
+            await supabase.auth.refreshSession(); // refresh if needed
+            await supabase.auth.signOut();
+            window.location.href = '../index.php';
+        } else {
+            console.warn('No active session');
+            window.location.href = '../index.php';
+        }
     });
 </script>
