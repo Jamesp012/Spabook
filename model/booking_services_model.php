@@ -6,25 +6,32 @@ class BookingServices
     public function fetchServices($php_fetch, $table)
     {
         $item_data = array();
-        $ervice_data = $php_fetch($table, 'id,service_name, description, price, per_minute, service_picture', ['order' => 'service_name.asc']);
-        if (!empty($ervice_data)) {
-            foreach ($ervice_data as $row) {
+        $service_data = $php_fetch($table, 'id,service_name, description, price, per_minute, service_picture', ['order' => 'service_name.asc']);
+        if (!empty($service_data)) {
+            foreach ($service_data as $row) {
+                // Optimize image data - you could implement image compression here
+                $optimized_image = $this->optimizeImageData($row['service_picture']);
+                
                 $item_data[] = array(
-                    'id' => $row['id'],
+                    'service_id' => $row['id'], // Fix the key name to match what's expected
                     'service_name' => $row['service_name'],
                     'description' => $row['description'],
                     'price' => $row['price'],
                     'per_minute' => $row['per_minute'],
-                    'service_picture' => $row['service_picture']
+                    'service_picture' => $optimized_image
                 );
             }
 
-            // Encode the first row only
             return json_encode($item_data);
         } else {
-            // No rows found; return null or an empty object
             return json_encode('nodata');
         }
+    }
+
+    private function optimizeImageData($imageData) {
+        // For now, just return the original data
+        // In the future, you could implement image compression here
+        return $imageData;
     }
     public function getServiceById($php_fetch, $table, $serviceid)
     {
