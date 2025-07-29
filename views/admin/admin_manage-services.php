@@ -12,9 +12,7 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        loadServices();
-    });
+    loadServices();
     // Views Script
     function loadServices() {
         $.ajax({

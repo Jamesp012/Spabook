@@ -33,29 +33,8 @@
 
         <!-- Right Side: Status and Recent Services -->
         <div class="col-lg-4 col-md-5 col-sm-12">
-            <button class="btn btn-primary w-100 mb-3 position-relative" id="checkOutBtn">
-                Check-out
-                <span id="cartBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
-                    0
-                </span>
-            </button>
-
-
-            <!-- Booking Status -->
-            <div class="card bg-transparent border-0 mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Booking Status</h5>
-                </div>
-                <div class="booking-status-scroll">
-                    <ul class="list-group list-group-flush" id="booking-status-list">
-                        <!-- Dynamic content goes here -->
-                    </ul>
-                </div>
-            </div>
-
-
-            <!-- Recent Services -->
-            <div class="card bg-transparent border-0">
+            <button class="btn btn-primary w-100 mb-3">Check-out</button>
+            <div class="card mt-4 mt-md-0" style="background-color: transparent; border: none;">
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
@@ -69,7 +48,6 @@
             </div>
 
         </div>
-
     </div>
 </div>
 
