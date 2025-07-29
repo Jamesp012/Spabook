@@ -18,6 +18,10 @@ function supabaseRequest($method, $endpoint, $data = null)
         $url .= '?' . http_build_query($data);
     }
 
+    if ($method === 'POST' || $method === 'PATCH') {
+        $headers[] = "Prefer: return=representation";
+    }
+
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -25,7 +29,6 @@ function supabaseRequest($method, $endpoint, $data = null)
     if ($method === 'POST' || $method === 'PATCH') {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        $headers[] = "Prefer: return=representation";
     }
 
     if ($method === 'DELETE') {
@@ -33,7 +36,20 @@ function supabaseRequest($method, $endpoint, $data = null)
     }
 
     $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError = curl_error($ch);
     curl_close($ch);
+
+    // Debug logging
+    file_put_contents('debug_curl.txt', "URL: $url\nHTTP Code: $httpCode\nCURL Error: $curlError\nResponse: $response\n\n", FILE_APPEND);
+
+    if ($curlError) {
+        return ['error' => 'cURL Error: ' . $curlError];
+    }
+
+    if ($httpCode >= 400) {
+        return ['error' => 'HTTP Error: ' . $httpCode, 'response' => $response];
+    }
 
     return json_decode($response, true);
 }
@@ -58,7 +74,9 @@ $php_fetch = function ($table, $select = '*', $filters = []) {
 
 // Insert (POST)
 $php_insert = function ($table, $data) {
-    return supabaseRequest('POST', $table, $data);
+    $result = supabaseRequest('POST', $table, $data);
+    file_put_contents('debug_supabase_insert.txt', "Table: $table\nData: " . print_r($data, true) . "\nResult: " . print_r($result, true));
+    return $result;
 };
 
 // Update (PATCH)
