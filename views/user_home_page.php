@@ -92,35 +92,5 @@
                 }
             });
         }
-
-        // Global modal handler (if any modal triggers in user views)
-        $(document).on('click', '.btn-view', function(e) {
-            e.preventDefault();
-
-            const id = $(this).data('id');
-
-            $('#modalContainer').empty();
-            $('#userModal').remove();
-            $('.modal-backdrop').remove();
-            $('body').removeClass('modal-open').css('padding-right', '');
-
-            $.get('user/user_modal.php', {
-                id: id
-            }, function(data) {
-                $('#modalContainer').html(data);
-
-                const modalEl = document.getElementById('userModal');
-                const modal = new bootstrap.Modal(modalEl);
-                modal.show();
-
-                $(modalEl).on('hidden.bs.modal', function() {
-                    $('#userModal').remove();
-                    $('.modal-backdrop').remove();
-                    $('body').removeClass('modal-open').css('padding-right', '');
-                });
-            }).fail(function() {
-                alert('Failed to load modal.');
-            });
-        });
     });
 </script>
