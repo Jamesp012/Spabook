@@ -38,7 +38,6 @@
   window.dispatchEvent(new Event('user_id_ready'));
 </script>
 <script>
-<<<<<<< HEAD
   window.addEventListener('user_id_ready', async function() {
     const user_id = sessionStorage.getItem('user_id');
     $('#profileSkeleton').removeClass('d-none');
@@ -55,63 +54,22 @@
         id: user_id
       },
       success: function(data) {
+        console.log('User profile data:', data);
         if (data.role === 'User') {
           // Update profile image and name in the navbar
-          document.getElementById('navProfileImage').src = data.profile_picture ?
-            `data:image/png;base64,${data.profile_picture}` :
-            '../vendor/images/default_profile.png';
-          document.getElementById('navProfileName').textContent = data.full_name || 'Guest';
+          $('#navProfileImage').attr('src', data.profile_picture);
+
+          $('#navProfileName').text(data.full_name);
 
           $('#profileSkeleton').addClass('d-none');
           $('#profileItem').removeClass('d-none');
         } else {
           $('#navProfileImage').src = '../vendor/images/default_profile.png';
-          $('#navProfileName').textContent = 'Guest';
+          $('#navProfileName').text('Guest');
         }
 
       }
     })
 
-=======
-    window.addEventListener('user_id_ready', function() {
-        const user_id = sessionStorage.getItem('user_id');
-        // Now user_id is guaranteed to be set
-    });
-</script>
-<script type="module">
-  $(document).ready(function() {
-    window.addEventListener('user_id_ready', async function () {
-        const user_id = sessionStorage.getItem('user_id');
-
-        if (!user_id) return;
-
-        try {
-        // For Deployment
-        // const response = await fetch('./controller/user_contr.php', { 
-
-        // For Local Testing
-        const response = await fetch('/Spabook/controller/user_contr.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `action=get_user_profile&id=${user_id}`
-        });
-
-        const user = await response.json();
-
-        // Optional fallback image
-        // const defaultProfile = '../path/to/default-profile.jpg';
-
-        // Update image and name
-        document.getElementById('navProfileImage').src =
-            user.profile_picture ? `data:image/jpeg;base64,${user.profile_picture}` : defaultProfile;
-
-        document.getElementById('navProfileName').textContent =
-            user.full_name || 'Guest';
-
-        } catch (err) {
-        console.error('Failed to load profile info:', err);
-        }
-    });
->>>>>>> origin/James
   });
 </script>

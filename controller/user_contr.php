@@ -46,9 +46,9 @@ if (isset($_POST['action'])) {
             $update_at_raw = trim($_POST['update_at']);
             $date_update = new DateTime($update_at_raw);
             $update_at = $date_update->format('Y-m-d H:i:s');
-            $profile_image = trim($_POST['profile_image']);
-            $imageupload = uploadProfileImage($profile_image, $supabase_uuid, 'profile_images');
-            echo $User->signUpWithGoogle($php_fetch, $php_insert, 'users', $email, $user_fullname, $supabase_uuid, $email_verified, $created_at, $update_at, $profile_image);
+            $base64image = trim($_POST['profile_image']);
+            $imageupload = uploadProfileImage($base64image, $supabase_uuid, 'profile_images');
+            echo $User->signUpWithGoogle($php_fetch, $php_insert, 'users', $email, $user_fullname, $supabase_uuid, $email_verified, $created_at, $update_at, $imageupload);
             break;
 
 

@@ -141,14 +141,9 @@
       },
       success: function(response) {
         Swal.close();
-
+        console.log('User profile data:', response);
         $('#userProfileForm').show();
-        $('#profile_picture').attr(
-          'src',
-          response.profile_picture ?
-          `data:image/png;base64,${response.profile_picture}` :
-          '../vendor/images/default_profile.png'
-        );
+        $('#profile_picture').attr('src', response.profile_picture);
         $('#profileName').val(response.full_name || 'N/A');
         $('#profileEmail').val(response.email || 'N/A');
         $('#profilePhone').val(response.contact_number || 'N/A');

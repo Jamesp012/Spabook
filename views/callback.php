@@ -310,6 +310,7 @@
                     });
 
                     if (data.user) {
+                        console.log('User verified:', data.user);
                         $.ajax({
                             url: '../controller/user_contr.php',
                             type: 'POST',

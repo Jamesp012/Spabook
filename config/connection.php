@@ -80,8 +80,9 @@ $php_delete = function ($table, $id) {
 
 function uploadProfileImage($base64Image, $uuid, $folder, $bucket = 'services-images')
 {
-    global $baseUrl, $serviceRoleKey;
+    global $projectUrl, $serviceRoleKey;
 
+    // Decode base64 image
     $imageData = base64_decode($base64Image);
     if ($imageData === false) {
         return false;
@@ -96,32 +97,50 @@ function uploadProfileImage($base64Image, $uuid, $folder, $bucket = 'services-im
         'image/jpeg' => 'jpg',
         'image/png' => 'png',
         'image/webp' => 'webp',
-        default => 'bin', // fallback
+        default => 'bin',
     };
 
     $filename = "$folder/$uuid.$extension";
-    $url = "$baseUrl/storage/v1/object/$bucket/$filename";
 
-    $headers = [
+    // Step 1: Delete existing image if it exists
+    $deleteUrl = "$projectUrl/storage/v1/object/$bucket/$filename";
+    $deleteHeaders = [
+        "Authorization: Bearer $serviceRoleKey"
+    ];
+
+    $deleteCh = curl_init($deleteUrl);
+    curl_setopt_array($deleteCh, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CUSTOMREQUEST => 'DELETE',
+        CURLOPT_HTTPHEADER => $deleteHeaders
+    ]);
+
+    curl_exec($deleteCh);
+    curl_close($deleteCh);
+    // (ignore delete errors; continue to upload)
+
+    // Step 2: Upload new image
+    $uploadUrl = "$projectUrl/storage/v1/object/$bucket/$filename";
+    $uploadHeaders = [
         "Authorization: Bearer $serviceRoleKey",
         "Content-Type: $mimeType"
     ];
 
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
+    $uploadCh = curl_init($uploadUrl);
+    curl_setopt_array($uploadCh, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_CUSTOMREQUEST => 'POST', // POST: create new; PUT: overwrite
         CURLOPT_POSTFIELDS => $imageData,
-        CURLOPT_HTTPHEADER => $headers
+        CURLOPT_HTTPHEADER => $uploadHeaders
     ]);
 
-    $response = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+    $response = curl_exec($uploadCh);
+    $httpCode = curl_getinfo($uploadCh, CURLINFO_HTTP_CODE);
+    curl_close($uploadCh);
 
     if ($httpCode >= 200 && $httpCode < 300) {
-        return "$baseUrl/storage/v1/object/public/$bucket/$filename";
+        return "$projectUrl/storage/v1/object/public/$bucket/$filename";
     }
 
-    return false;
+    return "../vendor/images/default_profile.png"; // Return default image on failure
 }
