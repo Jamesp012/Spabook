@@ -74,7 +74,7 @@
                     $('#serviceDescription').val(result.description);
                     $('#servicePrice').val(result.price);
                     $('#serviceDuration').val(result.per_minute);
-                    $('.service_image_container').html('<img src="data:image/png;base64,' + result.service_picture + '" value="' + result.service_picture + '" class="service_image img-fluid rounded-3 border" id="service_image" style="height: 200px; object-fit: cover;" alt="Preview">');
+                    $('.service_image_container').html('<img src="' + result.service_picture + '" value="' + result.service_picture + '" class="service_image img-fluid rounded-3 border" id="service_image" style="height: 200px; object-fit: cover;" alt="Preview">');
                 }
             }
         });
@@ -163,6 +163,33 @@
                         description: $('#serviceDescription').val(),
                         price: $('#servicePrice').val(),
                         duration: $('#serviceDuration').val()
+                    },
+                    beforeSend: function() {
+                        Swal.fire({
+                            title: 'Adding Service...',
+                            html: `
+                                <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
+                                    <img src="../vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
+                                </div>
+                                <style>
+                                    .custom-spinner-glow {
+                                        animation: spin 1.2s linear infinite, glow 1.2s ease-in-out infinite alternate;
+                                        filter: drop-shadow(0 0 16px #a1623f);
+                                    }
+                                    @keyframes spin {
+                                        100% { transform: rotate(360deg); }
+                                    }
+                                    @keyframes glow {
+                                        0% { filter: drop-shadow(0 0 8px #a1623f); }
+                                        100% { filter: drop-shadow(0 0 32px #a1623f); }
+                                    }
+                                </style>
+                            `,
+                            showConfirmButton: false,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            backdrop: true,
+                        });
                     },
                     success: function(response) {
                         if (response === 'success') {
