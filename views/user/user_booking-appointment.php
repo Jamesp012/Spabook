@@ -1,12 +1,38 @@
-<div class="container-fluid h-100 overflow-hidden" style="min-height: calc(100vh - 610px); overflow-y: hidden;">
+<style>
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.service-card {
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+}
+
+.service-card.selected {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+}
+</style>
+
+<div class="container-fluid h-100 overflow-hidden overflow-auto">
     <div class="row g-3 mt-2">
+
 
         <!-- Left Side: Services Grid -->
         <div class="col-lg-8 col-md-7 col-sm-12">
-            <div id="services_container" class="d-flex flex-wrap gap-3"></div>
+            <div id="services_container" class="d-flex flex-wrap gap-3 overflow-auto" style="max-height: calc(100vh - 160px);"></div>
         </div>
 
-        <!-- Right Side: Recent Services Card -->
+        <!-- Right Side: Status and Recent Services -->
         <div class="col-lg-4 col-md-5 col-sm-12">
             <button class="btn btn-primary w-100 mb-3">Check-out</button>
             <div class="card mt-4 mt-md-0" style="background-color: transparent; border: none;">
@@ -15,42 +41,42 @@
                 </div>
                 <div class="recent-services-scroll">
                     <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: calc(100vh - 250px);">
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
+                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
+                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
+                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
                         <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li>
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-
+                        
                     </ul>
                 </div>
             </div>
@@ -62,7 +88,7 @@
 
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         loadServices();
     });
     // Views Script
@@ -93,7 +119,7 @@
                     html += `
                         <div class="service-card">
                             <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
-                                <img src="${service.service_picture}"
+                                <img src="data:image/png;base64,${service.service_picture}"
                                     class="card-img-top img-fluid"
                                     style="height: 120px; object-fit: cover;"
                                     alt="${service.service_name}">
@@ -166,28 +192,63 @@
             flex: 0 0 33.3333%;
         }
     }
-
     #services_container {
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
     }
 
-    /* Each card flexes and adapts */
     .service-card {
-        flex: 1 1 250px;
-        /* grow, shrink, base width */
+        flex: 1 1 250px; /* grow, shrink, base width */
         max-width: 100%;
+        min-width: 200px;
     }
 
-    /* Optional for clean visuals */
+    .card:hover {
+        border-radius: 1.5rem;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 1) !important;
+        transition: box-shadow 0.2s ease-in-out;
+    }
+
+    .card-img-top {
+        height: 120px;
+        object-fit: cover;
+    }
+
     .card-body {
         padding: 1rem;
     }
 
-    @media (max-width: 768px) {
+    .booking-status-scroll ul,
+    .recent-services-scroll ul {
+        overflow-y: auto;
+        max-height: 40vh;
+        padding-right: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: #ccc transparent;
+    }
+
+    .booking-status-scroll ul::-webkit-scrollbar,
+    .recent-services-scroll ul::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .booking-status-scroll ul::-webkit-scrollbar-thumb,
+    .recent-services-scroll ul::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 3px;
+    }
+
+    @media (max-width: 991.98px) {
+        .col-lg-8,
+        .col-lg-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
         .service-card {
             flex: 1 1 100%;
         }
     }
+
 </style>
