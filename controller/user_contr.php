@@ -61,5 +61,34 @@ if (isset($_POST['action'])) {
             $role = trim($_POST['role']);
             echo $User->updateUserRole($php_update, 'users', $id, $role);
             break;
+        case 'upload_receipt':
+            if (isset($_FILES['receipt']) && $_FILES['receipt']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = '../uploads/receipts/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+
+                $tmpName = $_FILES['receipt']['tmp_name'];
+                $originalName = basename($_FILES['receipt']['name']);
+                $fileName = uniqid('receipt_', true) . '_' . $originalName;
+                $targetFile = $uploadDir . $fileName;
+
+                if (move_uploaded_file($tmpName, $targetFile)) {
+                    // ✅ Optional: Save file path to DB with User info
+                    echo json_encode([
+                        'status' => 'success',
+                        'filename' => $fileName,
+                        'filepath' => $targetFile
+                    ]);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(['status' => 'error', 'message' => 'Failed to move uploaded file.']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'message' => 'Invalid file upload.']);
+            }
+            break;
+
     }
 }
