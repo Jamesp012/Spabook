@@ -47,16 +47,14 @@
                 <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
                     <span class="profile-img-nav rounded-circle me-2"
                         style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img id="navProfileImage" 
+                        <img id="navProfileImage"
                             src=""
                             alt="Profile"
                             style="width:100%; height:100%; object-fit:cover;">
-                    <span class="profile-img-nav rounded-circle me-2" style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
-                        <img id="navProfileImage" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
                     </span>
                     <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;"></span>
-
                 </a>
+
             </li>
         </ul>
         <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" id="logout-btn">
