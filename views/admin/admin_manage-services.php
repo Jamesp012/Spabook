@@ -51,7 +51,7 @@
                                             onclick="deleteService(${service.id})" title="Delete Service">
                                     <i class="bi bi-trash-fill text-danger"></i>
                                     </button>
-                                <img src="data:image/png;base64,${service.service_picture}" 
+                                <img src="${service.service_picture}" 
                                     class="card-img-top img-fluid" 
                                     style="height: 200px; object-fit: cover;" 
                                     alt="${service.service_name}">
