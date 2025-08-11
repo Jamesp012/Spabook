@@ -50,12 +50,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $bookingId = $bookingData['bookingid'];
 
                 foreach ($services as $service) {
-                    $BookingModel->addBookingDetail($php_insert, 'booking_details', [
-                        'booking_id' => $bookingId,
-                        'service_id' => $service['id'],
-                        'quantity' => $service['people'],
-                        'price' => $service['price']
-                    ]);
+                    // If service has therapist assignments, create multiple booking details (one per person/therapist)
+                    if (isset($service['therapists']) && is_array($service['therapists']) && count($service['therapists']) > 0) {
+                        // Create separate booking detail for each person with their assigned therapist
+                        for ($person = 1; $person <= $service['people']; $person++) {
+                            // Find therapist for this person
+                            $assignedTherapist = null;
+                            foreach ($service['therapists'] as $therapist) {
+                                if ($therapist['person'] == $person) {
+                                    $assignedTherapist = $therapist;
+                                    break;
+                                }
+                            }
+                            
+                            $BookingModel->addBookingDetail($php_insert, 'booking_details', [
+                                'booking_id' => $bookingId,
+                                'service_id' => $service['id'],
+                                'quantity' => 1, // 1 person per detail when therapists are assigned
+                                'price' => $service['price'],
+                                'therapist_id' => $assignedTherapist ? $assignedTherapist['therapistId'] : null,
+                                'person_number' => $person,
+                                'booking_date' => $service['selectedDate'] ?? null,
+                                'booking_time' => $service['selectedTime'] ?? null
+                            ]);
+                        }
+                    } else {
+                        // No specific therapist assignments, create single booking detail
+                        $BookingModel->addBookingDetail($php_insert, 'booking_details', [
+                            'booking_id' => $bookingId,
+                            'service_id' => $service['id'],
+                            'quantity' => $service['people'],
+                            'price' => $service['price'],
+                            'therapist_id' => null,
+                            'person_number' => null,
+                            'booking_date' => $service['selectedDate'] ?? null,
+                            'booking_time' => $service['selectedTime'] ?? null
+                        ]);
+                    }
                 }
 
                 response(['status' => 'success', 'bookingid' => $bookingId]);
@@ -197,6 +228,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $result = $BookingModel->updateBookingStatus($php_update, 'booking', $bookingid, 'Rejected');
             response(json_decode($result, true));
+            break;
+
+        case 'get_user_booking_status':
+            $user_id = $_POST['user_id'] ?? null;
+            if (!$user_id) {
+                response(['status' => 'error', 'message' => 'User ID is required']);
+            }
+            try {
+                $result = $BookingModel->getUserBookingStatus($php_fetch, 'booking', 'booking_details', 'services', $user_id);
+                response(json_decode($result, true));
+            } catch (Exception $e) {
+                error_log("Error in get_user_booking_status: " . $e->getMessage());
+                response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
+            }
+            break;
+
+        case 'get_user_recent_services':
+            $user_id = $_POST['user_id'] ?? null;
+            if (!$user_id) {
+                response(['status' => 'error', 'message' => 'User ID is required']);
+            }
+            try {
+                $result = $BookingModel->getUserRecentServices($php_fetch, 'booking', 'booking_details', 'services', $user_id);
+                response(json_decode($result, true));
+            } catch (Exception $e) {
+                error_log("Error in get_user_recent_services: " . $e->getMessage());
+                response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
+            }
+            break;
+
+        case 'get_booked_times':
+            $date = $_POST['date'] ?? null;
+            
+            if (!$date) {
+                response(['status' => 'error', 'message' => 'Date is required']);
+            }
+            
+            try {
+                $result = $BookingModel->getBookedTimes($php_fetch, $date);
+                response(json_decode($result, true));
+            } catch (Exception $e) {
+                error_log("Error in get_booked_times: " . $e->getMessage());
+                response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
+            }
             break;
 
         default:

@@ -1,0 +1,100 @@
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&created_at=gte.2025-08-09+08%3A19%3A37&status=eq.pending
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=id
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/notifications
+HTTP Code: 404
+CURL Error: 
+Response: {}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&appointment_date=lt.2025-08-09+08%3A24%3A38&status=eq.confirmed
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&created_at=gte.2025-08-09+08%3A22%3A15&status=eq.pending
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=id
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/notifications
+HTTP Code: 404
+CURL Error: 
+Response: {}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&appointment_date=lt.2025-08-09+08%3A27%3A17&status=eq.confirmed
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&created_at=gte.2025-08-09+08%3A25%3A35&status=eq.pending
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=id
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/notifications
+HTTP Code: 404
+CURL Error: 
+Response: {}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&appointment_date=lt.2025-08-09+08%3A30%3A36&status=eq.confirmed
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&created_at=gte.2025-08-09+08%3A45%3A27&status=eq.pending
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=id
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/notifications
+HTTP Code: 404
+CURL Error: 
+Response: {}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&appointment_date=lt.2025-08-09+08%3A50%3A28&status=eq.confirmed
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&created_at=gte.2025-08-09+08%3A50%3A15&status=eq.pending
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=id
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/notifications
+HTTP Code: 404
+CURL Error: 
+Response: {}
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/bookings?select=%2A&appointment_date=lt.2025-08-09+08%3A55%3A16&status=eq.confirmed
+HTTP Code: 404
+CURL Error: 
+Response: {"code":"42P01","details":null,"hint":null,"message":"relation \"public.bookings\" does not exist"}
+

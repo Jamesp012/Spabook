@@ -1,36 +1,17 @@
-Table: users
+Table: therapist
 Data: Array
 (
-    [email] => fallen.knighttt@gmail.com
-    [full_name] => Fallen Knight
-    [user_id] => e3333c60-b507-4d82-bbda-6d93808f98b5
-    [is_email_verified] => true
-    [created_at] => 2025-07-29 06:55:41
-    [updated_at] => 2025-07-29 06:55:41
-    [agreed_to_terms] => 1
-    [profile_picture] => iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAAAA3NCSVQICAjb4U/gAAAABmJLR0QAUQAtAKgUqKNtAAABgElEQVR4nO3cv0rDQACA8SatbsG5IPQJHNykaxfByb1bB19AqA/hgzgKrtLurk7FIS4VLBRKVQQrjbvQfEbSO5Hvt98fPu6G3JDk9OCqoc3S2Bv46wwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEWsFWOr/sHvX2a5nq7Phm/vxey1QoXKC0maTNpJapWjvhDr5XDIQ7Qd8URaNYF78b+7la17uZEtECPdzPL/q3sVb/Oa8YMBAwEDAQMBAwEDAQMBAwEDAQMBCI9i2W7e0OhoeVhuSTxeg639J+NokWqN3JTjpZpSF342n4QF4xYCAQ7Yq9Lj+qvivPpm9b2kyJaIGeHl98MPsPDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBBJ/0VXOEwQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAS+ACQcLZ//kcj5AAAAAElFTkSuQmCC
+    [therapist_name] => jp
+    [therapist_desc] => secret
+    [specialties] => 
+    [experience_years] => 1
+    [certification] => secret
+    [phone] => 09923599110
+    [photo] => 
 )
 
 Result: Array
 (
-    [0] => Array
-        (
-            [id] => 46
-            [full_name] => Fallen Knight
-            [address] => 
-            [contact_number] => 
-            [email] => fallen.knighttt@gmail.com
-            [agreed_to_terms] => 1
-            [user_id] => e3333c60-b507-4d82-bbda-6d93808f98b5
-            [date_of_birth] => 
-            [gender] => 
-            [bio] => 
-            [is_email_verified] => 1
-            [is_number_verified] => 
-            [created_at] => 2025-07-29T06:55:41
-            [updated_at] => 2025-07-29T06:55:41
-            [role] => User
-            [profile_picture] => iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAAAA3NCSVQICAjb4U/gAAAABmJLR0QAUQAtAKgUqKNtAAABgElEQVR4nO3cv0rDQACA8SatbsG5IPQJHNykaxfByb1bB19AqA/hgzgKrtLurk7FIS4VLBRKVQQrjbvQfEbSO5Hvt98fPu6G3JDk9OCqoc3S2Bv46wwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEWsFWOr/sHvX2a5nq7Phm/vxey1QoXKC0maTNpJapWjvhDr5XDIQ7Qd8URaNYF78b+7la17uZEtECPdzPL/q3sVb/Oa8YMBAwEDAQMBAwEDAQMBAwEDAQMBCI9i2W7e0OhoeVhuSTxeg639J+NokWqN3JTjpZpSF342n4QF4xYCAQ7Yq9Lj+qvivPpm9b2kyJaIGeHl98MPsPDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBBJ/0VXOEwQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAQMBAwEDAS+ACQcLZ//kcj5AAAAAElFTkSuQmCC
-        )
-
+    [error] => HTTP Error: 400
+    [response] => {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'certification' column of 'therapist' in the schema cache"}
 )

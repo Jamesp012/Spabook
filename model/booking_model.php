@@ -23,8 +23,15 @@ class BookingModel
         $result = [];
         foreach ($bookings as $booking) {
             try {
-                // Get user details using correct field name
-                $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+                // Check if user_id exists and is not empty
+                $user = null;
+                if (isset($booking['user_id']) && !empty($booking['user_id'])) {
+                    $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+                    // Check if user fetch returned an error (empty user_id case)
+                    if (isset($user['error'])) {
+                        $user = null;
+                    }
+                }
                 
                 // Get booking details and services
                 $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $booking['bookingid']]);
@@ -45,9 +52,9 @@ class BookingModel
                 
                 $result[] = [
                     'bookingid' => $booking['bookingid'],
-                    'user_name' => ($user ? $user[0]['full_name'] : 'Unknown User'),
-                    'user_email' => ($user ? $user[0]['email'] : ''),
-                    'user_phone' => ($user ? $user[0]['contact_number'] : ''),
+                    'user_name' => ($user && count($user) > 0 ? $user[0]['full_name'] : 'Unknown User'),
+                    'user_email' => ($user && count($user) > 0 ? $user[0]['email'] : ''),
+                    'user_phone' => ($user && count($user) > 0 ? $user[0]['contact_number'] : ''),
                     'total_price' => $booking['total_price'],
                     'booking_date' => $booking['date_created'] ?? date('Y-m-d H:i:s'),
                     'booking_status' => $booking['booking_status'],
@@ -80,8 +87,15 @@ class BookingModel
         $result = [];
         foreach ($bookings as $booking) {
             try {
-                // Get user details
-                $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+                // Check if user_id exists and is not empty
+                $user = null;
+                if (isset($booking['user_id']) && !empty($booking['user_id'])) {
+                    $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+                    // Check if user fetch returned an error (empty user_id case)
+                    if (isset($user['error'])) {
+                        $user = null;
+                    }
+                }
                 
                 // Get booking details and services
                 $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $booking['bookingid']]);
@@ -100,11 +114,13 @@ class BookingModel
                     }
                 }
                 
+                $user_name = ($user && count($user) > 0 ? $user[0]['full_name'] : 'Unknown User');
+                
                 $result[] = [
                     'bookingid' => $booking['bookingid'],
-                    'user_name' => ($user ? $user[0]['full_name'] : 'Unknown User'),
-                    'user_email' => ($user ? $user[0]['email'] : ''),
-                    'user_phone' => ($user ? $user[0]['contact_number'] : ''),
+                    'user_name' => $user_name,
+                    'user_email' => ($user && count($user) > 0 ? $user[0]['email'] : ''),
+                    'user_phone' => ($user && count($user) > 0 ? $user[0]['contact_number'] : ''),
                     'total_price' => $booking['total_price'],
                     'booking_date' => $booking['date_created'] ?? date('Y-m-d H:i:s'),
                     'booking_status' => $booking['booking_status'],
@@ -132,8 +148,15 @@ class BookingModel
             
             $booking = $booking[0];
             
-            // Get user details
-            $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+            // Check if user_id exists and is not empty
+            $user = null;
+            if (isset($booking['user_id']) && !empty($booking['user_id'])) {
+                $user = $php_fetch($users_table, 'full_name, email, contact_number', ['user_id' => $booking['user_id']]);
+                // Check if user fetch returned an error (empty user_id case)
+                if (isset($user['error'])) {
+                    $user = null;
+                }
+            }
             
             // Get booking details and services
             $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $bookingid]);
@@ -156,9 +179,9 @@ class BookingModel
             
             return [
                 'bookingid' => $booking['bookingid'],
-                'user_name' => ($user ? $user[0]['full_name'] : 'Unknown User'),
-                'user_email' => ($user ? $user[0]['email'] : ''),
-                'user_phone' => ($user ? $user[0]['contact_number'] : ''),
+                'user_name' => ($user && count($user) > 0 ? $user[0]['full_name'] : 'Unknown User'),
+                'user_email' => ($user && count($user) > 0 ? $user[0]['email'] : ''),
+                'user_phone' => ($user && count($user) > 0 ? $user[0]['contact_number'] : ''),
                 'total_price' => $booking['total_price'],
                 'booking_date' => $booking['date_created'] ?? date('Y-m-d H:i:s'),
                 'booking_status' => $booking['booking_status'],
@@ -257,6 +280,98 @@ class BookingModel
         return !empty($data) ? json_encode($data) : json_encode(['status' => 'nodata']);
     }
 
+    //! ============================== USER BOOKING METHODS ==============================
+    
+    public function getUserBookingStatus($php_fetch, $bookings_table, $booking_details_table, $services_table, $user_id)
+    {
+        try {
+            // Get all bookings that are not completed (pending, confirmed)
+            $bookings = $php_fetch($bookings_table, '*', ['user_id' => $user_id]);
+            
+            if (!$bookings || count($bookings) === 0) {
+                return json_encode('nodata');
+            }
+            
+            $result = [];
+            foreach ($bookings as $booking) {
+                // Only include active bookings (not completed or cancelled)
+                $status = strtolower($booking['booking_status']);
+                if (!in_array($status, ['completed', 'cancelled', 'rejected'])) {
+                    // Get booking details and services for this booking
+                    $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $booking['bookingid']]);
+                    
+                    if ($booking_details) {
+                        foreach ($booking_details as $detail) {
+                            $service = $php_fetch($services_table, 'service_name', ['id' => $detail['service_id']]);
+                            if ($service && count($service) > 0) {
+                                $result[] = [
+                                    'bookingid' => $booking['bookingid'],
+                                    'service_name' => $service[0]['service_name'],
+                                    'status' => $booking['booking_status'],
+                                    'booking_date' => $booking['date_created'],
+                                    'total_amount' => $detail['price'] * $detail['quantity'],
+                                    'quantity' => $detail['quantity']
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return json_encode(count($result) > 0 ? $result : 'nodata');
+        } catch (Exception $e) {
+            error_log("Error in getUserBookingStatus: " . $e->getMessage());
+            return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+    
+    public function getUserRecentServices($php_fetch, $bookings_table, $booking_details_table, $services_table, $user_id)
+    {
+        try {
+            // Get all completed bookings
+            $bookings = $php_fetch($bookings_table, '*', ['user_id' => $user_id, 'booking_status' => 'Completed']);
+            
+            if (!$bookings || count($bookings) === 0) {
+                return json_encode('nodata');
+            }
+            
+            $result = [];
+            foreach ($bookings as $booking) {
+                // Get booking details and services for this booking
+                $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $booking['bookingid']]);
+                
+                if ($booking_details) {
+                    foreach ($booking_details as $detail) {
+                        $service = $php_fetch($services_table, 'service_name', ['id' => $detail['service_id']]);
+                        if ($service && count($service) > 0) {
+                            $result[] = [
+                                'bookingid' => $booking['bookingid'],
+                                'service_name' => $service[0]['service_name'],
+                                'status' => $booking['booking_status'],
+                                'booking_date' => $booking['date_created'],
+                                'total_amount' => $detail['price'] * $detail['quantity'],
+                                'quantity' => $detail['quantity']
+                            ];
+                        }
+                    }
+                }
+            }
+            
+            // Sort by date (most recent first)
+            usort($result, function($a, $b) {
+                return strtotime($b['booking_date']) - strtotime($a['booking_date']);
+            });
+            
+            // Limit to last 10 services
+            $result = array_slice($result, 0, 10);
+            
+            return json_encode(count($result) > 0 ? $result : 'nodata');
+        } catch (Exception $e) {
+            error_log("Error in getUserRecentServices: " . $e->getMessage());
+            return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
+    }
+    
     //! ============================== OPTIONAL ENHANCED METHODS ==============================
 
     public function getBookingsWithDetails($conn, $user_id)
@@ -281,5 +396,46 @@ class BookingModel
         $stmt = $conn->prepare($sql);
         $stmt->execute([$user_id]);
         return json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    }
+    
+    /**
+     * Get booked time slots for a specific date
+     */
+    public function getBookedTimes($php_fetch, $date)
+    {
+        try {
+            global $connection;
+            
+            // Get all booked time slots for the given date
+            // Only include confirmed/pending bookings (not cancelled/declined)
+            $query = "
+                SELECT DISTINCT TIME(bd.booking_time) as booked_time,
+                       COUNT(*) as bookings_count
+                FROM booking_details bd
+                INNER JOIN booking b ON bd.booking_id = b.bookingid
+                WHERE DATE(bd.booking_date) = ?
+                AND b.booking_status NOT IN ('Cancelled', 'Declined')
+                GROUP BY TIME(bd.booking_time)
+                HAVING COUNT(*) >= (
+                    SELECT COUNT(*) FROM therapist WHERE active = 1
+                )
+                ORDER BY booked_time
+            ";
+            
+            $stmt = $connection->prepare($query);
+            $stmt->bind_param("s", $date);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $booked_times = [];
+            while ($row = $result->fetch_assoc()) {
+                $booked_times[] = $row['booked_time'];
+            }
+            
+            return json_encode($booked_times);
+        } catch (Exception $e) {
+            error_log("Error in getBookedTimes: " . $e->getMessage());
+            return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+        }
     }
 }

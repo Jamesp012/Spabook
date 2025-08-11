@@ -46,6 +46,16 @@ if (isset($_POST['action'])) {
             echo $bookingServices->getServiceById($php_fetch, 'services', $serviceid);
             break;
 
+        case 'get_services':
+            // Get simplified services list for dropdowns
+            $service_data = $php_fetch('services', 'id, service_name', ['order' => 'service_name.asc']);
+            if (!empty($service_data)) {
+                echo json_encode($service_data);
+            } else {
+                echo json_encode([]);
+            }
+            break;
+
         case 'load_image_base64':
             $image_data = $_POST['image'];
             $image_array_1 = explode(";", $image_data);
