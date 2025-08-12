@@ -54,43 +54,6 @@
                     <h5 class="mb-0">Recent Services</h5>
                 </div>
                 <div class="recent-services-scroll">
-                    <ul class="list-group list-group-flush" style="overflow-y: auto; max-height: calc(100vh - 250px);">
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li> 
-                        <li class="list-group-item">Shiatsu - June 2, 2025</li> 
-                        <li class="list-group-item">Swedish Massage - June 9, 2025</li> 
-                        <li class="list-group-item">Facial Treatment - June 5, 2025</li>
-                        
                     <ul class="list-group list-group-flush" id="recentServicesList" style="overflow-y: auto; max-height: calc(100vh - 400px);">
                         <!-- Recent services will be loaded here -->
                     </ul>
@@ -150,7 +113,6 @@
                     html += `
                         <div class="service-card" data-service-id="${service.service_id}" data-service-name="${service.service_name}" data-service-price="${service.price}" data-service-description="${service.description}" data-service-image="${imageSrc}">
                             <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
-                                <img src="data:image/png;base64,${service.service_picture}"
                                 <img src="${imageSrc}"
                                     class="card-img-top img-fluid"
                                     style="height: 120px; object-fit: cover;"
@@ -552,33 +514,6 @@
     .booking-status-scroll ul,
     .recent-services-scroll ul {
         overflow-y: auto;
-        max-height: 40vh;
-        padding-right: 8px;
-        scrollbar-width: thin;
-        scrollbar-color: #ccc transparent;
-    }
-
-    .booking-status-scroll ul::-webkit-scrollbar,
-    .recent-services-scroll ul::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .booking-status-scroll ul::-webkit-scrollbar-thumb,
-    .recent-services-scroll ul::-webkit-scrollbar-thumb {
-        background-color: #ccc;
-        border-radius: 3px;
-    }
-
-    @media (max-width: 991.98px) {
-        .col-lg-8,
-        .col-lg-4 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-
-    .booking-status-scroll ul,
-    .recent-services-scroll ul {
-        overflow-y: auto;
         max-height: 25vh;
         padding-right: 8px;
         scrollbar-width: thin;
@@ -617,8 +552,6 @@
         .service-card {
             flex: 1 1 100%;
         }
-    }
-
 
         /* Adjust section heights on mobile */
         .booking-status-scroll ul,

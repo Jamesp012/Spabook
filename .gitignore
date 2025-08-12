@@ -1,0 +1,234 @@
+# =============================================================================
+# SpaBook Project - Git Ignore File
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Debug Files
+# -----------------------------------------------------------------------------
+# Specific debug files found in the project
+controller/debug_*.txt
+views/admin/debug_*.txt
+views/modal/debug_*.txt
+views/user/debug_*.txt
+
+# General debug patterns
+debug*.txt
+debug*.log
+*debug*.txt
+*debug*.log
+*.debug
+test_*.txt
+test_*.log
+
+# -----------------------------------------------------------------------------
+# PHP Development Files
+# -----------------------------------------------------------------------------
+# Composer dependencies (if using Composer)
+/vendor/
+composer.phar
+composer.lock
+
+# PHP specific files
+*.php~
+*.php.bak
+*.php.orig
+*.php.swp
+.php_cs.cache
+.phpunit.result.cache
+
+# -----------------------------------------------------------------------------
+# Environment & Configuration Files
+# -----------------------------------------------------------------------------
+# Environment files (contains sensitive data)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*.local
+
+# Configuration files with sensitive data
+config.local.php
+database.local.php
+connection.local.php
+*secret*.php
+*private*.php
+
+# -----------------------------------------------------------------------------
+# System & IDE Files
+# -----------------------------------------------------------------------------
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# IDE Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.atom/
+*.code-workspace
+
+# PHPStorm
+.phpstorm.meta.php
+_ide_helper.php
+
+# -----------------------------------------------------------------------------
+# Log Files
+# -----------------------------------------------------------------------------
+# Application logs
+*.log
+logs/
+log/
+error.log
+access.log
+php_errors.log
+debug.log
+
+# Apache/Nginx logs
+/logs/*
+/log/*
+*.access.log
+*.error.log
+
+# -----------------------------------------------------------------------------
+# Cache & Temporary Files
+# -----------------------------------------------------------------------------
+# Cache directories
+cache/
+tmp/
+temp/
+/cache/*
+/tmp/*
+/temp/*
+
+# Session files
+sessions/
+/sessions/*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# -----------------------------------------------------------------------------
+# Upload & Media Files (Optional - uncomment if needed)
+# -----------------------------------------------------------------------------
+# Uncomment these if you want to ignore user uploads
+# uploads/
+# /uploads/*
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+# *.pdf
+# *.doc
+# *.docx
+
+# -----------------------------------------------------------------------------
+# Database Files
+# -----------------------------------------------------------------------------
+# SQLite databases (if using SQLite)
+*.sqlite
+*.sqlite3
+*.db
+*.db3
+
+# Database dumps
+*.sql
+*.sql.gz
+*.sql.bz2
+dump.sql
+backup.sql
+
+# -----------------------------------------------------------------------------
+# Security Files
+# -----------------------------------------------------------------------------
+# SSL certificates and keys
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# Password files
+passwords.txt
+users.txt
+credentials.txt
+
+# -----------------------------------------------------------------------------
+# Build & Distribution Files
+# -----------------------------------------------------------------------------
+# Distribution builds
+dist/
+build/
+public/build/
+
+# Node.js (if using Node.js for frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# -----------------------------------------------------------------------------
+# Version Control
+# -----------------------------------------------------------------------------
+# Git files
+.git/
+*.orig
+
+# -----------------------------------------------------------------------------
+# Miscellaneous
+# -----------------------------------------------------------------------------
+# Backup files
+*.bak
+*.backup
+*~
+*.old
+
+# Archive files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# Documentation build files
+/docs/build/
+
+# Test coverage reports
+coverage/
+*.coverage
+htmlcov/
+
+# =============================================================================
+# End of .gitignore
+# =============================================================================

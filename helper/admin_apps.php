@@ -24,6 +24,9 @@
             <li class="app_sidebar_item" data-content="admin_manage-services.php" id="admin_manage_services">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-leaf"></i>Manage Services</a>
             </li>
+            <li class="app_sidebar_item" data-content="admin_manage-therapists.php" id="admin_manage_therapists">
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people-fill"></i>Manage Therapists</a>
+            </li>
             <li class="app_sidebar_item" data-content="admin_manage-users.php" id="admin_manage_users">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people"></i>Manage Users</a>
             </li>
