@@ -120,6 +120,7 @@
                         <div class="service-card">
                             <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
                                 <img src="data:image/png;base64,${service.service_picture}"
+                                <img src="${imageSrc}"
                                     class="card-img-top img-fluid"
                                     style="height: 120px; object-fit: cover;"
                                     alt="${service.service_name}">
