@@ -86,7 +86,6 @@
     function renderServices(services) {
         let html = '';
         services.forEach(service => {
-            // Determine the correct image source format
             let imageSrc;
             if (service.service_picture.startsWith('http')) {
                 imageSrc = service.service_picture;
@@ -107,6 +106,17 @@
                                 onerror="this.src='../vendor/images/headMassage.png'">
                             <div class="position-absolute bottom-0 start-0 end-0 bg-gradient-dark p-2">
                                 <span class="badge bg-primary">${service.per_minute} minutes</span>
+                            </div>
+                            <!-- Action Buttons - Top Right -->
+                            <div class="position-absolute top-0 end-0 p-2">
+                                <div class="d-flex flex-column gap-2">
+                                    <button type="button" class="btn btn-light btn-action" onclick="editService(${service.id})" title="Edit Service">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-action" onclick="deleteService(${service.id})" title="Delete Service">
+                                        <i class="bi bi-trash3 text-danger"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -177,12 +187,24 @@
 <style>
     .service-card {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        border: 1px solid rgba(0,0,0,0.08) !important;
+        border-width: 2px !important;
     }
     
     .service-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 8px 25px rgba(25, 135, 84, 0.2) !important;
+    }
+
+    .border-success {
+        border-color: #198754 !important;
+    }
+
+    .border-primary {
+        border-color: #0d6efd !important;
     }
     
     .bg-gradient-dark {
@@ -237,6 +259,41 @@
         font-weight: 500;
     }
     
+    /* Action Buttons Styling - Top Right Overlay */
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(4px);
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-action:hover {
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .btn-action i {
+        font-size: 0.875rem;
+    }
+    
+    .btn-action:focus {
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+    
+    /* Ensure proper column layout for action buttons only */
+    .position-absolute .d-flex.flex-column {
+        align-items: center;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .service-card:hover {
@@ -245,6 +302,15 @@
         
         .card-img-top {
             height: 180px !important;
+        }
+        
+        .btn-action {
+            width: 36px;
+            height: 36px;
+        }
+        
+        .btn-action:hover {
+            transform: none;
         }
     }
 </style>

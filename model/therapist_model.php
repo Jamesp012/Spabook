@@ -7,31 +7,29 @@ class TherapistModel
     public function getTherapistsByService($php_fetch, $therapist_table, $service_id)
     {
         try {
-            // Use JOIN to get therapists assigned to the specific service
-            $query = "
-                SELECT t.* 
-                FROM therapist t
-                INNER JOIN therapist_services ts ON t.therapistid = ts.therapist_id
-                WHERE ts.service_id = ? AND t.active = 1
-                ORDER BY t.therapist_name
-            ";
+            // Get all therapists first
+            $all_therapists = $php_fetch($therapist_table, '*', []);
             
-            global $connection;
-            $stmt = $connection->prepare($query);
-            $stmt->bind_param("i", $service_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            $therapists = [];
-            while ($row = $result->fetch_assoc()) {
-                $therapists[] = $row;
-            }
-            
-            if (count($therapists) === 0) {
+            if (!$all_therapists || count($all_therapists) === 0) {
                 return json_encode('nodata');
             }
             
-            return json_encode($therapists);
+            $matching_therapists = [];
+            
+            // Filter therapists who can perform this service
+            foreach ($all_therapists as $therapist) {
+                $therapist_service_ids = $this->parseServiceIds($therapist['service_id']);
+                
+                if (in_array($service_id, $therapist_service_ids)) {
+                    $matching_therapists[] = $therapist;
+                }
+            }
+            
+            if (count($matching_therapists) === 0) {
+                return json_encode('nodata');
+            }
+            
+            return json_encode($matching_therapists);
         } catch (Exception $e) {
             error_log("Error in getTherapistsByService: " . $e->getMessage());
             return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
@@ -75,7 +73,7 @@ class TherapistModel
         try {
             error_log("=== THERAPIST MODEL - addTherapist ===");
             error_log("Input data: " . print_r($data, true));
-            error_log("Schema: therapistid, therapist_name, service_id, therapist_desc");
+            error_log("Schema: therapistid, therapist_name, service_id, therapist_desc, rate");
             
             // Validate required fields for the actual schema
             if (!isset($data['therapist_name']) || empty($data['therapist_name'])) {
@@ -144,7 +142,7 @@ class TherapistModel
                 return json_encode(['status' => 'error', 'message' => 'Failed to get therapist ID from database response']);
             }
             
-            // No separate service assignment needed - service_id is already in the therapist table
+            // Service IDs are already stored in the main therapist record
             error_log("=== THERAPIST MODEL - SUCCESS ===");
             return json_encode(['status' => 'success', 'therapist_id' => $therapist_id]);
         } catch (Exception $e) {
@@ -160,7 +158,7 @@ class TherapistModel
             error_log("=== THERAPIST MODEL - updateTherapist ===");
             error_log("Therapist ID: " . $therapist_id);
             error_log("Update data: " . print_r($data, true));
-            error_log("Schema: therapistid, therapist_name, service_id, therapist_desc");
+            error_log("Schema: therapistid, therapist_name, service_id, therapist_desc, rate");
             
             // Validate therapist_id
             if (!$therapist_id) {
@@ -170,7 +168,7 @@ class TherapistModel
             // No need to extract service_ids - data contains service_id directly for the schema
             
             // Update therapist (data already contains the correct schema fields)
-            $update = $php_update($therapist_table, ['therapistid' => $therapist_id], $data);
+            $update = $php_update($therapist_table, $data, ['therapistid' => $therapist_id]);
             
             error_log("Update result: " . print_r($update, true));
             
@@ -224,7 +222,7 @@ class TherapistModel
             $enrichedTherapists = [];
             foreach ($therapists as $therapist) {
                 // Get all assigned services for this therapist
-                $assigned_services = $this->getTherapistServices($therapist['therapistid']);
+                $assigned_services = $this->getTherapistServices($therapist['therapistid'], $php_fetch);
                 
                 $enrichedTherapist = $therapist;
                 
@@ -310,35 +308,132 @@ class TherapistModel
             return json_encode(['status' => 'error', 'message' => $e->getMessage()]);
         }
     }
-    
-    //! ============================== MULTIPLE SERVICES METHODS ==============================
+
     
     /**
-     * Assign multiple services to a therapist
+     * Get all services assigned to a therapist
      */
-    public function assignServicesToTherapist($php_insert, $therapist_id, $service_ids)
+    public function getTherapistServices($therapist_id, $php_fetch = null)
     {
         try {
-            global $connection;
+            // Use passed parameter or get global
+            if ($php_fetch === null) {
+                global $php_fetch;
+            }
             
+            if (!$php_fetch) {
+                error_log("php_fetch function not available in getTherapistServices");
+                return [];
+            }
+            
+            // Get therapist data to find their service_id field
+            $therapist = $php_fetch('therapist', 'service_id', ['therapistid' => $therapist_id]);
+            
+            if (!$therapist || count($therapist) === 0 || empty($therapist[0]['service_id'])) {
+                return [];
+            }
+            
+            // Parse service IDs from the service_id text field
+            $service_ids = $this->parseServiceIds($therapist[0]['service_id']);
+            
+            // Get service details for each service ID
+            $services = [];
             foreach ($service_ids as $service_id) {
-                // Check if assignment already exists
-                $check_query = "SELECT id FROM therapist_services WHERE therapist_id = ? AND service_id = ?";
-                $check_stmt = $connection->prepare($check_query);
-                $check_stmt->bind_param("ii", $therapist_id, $service_id);
-                $check_stmt->execute();
-                $exists = $check_stmt->get_result()->fetch_assoc();
-                
-                if (!$exists) {
-                    // Insert new assignment
-                    $php_insert('therapist_services', [
-                        'therapist_id' => $therapist_id,
-                        'service_id' => $service_id
-                    ]);
+                if (!empty($service_id)) {
+                    $service = $php_fetch('services', 'id,service_name,price', ['id' => $service_id]);
+                    if ($service && count($service) > 0) {
+                        $services[] = $service[0];
+                    }
                 }
             }
             
+            return $services;
+            
+        } catch (Exception $e) {
+            error_log("Error in getTherapistServices: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    /**
+     * Parse service IDs from the service_id text field
+     * Supports comma-separated values: "1,2,3" or JSON array: "[1,2,3]"
+     */
+    private function parseServiceIds($service_id_field)
+    {
+        if (empty($service_id_field)) {
+            return [];
+        }
+        
+        // Try to parse as JSON first
+        if (substr($service_id_field, 0, 1) === '[') {
+            $json_parsed = json_decode($service_id_field, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($json_parsed)) {
+                return array_map('intval', $json_parsed);
+            }
+        }
+        
+        // Parse as comma-separated values
+        if (strpos($service_id_field, ',') !== false) {
+            $ids = explode(',', $service_id_field);
+            return array_map('trim', array_map('intval', array_filter($ids)));
+        }
+        
+        // Single service ID
+        return [intval(trim($service_id_field))];
+    }
+    
+    /**
+     * Convert array of service IDs to string for storage
+     */
+    private function formatServiceIds($service_ids)
+    {
+        if (empty($service_ids) || !is_array($service_ids)) {
+            return '';
+        }
+        
+        // Filter and convert to integers
+        $clean_ids = array_filter(array_map('intval', $service_ids), function($id) {
+            return $id > 0;
+        });
+        
+        if (empty($clean_ids)) {
+            return '';
+        }
+        
+        // Store as comma-separated values for simplicity
+        return implode(',', $clean_ids);
+    }
+    
+    /**
+     * Assign multiple services to a therapist (updates existing record)
+     */
+    public function assignServicesToTherapist($therapist_id, $service_ids)
+    {
+        try {
+            global $php_update;
+            
+            error_log("=== ASSIGNING SERVICES TO THERAPIST (EXISTING SCHEMA) ===");
+            error_log("Therapist ID: " . $therapist_id);
+            error_log("Service IDs: " . print_r($service_ids, true));
+            
+            // Format service IDs as comma-separated string
+            $formatted_service_ids = $this->formatServiceIds($service_ids);
+            
+            // Update the therapist record
+            $data = ['service_id' => $formatted_service_ids];
+            $result = $php_update('therapist', $data, ['therapistid' => $therapist_id]);
+            
+            error_log("Service assignment result: " . print_r($result, true));
+            
+            if (isset($result['error'])) {
+                error_log("Error updating therapist services: " . $result['error']);
+                return false;
+            }
+            
+            error_log("=== SERVICES ASSIGNED SUCCESSFULLY ===");
             return true;
+            
         } catch (Exception $e) {
             error_log("Error in assignServicesToTherapist: " . $e->getMessage());
             return false;
@@ -346,67 +441,52 @@ class TherapistModel
     }
     
     /**
-     * Update therapist service assignments (replace all)
+     * Add a single service to a therapist (appends to existing services)
      */
-    public function updateTherapistServices($therapist_id, $service_ids)
+    public function addServiceToTherapist($therapist_id, $service_id)
     {
         try {
-            global $connection;
+            global $php_fetch;
             
-            // Remove all existing assignments
-            $delete_query = "DELETE FROM therapist_services WHERE therapist_id = ?";
-            $delete_stmt = $connection->prepare($delete_query);
-            $delete_stmt->bind_param("i", $therapist_id);
-            $delete_stmt->execute();
+            // Get current services
+            $current_services = $this->getTherapistServices($therapist_id, $php_fetch);
+            $current_service_ids = array_column($current_services, 'id');
             
-            // Add new assignments
-            if (!empty($service_ids)) {
-                $insert_query = "INSERT INTO therapist_services (therapist_id, service_id) VALUES (?, ?)";
-                $insert_stmt = $connection->prepare($insert_query);
-                
-                foreach ($service_ids as $service_id) {
-                    $insert_stmt->bind_param("ii", $therapist_id, $service_id);
-                    $insert_stmt->execute();
-                }
+            // Add new service if not already present
+            if (!in_array($service_id, $current_service_ids)) {
+                $current_service_ids[] = $service_id;
+                return $this->assignServicesToTherapist($therapist_id, $current_service_ids);
             }
             
-            return true;
+            return true; // Already has this service
+            
         } catch (Exception $e) {
-            error_log("Error in updateTherapistServices: " . $e->getMessage());
+            error_log("Error in addServiceToTherapist: " . $e->getMessage());
             return false;
         }
     }
     
     /**
-     * Get all services assigned to a therapist
+     * Remove a single service from a therapist
      */
-    public function getTherapistServices($therapist_id)
+    public function removeServiceFromTherapist($therapist_id, $service_id)
     {
         try {
-            global $connection;
+            // Get current services
+            global $php_fetch;
+            $current_services = $this->getTherapistServices($therapist_id, $php_fetch);
+            $current_service_ids = array_column($current_services, 'id');
             
-            $query = "
-                SELECT s.id, s.service_name
-                FROM services s
-                INNER JOIN therapist_services ts ON s.id = ts.service_id
-                WHERE ts.therapist_id = ?
-                ORDER BY s.service_name
-            ";
+            // Remove the service
+            $updated_service_ids = array_filter($current_service_ids, function($id) use ($service_id) {
+                return $id != $service_id;
+            });
             
-            $stmt = $connection->prepare($query);
-            $stmt->bind_param("i", $therapist_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            return $this->assignServicesToTherapist($therapist_id, $updated_service_ids);
             
-            $services = [];
-            while ($row = $result->fetch_assoc()) {
-                $services[] = $row;
-            }
-            
-            return $services;
         } catch (Exception $e) {
-            error_log("Error in getTherapistServices: " . $e->getMessage());
-            return [];
+            error_log("Error in removeServiceFromTherapist: " . $e->getMessage());
+            return false;
         }
     }
     

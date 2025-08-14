@@ -13,7 +13,7 @@ class BookingServices
                 $optimized_image = $this->optimizeImageData($row['service_picture']);
                 
                 $item_data[] = array(
-                    'service_id' => $row['id'], // Fix the key name to match what's expected
+                    'id' => $row['id'], // Use 'id' to match frontend expectations
                     'service_name' => $row['service_name'],
                     'description' => $row['description'],
                     'price' => $row['price'],
@@ -104,13 +104,17 @@ class BookingServices
         }
 
         // Proceed with update
-        $update_service = $php_update($table, ['id' => $serviceid], [
+        $update_data = [
             'service_name' => $name,
             'description' => $description,
             'price' => $price,
             'per_minute' => $duration,
-            'service_picture' => $image
-        ]);
+            'service_picture' => $image,
+            'type' => $type,
+            'stock' => $stock
+        ];
+        
+        $update_service = $php_update($table, $update_data, ['id' => $serviceid]);
 
         if (isset($update_service['error'])) {
             return json_encode('error');

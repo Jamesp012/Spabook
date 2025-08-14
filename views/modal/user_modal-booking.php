@@ -46,10 +46,49 @@
 </div>
 
 <script>
-// Global variables for modal
-let selectedServiceData = {};
-let availableTherapists = [];
-let selectedTherapists = [];
+// Global variables for modal - using var to avoid redeclaration errors
+var selectedServiceData = {};
+var availableTherapists = [];
+var selectedTherapists = [];
+
+// Initialize modal when document is ready
+$(document).ready(function() {
+    // Wait for modal data to be available
+    setTimeout(() => {
+        initializeBookingModal();
+    }, 100);
+});
+
+// Initialize booking modal with service data
+function initializeBookingModal() {
+    console.log('🔄 Initializing booking modal...');
+    
+    // Get service data from modal data or window
+    const serviceData = window.modalData || {};
+    console.log('📋 Service data:', serviceData);
+    
+    if (serviceData && serviceData.id) {
+        // Populate service information
+        selectedServiceData = serviceData;
+        
+        $('#selected-service-name').text(serviceData.name || 'Unknown Service');
+        $('#selected-service-description').text(serviceData.description || 'No description available');
+        $('#selected-service-price').text('₱' + (serviceData.price || 0)).attr('data-price', serviceData.price || 0);
+        
+        if (serviceData.image) {
+            $('#selected-service-image').attr('src', serviceData.image);
+        }
+        
+        // Load therapists for this service
+        console.log('🔄 Loading therapists for service ID:', serviceData.id);
+        loadTherapists(serviceData.id);
+        
+    } else {
+        console.error('❌ No service data provided to modal');
+        // Still enable the confirm button for testing
+        $('#confirmServiceBtn').prop('disabled', false);
+    }
+}
 
 // Function to load therapists for the selected service
 function loadTherapists(serviceId) {
@@ -80,12 +119,15 @@ function loadTherapists(serviceId) {
                 $('#confirmServiceBtn').prop('disabled', false);
             }
         },
-        error: function() {
+        error: function(xhr, status, error) {
+            console.error('❌ Therapist loading error:', {xhr, status, error});
+            console.error('❌ Response text:', xhr.responseText);
             $('#therapist-loading').addClass('d-none');
             $('#therapist-selection-container').html(`
                 <div class="alert alert-danger">
                     <i class="bi bi-exclamation-circle me-1"></i>
                     Failed to load therapists. You can still proceed without therapist selection.
+                    <br><small class="text-muted">Error: ${error} | Status: ${status}</small>
                 </div>
             `);
             $('#confirmServiceBtn').prop('disabled', false);

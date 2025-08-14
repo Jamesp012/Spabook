@@ -1,3 +1,96 @@
+<style>
+/* Checkbox Service Selection Styles */
+#therapistServicesContainer {
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#therapistServicesContainer.is-invalid {
+    border-color: #dc3545;
+}
+
+/* Service selection controls styling */
+.service-selection-controls {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.service-selection-controls .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Service list container */
+#therapistServicesList .form-check {
+    padding: 12px 16px;
+    border-radius: 6px;
+    transition: background-color 0.15s ease-in-out;
+    border: 1px solid transparent;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+}
+
+#therapistServicesList .form-check:hover {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+#therapistServicesList .form-check-input {
+    margin-top: 4px;
+    margin-left: 0;
+    margin-right: 0;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    position: static;
+}
+
+#therapistServicesList .form-check-label {
+    margin-left: 0;
+    width: 100%;
+    cursor: pointer;
+    line-height: 1.4;
+}
+
+#therapistServicesList .form-check-input:checked + .form-check-label {
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+#therapistServicesList .form-check:has(.form-check-input:checked) {
+    background-color: #e7f3ff;
+    border-color: #0d6efd;
+}
+
+#selectedServicesDisplay {
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.badge {
+    font-size: 12px;
+}
+
+
+
+/* Validation feedback for checkboxes */
+#servicesValidation {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+}
+
+/* Service count display */
+#serviceCount {
+    font-weight: 500;
+}
+</style>
+
 <div class="modal-header border-0 pb-0">
     <h5 class="modal-title fw-semibold" id="therapistModalLabel">Add New Therapist</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -30,32 +123,62 @@
         <div class="invalid-feedback"></div>
     </div>
 
-    <!-- Service Assignment (Single Selection) -->
+    <!-- Service Assignment (Multiple Checkbox Selection) -->
     <div class="mb-3">
-        <label class="form-label fw-semibold">Assigned Service <span class="text-danger">*</span></label>
+        <label class="form-label fw-semibold">Assigned Services <span class="text-danger">*</span></label>
         <div class="d-flex align-items-center gap-2 mb-2">
-            <small class="text-muted">Select the primary service for this therapist:</small>
+            <small class="text-muted">Select multiple services this therapist can perform:</small>
             <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshServices()" title="Refresh Services">
                 <i class="bi bi-arrow-clockwise"></i>
             </button>
         </div>
         
         <!-- Schema Info Alert -->
-        <div class="alert alert-warning alert-sm py-2 mb-2" style="font-size: 0.875rem;">
-            <i class="bi bi-info-circle me-1"></i>
-            <strong>Database Schema:</strong> <code>therapistid, therapist_name, service_id, therapist_desc</code><br>
-            <strong>Note:</strong> Current schema supports <strong>one service per therapist</strong> only.
+        <div class="alert alert-success alert-sm py-2 mb-2" style="font-size: 0.875rem;">
+            <i class="bi bi-check-circle me-1"></i>
+            <strong>Schema:</strong> <code>therapistid, therapist_name, service_id, therapist_desc, rate</code><br>
+            <strong>Multiple Services:</strong> Stored as comma-separated values in <code>service_id</code> field.
         </div>
         
-        <!-- Service Dropdown -->
-        <select class="form-control" id="therapistService" name="service_id" required>
-            <option value="">-- Loading services... --</option>
-        </select>
+        <!-- Service Checkbox Group with Controls -->
+        <div id="therapistServicesContainer" class="border rounded" style="max-height: 300px;">
+            <!-- Service Selection Controls (inside container) -->
+            <div class="service-selection-controls d-flex justify-content-between align-items-center p-2 border-bottom bg-light d-none" id="serviceSelectionControls">
+                <small class="text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <span id="serviceCount">0 services available</span>
+                </small>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="selectAllServices()" title="Select All Services">
+                        <i class="bi bi-check-all me-1"></i>Select All
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearAllServices()" title="Clear All Services">
+                        <i class="bi bi-x-circle me-1"></i>Clear All
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Services List -->
+            <div id="therapistServicesList" class="p-3" style="max-height: 220px; overflow-y: auto;">
+                <div class="text-center text-muted py-3">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    Loading services...
+                </div>
+            </div>
+        </div>
         
         <div class="form-text mt-2">
             <i class="bi bi-info-circle me-1"></i>
-            Therapist will appear in booking for their assigned service. 
+            Select multiple services that this therapist can perform. 
             <span class="text-muted">Need to add a new service? Go to <strong>Manage Services</strong> first.</span>
+        </div>
+        
+        <!-- Selected Services Display -->
+        <div id="selectedServicesDisplay" class="mt-2 p-2 bg-light rounded d-none">
+            <small class="text-muted d-block mb-1">Selected Services:</small>
+            <div id="selectedServicesList"></div>
         </div>
         
         <div class="invalid-feedback" id="servicesValidation"></div>
@@ -63,6 +186,8 @@
             ⚠️ Failed to load services. <a href="#" onclick="refreshServices()" class="text-primary">Try again</a>
         </div>
     </div>
+
+
 
     <!-- Description -->
     <div class="mb-3">
@@ -167,11 +292,20 @@
         }
     });
 
-    // Load services for dropdown (single selection)
+    // Load services for checkbox selection
     function loadServicesForModal() {
-        console.log('🔧 Loading services for dropdown...');
+        console.log('🔧 Loading services for checkbox selection...');
         
-        $('#therapistService').html('<option value="">-- Loading services... --</option>');
+        // Reset containers
+        $('#serviceSelectionControls').addClass('d-none');
+        $('#therapistServicesList').html(`
+            <div class="text-center text-muted py-3">
+                <div class="spinner-border spinner-border-sm me-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                Loading services...
+            </div>
+        `);
         
         $.ajax({
             url: '../controller/booking_services_contr.php',
@@ -184,39 +318,110 @@
                 console.log('✅ Services loaded:', result);
                 
                 if (result && Array.isArray(result) && result.length > 0) {
-                    let optionsHtml = '<option value="">-- Select a service --</option>';
+                    let checkboxesHtml = '';
                     
-                    result.forEach(function(service) {
+                    result.forEach(function(service, index) {
                         const servicePrice = service.price ? ` (₱${service.price})` : '';
-                        optionsHtml += `
-                            <option value="${service.id}">
-                                ${service.service_name}${servicePrice}
-                            </option>
+                        checkboxesHtml += `
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="therapistServices" 
+                                       id="service_${service.id}" value="${service.id}" 
+                                       data-service-name="${service.service_name}"
+                                       data-service-price="${service.price || 0}">
+                                <label class="form-check-label w-100" for="service_${service.id}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-medium">${service.service_name}</span>
+                                        ${service.price ? `<span class="text-muted small">₱${service.price}</span>` : ''}
+                                    </div>
+                                    ${service.description ? `<small class="text-muted d-block">${service.description}</small>` : ''}
+                                </label>
+                            </div>
                         `;
                     });
                     
-                    $('#therapistService').html(optionsHtml);
-                    console.log('✅ Service dropdown populated with', result.length, 'services');
+                    $('#therapistServicesList').html(checkboxesHtml);
+                    console.log('✅ Service checkboxes populated with', result.length, 'services');
                     
                     // Store services for later use
                     window.availableServices = result;
                     
+                    // Update service count and show selection controls
+                    $('#serviceCount').text(`${result.length} services available`);
+                    $('#serviceSelectionControls').removeClass('d-none');
+                    
+                    // Add change event listener to update selected services display
+                    $('input[name="therapistServices"]').off('change').on('change', function() {
+                        updateSelectedServicesDisplay();
+                        updateServiceCount();
+                    });
+                    
                 } else {
-                    $('#therapistService').html(`
-                        <option value="">-- No services available --</option>
-                        <option value="" disabled>⚠️ Add services in Manage Services first</option>
+                    $('#therapistServicesList').html(`
+                        <div class="text-center text-muted py-3">
+                            <i class="bi bi-exclamation-circle fs-2 text-warning mb-2"></i>
+                            <div>No services available</div>
+                            <small>Add services in <strong>Manage Services</strong> first</small>
+                        </div>
                     `);
+                    $('#serviceCount').text('No services available');
                     console.log('⚠️ No services found');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('❌ Failed to load services:', error);
-                $('#therapistService').html(`
-                    <option value="">-- Error loading services --</option>
-                    <option value="" disabled>❌ ${error}</option>
+                $('#therapistServicesList').html(`
+                    <div class="text-center text-danger py-3">
+                        <i class="bi bi-exclamation-triangle fs-2 mb-2"></i>
+                        <div>Error loading services</div>
+                        <small>${error}</small>
+                    </div>
                 `);
+                $('#serviceCount').text('Error loading services');
+                $('#serviceLoadError').show();
             }
         });
+    }
+
+    // Update selected services display
+    function updateSelectedServicesDisplay() {
+        const selectedCheckboxes = $('input[name="therapistServices"]:checked');
+        const selectedCount = selectedCheckboxes.length;
+        
+        if (selectedCount > 0) {
+            let displayHtml = '';
+            selectedCheckboxes.each(function() {
+                const serviceName = $(this).data('service-name');
+                const servicePrice = $(this).data('service-price');
+                displayHtml += `<span class="badge bg-primary me-1 mb-1">${serviceName}</span>`;
+            });
+            
+            $('#selectedServicesList').html(displayHtml);
+            $('#selectedServicesDisplay').removeClass('d-none');
+            
+            // Remove validation error if present
+            $('#servicesValidation').text('');
+            $('#therapistServicesContainer').removeClass('is-invalid');
+        } else {
+            $('#selectedServicesDisplay').addClass('d-none');
+        }
+    }
+
+    // Update service count display
+    function updateServiceCount() {
+        const totalServices = window.availableServices ? window.availableServices.length : 0;
+        const selectedCount = $('input[name="therapistServices"]:checked').length;
+        
+        if (selectedCount > 0) {
+            $('#serviceCount').html(`
+                <i class="bi bi-check-circle text-success me-1"></i>
+                ${selectedCount} of ${totalServices} services selected
+            `);
+        } else {
+            $('#serviceCount').html(`
+                <i class="bi bi-info-circle me-1"></i>
+                ${totalServices} services available
+            `);
+        }
     }
 
     // Refresh services function
@@ -225,33 +430,71 @@
         loadServicesForModal();
     }
 
-    // Get selected service ID (single selection)
-    function getSelectedServiceIds() {
-        const selectedId = $('#therapistService').val();
-        return selectedId ? [selectedId] : []; // Return array for compatibility
+    // Select all services
+    function selectAllServices() {
+        $('input[name="therapistServices"]').prop('checked', true);
+        updateSelectedServicesDisplay();
+        updateServiceCount();
+        console.log('✅ All services selected');
     }
 
-    // Set selected service ID (for edit mode)
+    // Clear all services
+    function clearAllServices() {
+        $('input[name="therapistServices"]').prop('checked', false);
+        updateSelectedServicesDisplay();
+        updateServiceCount();
+        console.log('🧹 All services cleared');
+    }
+
+    // Get selected service IDs (multiple selection)
+    function getSelectedServiceIds() {
+        const selectedCheckboxes = $('input[name="therapistServices"]:checked');
+        const serviceIds = [];
+        
+        selectedCheckboxes.each(function() {
+            serviceIds.push($(this).val());
+        });
+        
+        return serviceIds;
+    }
+
+    // Set selected service IDs (for edit mode)
     function setSelectedServiceIds(serviceIds) {
-        // Set the dropdown value to the first service ID
+        // Clear all checkboxes first
+        $('input[name="therapistServices"]').prop('checked', false);
+        
         if (serviceIds && serviceIds.length > 0) {
-            $('#therapistService').val(serviceIds[0]);
+            // Convert to array if it's a comma-separated string
+            if (typeof serviceIds === 'string') {
+                serviceIds = serviceIds.split(',').map(id => id.trim()).filter(id => id);
+            }
+            
+            console.log('🎯 Setting selected services:', serviceIds);
+            
+            // Select all matching service IDs
+            serviceIds.forEach(function(serviceId) {
+                $(`input[name="therapistServices"][value="${serviceId}"]`).prop('checked', true);
+            });
+            
+            updateSelectedServicesDisplay();
+            updateServiceCount();
         } else {
-            $('#therapistService').val('');
+            updateSelectedServicesDisplay();
+            updateServiceCount();
         }
     }
 
-    // Validate service is selected
+    // Validate at least one service is selected
     function validateServiceSelection() {
-        const selectedId = $('#therapistService').val();
+        const selectedIds = getSelectedServiceIds();
         
-        if (!selectedId) {
-            $('#servicesValidation').text('Please select a service for this therapist.');
-            $('#therapistService').addClass('is-invalid');
+        if (!selectedIds || selectedIds.length === 0) {
+            $('#servicesValidation').text('Please select at least one service for this therapist.');
+            $('#therapistServicesContainer').addClass('is-invalid');
             return false;
         } else {
             $('#servicesValidation').text('');
-            $('#therapistService').removeClass('is-invalid');
+            $('#therapistServicesContainer').removeClass('is-invalid');
             return true;
         }
     }
@@ -278,24 +521,28 @@
     function populateTherapistForm(therapist, readOnly = false) {
         $('#therapistName').val(therapist.therapist_name || '');
         $('#therapistDescription').val(therapist.therapist_desc || '');
-        // Removed non-schema field setters: specialties, experience_years, certification, phone, active
 
-        // Set assigned service (single selection for schema compatibility)
+        // Set assigned services (multiple selection)
         if (therapist.service_id) {
-            console.log('🎯 Setting selected service:', therapist.service_id);
-            setSelectedServiceIds([therapist.service_id]);
+            console.log('🎯 Setting selected services from service_id:', therapist.service_id);
+            // Handle comma-separated service IDs
+            setSelectedServiceIds(therapist.service_id);
         } else if (therapist.service_ids && therapist.service_ids.length > 0) {
-            // Backward compatibility - use first service
-            console.log('🔄 Using first service from array:', therapist.service_ids[0]);
-            setSelectedServiceIds([therapist.service_ids[0]]);
+            // Handle array format
+            console.log('🔄 Setting services from service_ids array:', therapist.service_ids);
+            setSelectedServiceIds(therapist.service_ids);
+        } else if (therapist.assigned_services && therapist.assigned_services.length > 0) {
+            // Handle service objects
+            const serviceIds = therapist.assigned_services.map(service => service.id.toString());
+            console.log('📋 Setting services from assigned_services:', serviceIds);
+            setSelectedServiceIds(serviceIds);
         }
-
-        // Photo functionality removed (not in schema)
 
         // If read-only mode, disable all inputs
         if (readOnly) {
-            $('#therapistName, #therapistDescription, #therapistService')
+            $('#therapistName, #therapistDescription')
                 .prop('disabled', true);
+            $('input[name="therapistServices"]').prop('disabled', true);
             $('.modal-footer .btn-primary, .modal-footer .btn-success').hide();
         }
     }
@@ -331,9 +578,9 @@
         if (selectedServiceIds.length === 0) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Service Required',
+                title: 'Services Required',
                 html: `
-                    <p>Please select at least one service.</p>
+                    <p>Please select at least one service for this therapist.</p>
                     <hr>
                     <small class="text-muted">
                         <strong>Troubleshooting:</strong><br>
@@ -359,32 +606,15 @@
             }
         });
         
-        // Prepare data - ensure proper formatting
-        const formData = new FormData();
-        formData.append('action', 'add_therapist');
-        formData.append('therapist_name', therapistName);
-        
-        // Single service_id for schema compatibility
-        const serviceId = selectedServiceIds[0]; // Get first (and only) selected service
-        formData.append('service_id', serviceId);
-        
-        formData.append('therapist_desc', $('#therapistDescription').val().trim() || '');
-        // Removed non-schema fields: specialties, experience_years, certification, phone, photo
-        
-        // Schema-compatible object format
+        // Schema-compatible object format with multiple services
         const requestData = {
             action: 'add_therapist',
             therapist_name: therapistName,
-            service_ids: selectedServiceIds, // Keep as array for compatibility with existing logic
+            service_ids: selectedServiceIds, // Multiple services array
             therapist_desc: $('#therapistDescription').val().trim() || ''
-            // Removed all non-schema fields
         };
         
         console.log('📤 Sending request data:', requestData);
-        console.log('📤 FormData entries:');
-        for (let [key, value] of formData.entries()) {
-            console.log(`  ${key}: ${value}`);
-        }
         
         // Try with regular data first
         console.log('🔄 Attempting with regular POST data...');
@@ -767,9 +997,8 @@
                     action: 'update_therapist',
                     therapist_id: therapistId,
                     therapist_name: $('#therapistName').val(),
-                    service_ids: selectedServiceIds, // Controller will convert to service_id
+                    service_ids: selectedServiceIds, // Controller will convert to service_id string
                     therapist_desc: $('#therapistDescription').val()
-                    // Removed all non-schema fields: specialties, experience_years, certification, phone, photo, active
                 },
                 beforeSend: function() {
                     showLoadingSpinner('Updating Therapist...');
@@ -779,7 +1008,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Therapist Updated Successfully',
-                            text: `Now assigned to ${selectedServiceIds.length} service(s)`,
+                            text: selectedServiceIds.length > 0 ? `Now assigned to ${selectedServiceIds.length} service(s)` : 'Therapist updated',
                             showConfirmButton: false,
                             timer: 2000
                         });

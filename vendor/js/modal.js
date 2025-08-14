@@ -14,18 +14,54 @@ function showGlobalModal(contentUrl, params = {}, callback = null) {
   modal.show();
 
   $.get(contentUrl, function (data) {
-    $('#globalModalContent').html(data);
-    window.modalData = params;
+    try {
+      $('#globalModalContent').html(data);
+      window.modalData = params;
 
-    setTimeout(() => {
-      if (typeof onGlobalModalReady === 'function') {
-        onGlobalModalReady();
-      }
+      setTimeout(() => {
+        try {
+          if (typeof onGlobalModalReady === 'function') {
+            onGlobalModalReady();
+          }
 
-      if (typeof callback === 'function') {
-        callback(); // ✅ finally run it
-      }
-    }, 10);
+          if (typeof callback === 'function') {
+            callback(); // ✅ finally run it
+          }
+        } catch (callbackError) {
+          console.error('Modal callback error:', callbackError);
+        }
+      }, 10);
+    } catch (modalError) {
+      console.error('Modal loading error:', modalError);
+      $('#globalModalContent').html(`
+        <div class="modal-header">
+          <h5 class="modal-title text-danger">Error Loading Content</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Failed to load modal content. Please refresh the page and try again.
+            <br><small class="text-muted">Error: ${modalError.message}</small>
+          </div>
+        </div>
+      `);
+    }
+  }).fail(function(xhr, status, error) {
+    console.error('AJAX Error:', {xhr, status, error});
+    $('#globalModalContent').html(`
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">Connection Error</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <i class="bi bi-wifi-off me-2"></i>
+          Failed to load content. Please check your connection and try again.
+          <br><small class="text-muted">Status: ${status} | Error: ${error}</small>
+        </div>
+      </div>
+    `);
   });
 }
 

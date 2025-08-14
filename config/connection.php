@@ -1,6 +1,6 @@
 <?php
 // connection.php
-require_once '../config/credentials.php';
+require_once __DIR__ . '/credentials.php';
 
 // Shared function to call Supabase API
 function supabaseRequest($method, $endpoint, $data = null)
@@ -80,7 +80,7 @@ $php_insert = function ($table, $data) {
 };
 
 // Update (PATCH)
-$php_update = function ($table, $filters = [], $data) {
+$php_update = function ($table, $data, $filters = []) {
     $query = [];
     foreach ($filters as $key => $value) {
         $query[] = "$key=eq.$value";
@@ -90,8 +90,17 @@ $php_update = function ($table, $filters = [], $data) {
 };
 
 // Delete (DELETE)
-$php_delete = function ($table, $id) {
-    $endpoint = "$table?id=eq.$id";
+$php_delete = function ($table, $filters = []) {
+    // If filters is not an array (old format), convert it
+    if (!is_array($filters)) {
+        $filters = ['id' => $filters];
+    }
+    
+    $query = [];
+    foreach ($filters as $key => $value) {
+        $query[] = "$key=eq.$value";
+    }
+    $endpoint = "$table?" . implode('&', $query);
     return supabaseRequest('DELETE', $endpoint);
 };
 

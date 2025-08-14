@@ -3,69 +3,6 @@
             <!-- Main Content -->
             <div class="col-md-12 px-md-4">
 
-                <!-- Statistics Cards -->
-                <div class="row mb-4">
-                    <div class="col-xl-4 col-md-4 mb-3">
-                        <div class="card border-left-primary shadow h-100 py-1">
-                            <div class="card-body py-2">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col me-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Therapists
-                                        </div>
-                                        <div class="h6 mb-0 font-weight-bold text-gray-800" id="totalTherapists">
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-people fs-4 text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-md-4 mb-3">
-                        <div class="card border-left-success shadow h-100 py-1">
-                            <div class="card-body py-2">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col me-2">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Active Therapists
-                                        </div>
-                                        <div class="h6 mb-0 font-weight-bold text-gray-800" id="activeTherapists">
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-person-check fs-4 text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-md-4 mb-3">
-                        <div class="card border-left-info shadow h-100 py-1">
-                            <div class="card-body py-2">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col me-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            Services Covered
-                                        </div>
-                                        <div class="h6 mb-0 font-weight-bold text-gray-800" id="servicesCovered">
-                                            <div class="spinner-border spinner-border-sm" role="status"></div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-gear fs-4 text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Filters and Search -->
                 <div class="row mb-3">
                     <div class="col-md-4">
@@ -158,7 +95,6 @@
         $(document).ready(function() {
             loadTherapists();
             loadServices(); // For filter dropdown
-            loadStats();
             
             // Search functionality
             $('#searchTherapist').on('keyup', function() {
@@ -209,7 +145,17 @@
             let html = '';
             
             therapists.forEach(function(therapist) {
-                const statusBadge = therapist.active ? 
+                // Check for active status - try is_active field first, then fallback
+                let isActive = true; // Default to active
+                if (therapist.hasOwnProperty('is_active')) {
+                    isActive = therapist.is_active == 1 || therapist.is_active === true;
+                } else if (therapist.hasOwnProperty('active')) {
+                    isActive = therapist.active == 1 || therapist.active === true;
+                } else if (therapist.therapist_desc && therapist.therapist_desc.includes('[INACTIVE]')) {
+                    isActive = false;
+                }
+                
+                const statusBadge = isActive ? 
                     '<span class="badge bg-success">Active</span>' : 
                     '<span class="badge bg-secondary">Inactive</span>';
                 
@@ -242,6 +188,11 @@
                         <td>${addedDate}</td>
                         <td>
                             <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm ${isActive ? 'btn-success' : 'btn-outline-secondary'}" 
+                                        onclick="toggleTherapistStatus(${therapist.therapistid}, ${!isActive})" 
+                                        title="${isActive ? 'Deactivate' : 'Activate'}">
+                                    <i class="bi ${isActive ? 'bi-pause-circle' : 'bi-play-circle'}"></i>
+                                </button>
                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="editTherapist(${therapist.therapistid})" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -413,6 +364,73 @@
             showGlobalModal('modal/admin_modal-manage-therapists.php', {
                 action: 'view',
                 therapistid: therapistId
+            });
+        }
+
+        // Toggle therapist active/inactive status
+        function toggleTherapistStatus(therapistId, newStatus) {
+            const actionText = newStatus ? 'activate' : 'deactivate';
+            
+            Swal.fire({
+                title: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} Therapist?`,
+                text: `Are you sure you want to ${actionText} this therapist?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: newStatus ? '#28a745' : '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: `Yes, ${actionText}!`,
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Processing...',
+                        text: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)}ing therapist...`,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    $.ajax({
+                        url: '../controller/therapist_contr.php',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            action: 'update_therapist_status',
+                            therapist_id: therapistId,
+                            active: newStatus ? 1 : 0
+                        },
+                        success: function(response) {
+                            if (response.status === 'success' || response === 'success') {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: `Therapist ${newStatus ? 'activated' : 'deactivated'} successfully!`,
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                
+                                // Reload therapists data
+                                loadTherapists();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message || `Failed to ${actionText} therapist. Please try again.`
+                                });
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Toggle therapist status error:', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: `Failed to ${actionText} therapist. Please try again.`
+                            });
+                        }
+                    });
+                }
             });
         }
     </script>

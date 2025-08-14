@@ -158,7 +158,7 @@
                     dataType: 'json',
                     data: {
                         action: 'add_service',
-                        image: $('#service_image').attr('value'),
+                        image: $('#service_image').attr('value') || $('#service_image').attr('src') || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
                         name: $('#serviceName').val(),
                         description: $('#serviceDescription').val(),
                         price: $('#servicePrice').val(),
@@ -166,7 +166,7 @@
                     },
                     beforeSend: function() {
                         Swal.fire({
-                            title: 'Adding Service...',
+                            title: `Adding ${isProduct ? 'Product' : 'Service'}...`,
                             html: `
                                 <div class="d-flex justify-content-center align-items-center" style="min-width:220px; min-height:220px;">
                                     <img src="../vendor/images/SpaBook.png" alt="Loading..." class="custom-spinner-glow" style="width: 120px; height: 120px;">
@@ -206,9 +206,18 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error Adding Service',
-                                text: response
+                                html: '<strong>Response:</strong> ' + JSON.stringify(response) + '<br><br><small>Check browser console for more details</small>'
                             });
+                            console.log('Service addition failed:', response);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Network Error',
+                            html: '<strong>Status:</strong> ' + status + '<br><strong>Error:</strong> ' + error + '<br><strong>Response:</strong> ' + xhr.responseText
+                        });
+                        console.log('AJAX Error:', {xhr, status, error});
                     }
                 });
             }

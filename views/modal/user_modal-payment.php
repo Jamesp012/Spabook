@@ -56,7 +56,7 @@ $(document).ready(function() {
     }, 100);
 });
 
-let bookingData = null;
+var bookingData = null;
 
 function initializePaymentModal() {
     // Get booking data from window

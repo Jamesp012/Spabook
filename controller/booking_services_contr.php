@@ -31,10 +31,12 @@ if (isset($_POST['action'])) {
             $name = $_POST['name'];
             $description = $_POST['description'];
             $price = $_POST['price'];
-            $duration = $_POST['duration'];
+            $duration = $_POST['duration'] ?? 0;
+            $type = $_POST['type'] ?? 'service';
+            $stock = $_POST['stock'] ?? 0;
             $cleanName = str_replace(' ', '_', $name);
             $imageupload = uploadProfileImage($imagebase64, $cleanName, 'services_images');
-            echo $bookingServices->updateService($php_fetch, $php_update, 'services', $serviceid, $imageupload, $name, $description, $price, $duration);
+            echo $bookingServices->updateService($php_fetch, $php_update, 'services', $serviceid, $imageupload, $name, $description, $price, $duration, $type, $stock);
             break;
 
         case 'delete_service':

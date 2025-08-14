@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 if ($therapist && isset($therapist['therapistid'])) {
                     // Get assigned services for this therapist
-                    $assigned_services = $TherapistModel->getTherapistServices($therapist['therapistid']);
+                    $assigned_services = $TherapistModel->getTherapistServices($therapist['therapistid'], $php_fetch);
                     $therapist['assigned_services'] = $assigned_services;
                     $therapist['service_ids'] = array_column($assigned_services, 'id');
                 }
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 response(['status' => 'error', 'message' => 'Therapist ID is required']);
             }
             try {
-                $services = $TherapistModel->getTherapistServices($therapist_id);
+                $services = $TherapistModel->getTherapistServices($therapist_id, $php_fetch);
                 response(['services' => $services, 'service_ids' => array_column($services, 'id')]);
             } catch (Exception $e) {
                 error_log("Error in get_therapist_services: " . $e->getMessage());
@@ -87,11 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         case 'add_therapist':
             try {
-                // Log all POST data for debugging
-                error_log("=== ADD THERAPIST REQUEST ===");
-                error_log("Full POST data: " . print_r($_POST, true));
-                error_log("Request method: " . $_SERVER['REQUEST_METHOD']);
-                error_log("Content type: " . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+
+
                 
                 $therapist_name = $_POST['therapist_name'] ?? null;
                 $service_ids = $_POST['service_ids'] ?? [];
@@ -146,12 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 // Prepare data for model - ONLY fields that exist in actual schema
-                // Schema: therapistid, therapist_name, service_id, therapist_desc
+                // Schema: therapistid, therapist_name, service_id, therapist_desc, rate
                 $data = [
                     'therapist_name' => trim($therapist_name),
                     'therapist_desc' => trim($therapist_desc),
-                    'service_id' => $service_ids[0] // Use first service ID (schema only supports single service_id)
-                    // Removed all non-existent fields: specialties, experience_years, certification, phone, photo, active
+                    'service_id' => implode(',', $service_ids), // Store multiple service IDs as comma-separated string
+                    'rate' => isset($_POST['rate']) ? intval($_POST['rate']) : 0
                 ];
                 
                 error_log("Final data for model: " . print_r($data, true));
@@ -189,18 +186,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $service_ids = [$_POST['service_id']];
             }
             
+            // Ensure service_ids is an array and handle various formats
+            if (!is_array($service_ids)) {
+                if (is_string($service_ids) && strpos($service_ids, ',') !== false) {
+                    $service_ids = explode(',', $service_ids);
+                } else {
+                    $service_ids = [$service_ids];
+                }
+            }
+            
+            // Clean service IDs
+            $service_ids = array_filter(array_map('trim', array_map('intval', $service_ids)), function($id) {
+                return $id > 0;
+            });
+            
             if (!$therapist_id || !$therapist_name) {
                 response(['status' => 'error', 'message' => 'Therapist ID and name are required']);
             }
             
+            if (empty($service_ids)) {
+                response(['status' => 'error', 'message' => 'At least one service must be selected']);
+            }
+            
             try {
                 // Update data - ONLY fields that exist in actual schema
-                // Schema: therapistid, therapist_name, service_id, therapist_desc
+                // Schema: therapistid, therapist_name, service_id, therapist_desc, rate
                 $data = [
                     'therapist_name' => $therapist_name,
                     'therapist_desc' => $therapist_desc,
-                    'service_id' => !empty($service_ids) ? $service_ids[0] : null // Use first service ID only
-                    // Removed all non-existent fields: specialties, experience_years, certification, phone, photo, active
+                    'service_id' => implode(',', $service_ids), // Store multiple service IDs as comma-separated string
+                    'rate' => isset($_POST['rate']) ? intval($_POST['rate']) : 0
                 ];
                 $result = $TherapistModel->updateTherapist($php_update, 'therapist', $therapist_id, $data);
                 response(json_decode($result, true));
@@ -258,6 +273,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 response(json_decode($result, true));
             } catch (Exception $e) {
                 error_log("Error in get_available_therapists: " . $e->getMessage());
+                response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
+            }
+            break;
+
+        case 'update_therapist_status':
+            $therapist_id = $_POST['therapist_id'] ?? null;
+            $active = $_POST['active'] ?? null;
+            
+            if (!$therapist_id || $active === null) {
+                response(['status' => 'error', 'message' => 'Therapist ID and active status are required']);
+            }
+            
+            $activeStatus = ($active === 'true' || $active === '1' || $active === 1) ? 1 : 0;
+            
+            try {
+                // Get current therapist data
+                $therapist = $php_fetch('therapist', '*', ['therapistid' => $therapist_id]);
+                if (!$therapist || count($therapist) === 0) {
+                    response(['status' => 'error', 'message' => 'Therapist not found']);
+                }
+                
+                $therapistData = $therapist[0];
+                $therapistName = $therapistData['therapist_name'] ?? 'Unknown';
+                $currentDesc = $therapistData['therapist_desc'] ?? '';
+                
+                error_log("=== THERAPIST STATUS UPDATE DEBUG ===");
+                error_log("Therapist ID: $therapist_id");
+                error_log("New Active Status: $activeStatus");
+                error_log("Current Description: '$currentDesc'");
+                
+                // Update the description to indicate status
+                $statusNote = $activeStatus ? '' : ' [INACTIVE]';
+                
+                // Remove any existing status markers first
+                $cleanDesc = preg_replace('/ \[INACTIVE\]$/', '', $currentDesc);
+                $cleanDesc = trim($cleanDesc);
+                
+                // Add new status marker if needed
+                $newDesc = $cleanDesc . $statusNote;
+                
+                error_log("Clean Description: '$cleanDesc'");
+                error_log("New Description: '$newDesc'");
+                
+                // Update the database
+                $updateData = ['therapist_desc' => $newDesc];
+                $updated = $php_update('therapist', $updateData, ['therapistid' => $therapist_id]);
+                
+                error_log("Update Data: " . print_r($updateData, true));
+                error_log("Update Result: " . print_r($updated, true));
+                
+                // Check if update was successful
+                if ($updated !== null && (!isset($updated['error']))) {
+                    response([
+                        'status' => 'success',
+                        'message' => "Therapist '{$therapistName}' " . ($activeStatus ? 'activated' : 'deactivated') . " successfully",
+                        'debug_info' => [
+                            'old_desc' => $currentDesc,
+                            'new_desc' => $newDesc,
+                            'update_result' => $updated
+                        ]
+                    ]);
+                } else {
+                    error_log("Update failed: " . print_r($updated, true));
+                    response([
+                        'status' => 'error', 
+                        'message' => 'Failed to update therapist status in database',
+                        'debug_info' => [
+                            'update_result' => $updated
+                        ]
+                    ]);
+                }
+                
+            } catch (Exception $e) {
+                error_log("Error in update_therapist_status: " . $e->getMessage());
+                error_log("Stack trace: " . $e->getTraceAsString());
                 response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
             }
             break;

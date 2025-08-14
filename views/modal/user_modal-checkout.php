@@ -46,7 +46,7 @@ $(document).ready(function() {
     }, 100);
 });
 
-let checkoutData = {
+var checkoutData = {
     services: [],
     totalAmount: 0
 };

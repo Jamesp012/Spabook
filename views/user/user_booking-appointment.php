@@ -97,7 +97,6 @@
 
                 let html = '';
                 result.forEach(service => {
-                    // Determine the correct image source format
                     let imageSrc;
                     if (service.service_picture.startsWith('http')) {
                         // It's a URL, use it directly
@@ -111,7 +110,7 @@
                     }
 
                     html += `
-                        <div class="service-card" data-service-id="${service.service_id}" data-service-name="${service.service_name}" data-service-price="${service.price}" data-service-description="${service.description}" data-service-image="${imageSrc}">
+                        <div class="service-card" data-service-id="${service.id}" data-service-name="${service.service_name}" data-service-price="${service.price}" data-service-description="${service.description}" data-service-image="${imageSrc}">
                             <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden position-relative">
                                 <img src="${imageSrc}"
                                     class="card-img-top img-fluid"
