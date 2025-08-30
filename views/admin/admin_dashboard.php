@@ -241,7 +241,7 @@
         <h5 class="mb-0" id="active_dashboard">Dashboard Overview</h5>
       </div>
     </div>
-    <div class="card-body">
+    <div class="card-body" style="max-height: 45vh; overflow-y: auto;">
       <!-- Loading State -->
       <div id="dashboard_loading" class="text-center py-5">
         <div class="spinner-border text-primary" role="status">
@@ -252,6 +252,19 @@
       
       <!-- Data Table Container -->
       <div id="dashboard_table_container" style="display: none;">
+        <!-- Items per page selector -->
+        <div class="d-flex justify-content-end mb-3">
+          <div class="form-inline">
+            <label for="itemsPerPage" class="me-2">Items per page:</label>
+            <select id="itemsPerPage" class="form-select form-select-sm" style="width: auto;">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+        
         <table id="dashboard_data_table" class="table table-striped w-100">
           <thead class="table-secondary" id="table_header">
             <!-- Dynamic headers will be inserted here -->
@@ -264,10 +277,24 @@
             </tbody>
           </table>
         </div>
+        <!-- Pagination will be inserted here -->
       </div>
       
       <!-- Recovery Actions Container -->
       <div id="recovery_actions_container" style="display: none;">
+        <!-- Items per page selector for recovery -->
+        <div class="d-flex justify-content-end mb-3">
+          <div class="form-inline">
+            <label for="recoveryItemsPerPage" class="me-2">Items per page:</label>
+            <select id="recoveryItemsPerPage" class="form-select form-select-sm" style="width: auto;">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          </div>
+        </div>
+        
         <div class="row">
           <div class="col-md-6">
             <div class="card border-warning">
