@@ -1,5 +1,5 @@
 <!-- Booking requests will be loaded here dynamically -->
-<div id="booking-requests-container">
+<div id="booking-requests-container" style="max-height: 80vh; overflow-y: auto;">
   <div class="text-center p-4">
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
@@ -16,7 +16,10 @@
     $(document).on('click', '.btn-view', function (e) {
       e.preventDefault();
       const bookingid = $(this).data('bookingid');
-      showGlobalModal('./modal/admin_modal-booking-details.php', { bookingid: bookingid });
+      console.log('View button clicked for booking ID:', bookingid);
+      
+      // Use the new modal file in the admin/modal directory
+      showGlobalModal('modal/admin_modal-booking-details.php', { bookingid: bookingid });
     });
     
     // Add toast notification function
@@ -65,16 +68,35 @@
   });
   
   function loadBookingRequests() {
+    console.log('Loading booking requests...');
     $.ajax({
       url: '../controller/booking_contr.php',
       type: 'POST',
       data: { action: 'get_admin_booking_requests' },
       dataType: 'json',
       success: function(response) {
-        renderBookingRequests(response);
+        console.log('Booking requests response:', response);
+        
+        // Check if we have bookings in the response
+        if (response && response.bookings && Array.isArray(response.bookings)) {
+          renderBookingRequests(response.bookings);
+        } else if (response && response.status === 'nodata') {
+          // Handle no data case
+          $('#booking-requests-container').html(`
+            <div class="text-center p-4">
+              <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+              <h5 class="mt-3 text-muted">No Booking Requests</h5>
+              <p class="text-muted">There are no pending booking requests at the moment.</p>
+            </div>
+          `);
+        } else {
+          // Handle other response formats
+          renderBookingRequests(response);
+        }
       },
       error: function(xhr, status, error) {
         console.error('Error loading booking requests:', error);
+        console.error('Response text:', xhr.responseText);
         $('#booking-requests-container').html(`
           <div class="alert alert-danger text-center">
             <i class="bi bi-exclamation-triangle"></i>
@@ -88,7 +110,22 @@
   function renderBookingRequests(bookings) {
     const container = $('#booking-requests-container');
     
-    if (bookings.status === 'nodata' || bookings.length === 0) {
+    console.log('Booking requests data:', bookings);
+    
+    // Check if bookings is an object with status property
+    if (bookings && bookings.status === 'nodata') {
+      container.html(`
+        <div class="text-center p-4">
+          <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>
+          <h5 class="mt-3 text-muted">No Booking Requests</h5>
+          <p class="text-muted">There are no pending booking requests at the moment.</p>
+        </div>
+      `);
+      return;
+    }
+    
+    // Check if bookings is an array with length 0
+    if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
       container.html(`
         <div class="text-center p-4">
           <i class="bi bi-inbox" style="font-size: 3rem; color: #6c757d;"></i>

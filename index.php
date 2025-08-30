@@ -97,6 +97,11 @@
                         <div class="mb-3">
                             <p class="small text-dark mt-3 mb-0 text-start">Don't have an account? <a href="./views/sign_up.php"
                                     class="link-dark fw-bold">Sign up</a></p>
+                            <div class="text-center mt-3">
+                                <p class="small text-muted mb-1">
+                                    <i class="fas fa-info-circle me-1"></i>Staff can also login using this form
+                                </p>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -220,8 +225,8 @@
                     password,
                 });
                 if (error) {
+                    // Supabase auth failed; show error and do not attempt therapist login
                     Swal.close();
-                    // Show error message at the top of the form
                     $('#login-error').text('Invalid email or password').removeClass('d-none');
                 } else {
                     $('#login-error').addClass('d-none');

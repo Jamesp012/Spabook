@@ -32,11 +32,23 @@ if (isset($_POST['action'])) {
             $description = $_POST['description'];
             $price = $_POST['price'];
             $duration = $_POST['duration'] ?? 0;
-            $type = $_POST['type'] ?? 'service';
-            $stock = $_POST['stock'] ?? 0;
             $cleanName = str_replace(' ', '_', $name);
-            $imageupload = uploadProfileImage($imagebase64, $cleanName, 'services_images');
-            echo $bookingServices->updateService($php_fetch, $php_update, 'services', $serviceid, $imageupload, $name, $description, $price, $duration, $type, $stock);
+            
+            // Handle image update logic
+            if ($imagebase64 && strpos($imagebase64, 'data:') === 0) {
+                // New image uploaded (base64 data)
+                $imageupload = uploadProfileImage($imagebase64, $cleanName, 'services_images');
+                if ($imageupload === false) {
+                    echo json_encode('image_upload_failed');
+                    break;
+                }
+            } else {
+                // No new image or existing URL - keep the current image
+                $imageupload = $imagebase64; // Use existing image URL
+            }
+            
+            // Remove type and stock parameters since they don't exist in services table
+            echo $bookingServices->updateService($php_fetch, $php_update, 'services', $serviceid, $imageupload, $name, $description, $price, $duration);
             break;
 
         case 'delete_service':

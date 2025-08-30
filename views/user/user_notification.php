@@ -1,172 +1,46 @@
 <div class="notification-container">
-    <div class="notification-list">
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>Appointment Reminder:</b> You have a session scheduled for May 20, 2026 at 2:00 PM.
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Location:</b> SpaBook Wellness Center</div>
-                <div><b>Therapist:</b> Jane Doe</div>
-                <div><b>Notes:</b> Please arrive 10 minutes early for your appointment.</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>Progress Update:</b> Congratulations! You have completed your first treatment.
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Progress:</b> 1/5 sessions completed</div>
-                <div><b>Next Step:</b> Book your next session to continue your recovery.</div>
+    <div class="notification-header d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0"><i class="bi bi-bell me-2"></i>Notifications</h4>
+        <div>
+            <button id="markAllReadBtn" class="btn btn-sm btn-outline-primary me-2">
+                <i class="bi bi-check-all me-1"></i>Mark All as Read
+            </button>
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="notificationFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-funnel me-1"></i>Filter
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="notificationFilterDropdown">
+                    <li><a class="dropdown-item notification-filter active" data-filter="all" href="#">All Notifications</a></li>
+                    <li><a class="dropdown-item notification-filter" data-filter="unread" href="#">Unread Only</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item notification-filter" data-filter="info" href="#">Information</a></li>
+                    <li><a class="dropdown-item notification-filter" data-filter="success" href="#">Success</a></li>
+                    <li><a class="dropdown-item notification-filter" data-filter="warning" href="#">Warnings</a></li>
+                    <li><a class="dropdown-item notification-filter" data-filter="error" href="#">Errors</a></li>
+                </ul>
             </div>
         </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>Therapist Note:</b> Please remember to do your home exercises before your next visit.
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Exercise:</b> 10 min stretching, 2x daily</div>
-                <div><b>Tip:</b> Track your progress in the app for better results.</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
-        <div class="notification-item" onclick="toggleNotification(this)">
-            <button class="notification-close" onclick="closeNotification(event, this)">&times;</button>
-            <div>
-                <b>New Service:</b> Detox Massage is now available for booking!
-            </div>
-            <div class="notification-details">
-                <hr>
-                <div><b>Description:</b> A relaxing detox massage to help cleanse your body and mind.</div>
-                <div><b>Promo:</b> 10% off for first-time bookings this month!</div>
-            </div>
-        </div>
+    </div>
 
+    <div id="notificationList" class="notification-list">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading notifications...</p>
+        </div>
+    </div>
+    
+    <div id="loadMoreContainer" class="text-center mt-3 d-none">
+        <button id="loadMoreBtn" class="btn btn-outline-primary">
+            <i class="bi bi-arrow-down-circle me-1"></i>Load More
+        </button>
+    </div>
+    
+    <div id="emptyNotifications" class="text-center py-5 d-none">
+        <i class="bi bi-bell-slash text-muted" style="font-size: 3rem;"></i>
+        <h5 class="mt-3">No Notifications</h5>
+        <p class="text-muted">You don't have any notifications at the moment.</p>
     </div>
 </div>
 
@@ -195,6 +69,28 @@
         cursor: pointer;
         transition: box-shadow 0.2s;
         overflow: hidden;
+        border-left: 4px solid #6c757d; /* Default color */
+    }
+    
+    .notification-item.unread {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .notification-item.info {
+        border-left-color: #0d6efd; /* Bootstrap primary/info */
+    }
+    
+    .notification-item.success {
+        border-left-color: #198754; /* Bootstrap success */
+    }
+    
+    .notification-item.warning {
+        border-left-color: #ffc107; /* Bootstrap warning */
+    }
+    
+    .notification-item.error {
+        border-left-color: #dc3545; /* Bootstrap danger */
     }
 
     .notification-item:hover {
@@ -224,6 +120,13 @@
         background: #b48a6a;
         color: #fff;
     }
+    
+    .notification-time {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+        font-weight: normal;
+    }
 
     .notification-details {
         max-height: 0;
@@ -232,12 +135,21 @@
         transition: max-height 0.3s cubic-bezier(.4, 0, .2, 1), opacity 0.3s;
         font-size: 1rem;
         margin-top: 0;
+        font-weight: normal;
     }
 
     .notification-item.expanded .notification-details {
         max-height: 300px;
         opacity: 1;
         margin-top: 10px;
+    }
+    
+    .notification-metadata {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+        font-size: 0.9rem;
     }
 
     @media (max-width: 767.98px) {
@@ -262,15 +174,300 @@
 </style>
 
 <script>
-    function toggleNotification(item) {
-        // Prevent toggle if clicking the close button
-        if (event.target.classList.contains('notification-close')) return;
-        item.classList.toggle('expanded');
-    }
-
-    function closeNotification(event, btn) {
-        event.stopPropagation();
-        const item = btn.closest('.notification-item');
-        item.remove();
-    }
+    $(document).ready(function() {
+        // Variables
+        const userId = sessionStorage.getItem('user_id');
+        let currentPage = 1;
+        const pageSize = 10;
+        let currentFilter = 'all';
+        let hasMoreNotifications = true;
+        
+        // Initial load
+        loadNotifications();
+        
+        // Event handlers
+        $('#markAllReadBtn').on('click', markAllAsRead);
+        $('#loadMoreBtn').on('click', loadMoreNotifications);
+        $('.notification-filter').on('click', function(e) {
+            e.preventDefault();
+            $('.notification-filter').removeClass('active');
+            $(this).addClass('active');
+            currentFilter = $(this).data('filter');
+            currentPage = 1;
+            hasMoreNotifications = true;
+            loadNotifications(true);
+        });
+        
+        // Functions
+        function loadNotifications(reset = false) {
+            if (reset) {
+                $('#notificationList').html(`
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3">Loading notifications...</p>
+                    </div>
+                `);
+                $('#loadMoreContainer').addClass('d-none');
+                $('#emptyNotifications').addClass('d-none');
+            }
+            
+            const unreadOnly = currentFilter === 'unread';
+            
+            $.ajax({
+                url: '../controller/notification_contr.php',
+                type: 'POST',
+                data: {
+                    action: 'get_user_notifications',
+                    user_id: userId,
+                    limit: pageSize * currentPage,
+                    unread_only: unreadOnly
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const notifications = response.notifications;
+                        
+                        // Filter notifications if needed
+                        let filteredNotifications = notifications;
+                        if (['info', 'success', 'warning', 'error'].includes(currentFilter)) {
+                            filteredNotifications = notifications.filter(n => n.type === currentFilter);
+                        }
+                        
+                        if (filteredNotifications.length === 0) {
+                            $('#notificationList').empty();
+                            $('#emptyNotifications').removeClass('d-none');
+                            $('#loadMoreContainer').addClass('d-none');
+                            return;
+                        }
+                        
+                        $('#emptyNotifications').addClass('d-none');
+                        
+                        // Check if we have more notifications to load
+                        hasMoreNotifications = filteredNotifications.length >= pageSize * currentPage;
+                        
+                        if (hasMoreNotifications) {
+                            $('#loadMoreContainer').removeClass('d-none');
+                        } else {
+                            $('#loadMoreContainer').addClass('d-none');
+                        }
+                        
+                        // Render notifications
+                        renderNotifications(filteredNotifications);
+                    } else {
+                        console.error('Error loading notifications:', response.message);
+                        $('#notificationList').html(`
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                Error loading notifications. Please try again later.
+                            </div>
+                        `);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    $('#notificationList').html(`
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Error connecting to the server. Please check your connection and try again.
+                        </div>
+                    `);
+                }
+            });
+        }
+        
+        function loadMoreNotifications() {
+            if (!hasMoreNotifications) return;
+            
+            currentPage++;
+            loadNotifications();
+        }
+        
+        function renderNotifications(notifications) {
+            let html = '';
+            
+            notifications.forEach(notification => {
+                const unreadClass = notification.is_read ? '' : 'unread';
+                const typeClass = notification.type || 'info';
+                
+                let metadataHtml = '';
+                if (notification.metadata && Object.keys(notification.metadata).length > 0) {
+                    metadataHtml = `
+                        <div class="notification-metadata">
+                            ${renderMetadata(notification.metadata)}
+                        </div>
+                    `;
+                }
+                
+                html += `
+                    <div class="notification-item ${unreadClass} ${typeClass}" data-id="${notification.notificationid}" onclick="toggleNotification(this)">
+                        <button class="notification-close" onclick="deleteNotification(event, ${notification.notificationid})">&times;</button>
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>${notification.title}</div>
+                                ${!notification.is_read ? '<span class="badge bg-primary ms-2">New</span>' : ''}
+                            </div>
+                            <div class="notification-time">${notification.relative_time}</div>
+                        </div>
+                        <div class="notification-details">
+                            <hr>
+                            <div>${notification.message}</div>
+                            ${metadataHtml}
+                            <div class="text-end mt-3">
+                                <button class="btn btn-sm btn-outline-secondary mark-read-btn" onclick="markAsRead(event, ${notification.notificationid})">
+                                    <i class="bi bi-check-circle me-1"></i>Mark as Read
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            $('#notificationList').html(html);
+        }
+        
+        function renderMetadata(metadata) {
+            let html = '';
+            
+            for (const [key, value] of Object.entries(metadata)) {
+                // Format the key for display (capitalize, replace underscores with spaces)
+                const formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                
+                html += `<div><strong>${formattedKey}:</strong> ${value}</div>`;
+            }
+            
+            return html;
+        }
+        
+        function markAllAsRead() {
+            $.ajax({
+                url: '../controller/notification_contr.php',
+                type: 'POST',
+                data: {
+                    action: 'mark_all_as_read',
+                    user_id: userId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Reload notifications
+                        loadNotifications(true);
+                        
+                        // Show success message
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'All notifications marked as read',
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    } else {
+                        console.error('Error marking all as read:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
+        }
+        
+        // Expose functions to global scope
+        window.toggleNotification = function(item) {
+            // Prevent toggle if clicking the close button or mark as read button
+            if (event.target.classList.contains('notification-close') || 
+                event.target.closest('.mark-read-btn')) return;
+            
+            $(item).toggleClass('expanded');
+            
+            // If notification is unread and being expanded, mark it as read
+            if (!$(item).hasClass('unread')) return;
+            
+            const notificationId = $(item).data('id');
+            if ($(item).hasClass('expanded')) {
+                // Mark as read when expanded
+                $.ajax({
+                    url: '../controller/notification_contr.php',
+                    type: 'POST',
+                    data: {
+                        action: 'mark_as_read',
+                        notification_id: notificationId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            $(item).removeClass('unread');
+                            $(item).find('.badge').remove();
+                        }
+                    }
+                });
+            }
+        };
+        
+        window.markAsRead = function(event, notificationId) {
+            event.stopPropagation();
+            
+            $.ajax({
+                url: '../controller/notification_contr.php',
+                type: 'POST',
+                data: {
+                    action: 'mark_as_read',
+                    notification_id: notificationId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        const item = $(event.target).closest('.notification-item');
+                        item.removeClass('unread');
+                        item.find('.badge').remove();
+                        
+                        // Hide the mark as read button
+                        $(event.target).closest('.mark-read-btn').fadeOut();
+                    }
+                }
+            });
+        };
+        
+        window.deleteNotification = function(event, notificationId) {
+            event.stopPropagation();
+            
+            Swal.fire({
+                title: 'Delete Notification',
+                text: 'Are you sure you want to delete this notification?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '../controller/notification_contr.php',
+                        type: 'POST',
+                        data: {
+                            action: 'delete_notification',
+                            notification_id: notificationId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                // Remove the notification from the UI
+                                const item = $(event.target).closest('.notification-item');
+                                item.fadeOut(300, function() {
+                                    $(this).remove();
+                                    
+                                    // Check if we have any notifications left
+                                    if ($('.notification-item').length === 0) {
+                                        $('#emptyNotifications').removeClass('d-none');
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        };
+    });
 </script>

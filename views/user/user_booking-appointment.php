@@ -67,13 +67,33 @@
 
 
 <script>
+    // Load data when document is ready
     $(document).ready(function () {
         loadServices();
         loadBookingStatus();
         loadRecentServices();
     });
+    
+    // Also load data when this page becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            console.log('Page is now visible, reloading services');
+            loadServices();
+            loadBookingStatus();
+            loadRecentServices();
+        }
+    });
+    
+    // Create a global function to reload services that can be called from other pages
+    window.reloadBookingServices = function() {
+        loadServices();
+        loadBookingStatus();
+        loadRecentServices();
+    };
     // Views Script
-    function loadServices() {
+    // Make loadServices globally accessible
+    window.loadServices = function() {
+        console.log('Loading services...');
         $.ajax({
             url: '../controller/booking_services_contr.php',
             type: 'POST',
@@ -134,8 +154,9 @@
         });
     }
 
-    // Function to load booking status
-    function loadBookingStatus() {
+    // Function to load booking status - make it globally accessible
+    window.loadBookingStatus = function() {
+        console.log('Loading booking status...');
         const userId = sessionStorage.getItem('user_id');
         if (!userId) return;
 
@@ -192,8 +213,9 @@
         });
     }
 
-    // Function to load recent services
-    function loadRecentServices() {
+    // Function to load recent services - make it globally accessible
+    window.loadRecentServices = function() {
+        console.log('Loading recent services...');
         const userId = sessionStorage.getItem('user_id');
         if (!userId) return;
 

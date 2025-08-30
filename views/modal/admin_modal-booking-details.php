@@ -29,6 +29,18 @@ $(document).ready(function() {
 });
 
 function loadBookingDetails(bookingid) {
+  console.log('Loading booking details for ID:', bookingid);
+  
+  // Show loading state
+  $('#booking-details-content').html(`
+    <div class="text-center p-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading booking details...</p>
+    </div>
+  `);
+  
   $.ajax({
     url: '../controller/booking_contr.php',
     type: 'POST',
@@ -38,10 +50,12 @@ function loadBookingDetails(bookingid) {
     },
     dataType: 'json',
     success: function(response) {
+      console.log('Booking details response:', response);
+      
       if (response.status === 'error') {
         $('#booking-details-content').html(`
           <div class="alert alert-danger">
-            <i class="bi bi-exclamation-triangle"></i>
+            <i class="bi bi-exclamation-triangle me-2"></i>
             ${response.message || 'Failed to load booking details'}
           </div>
         `);
@@ -52,10 +66,24 @@ function loadBookingDetails(bookingid) {
     },
     error: function(xhr, status, error) {
       console.error('Error loading booking details:', error);
+      console.error('Status:', status);
+      console.error('Response text:', xhr.responseText);
+      
+      // Try to parse the error response
+      try {
+        if (xhr.responseText) {
+          const errorResponse = JSON.parse(xhr.responseText);
+          console.error('Parsed error response:', errorResponse);
+        }
+      } catch (e) {
+        console.error('Could not parse error response as JSON');
+      }
+      
       $('#booking-details-content').html(`
         <div class="alert alert-danger">
-          <i class="bi bi-exclamation-triangle"></i>
+          <i class="bi bi-exclamation-triangle me-2"></i>
           Failed to load booking details. Please try again.
+          <div class="mt-2 small text-muted">Error: ${error}</div>
         </div>
       `);
     }

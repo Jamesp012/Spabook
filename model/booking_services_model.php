@@ -103,24 +103,30 @@ class BookingServices
             return json_encode('duplicate'); // another service with same name exists
         }
 
-        // Proceed with update
+        // Proceed with update - only use fields that exist in the services table
         $update_data = [
             'service_name' => $name,
             'description' => $description,
             'price' => $price,
             'per_minute' => $duration,
-            'service_picture' => $image,
-            'type' => $type,
-            'stock' => $stock
+            'service_picture' => $image
         ];
         
-        $update_service = $php_update($table, $update_data, ['id' => $serviceid]);
+        try {
+            $update_service = $php_update($table, $update_data, ['id' => $serviceid]);
 
-        if (isset($update_service['error'])) {
-            return json_encode('error');
+            if (isset($update_service['error'])) {
+                // Log the specific error for debugging
+                error_log("Service update error: " . json_encode($update_service['error']));
+                return json_encode('database_error');
+            }
+
+            return json_encode('success');
+        } catch (Exception $e) {
+            // Log the exception for debugging
+            error_log("Service update exception: " . $e->getMessage());
+            return json_encode('exception_error');
         }
-
-        return json_encode('success');
     }
 
     function deleteService($php_delete, $table, $serviceid)

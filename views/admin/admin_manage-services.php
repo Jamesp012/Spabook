@@ -1,41 +1,99 @@
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid" >
+        <div class="row" style="max-height: 80vh; overflow-y: auto;" >
             <!-- Main Content -->
             <div class="col-md-12 px-md-4">
-                <!-- Services Grid -->
+                <!-- Services and Products Tab Header -->
                 <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="bi bi-grid me-1"></i>Services Collection
-                        </h6>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-sm" onclick="addServices()">
-                                <i class="bi bi-plus-circle me-1"></i>Add New Service
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadServices()">
-                                <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-                            </button>
-                        </div>
+                    <div class="card-header py-3">
+                        <ul class="nav nav-tabs card-header-tabs" id="servicesProductsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab" aria-controls="services" aria-selected="true">
+                                    <i class="bi bi-leaf me-2"></i>Services
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab" aria-controls="products" aria-selected="false">
+                                    <i class="bi bi-box-seam me-2"></i>Products
+                                </button>
+                            </li>
+                        </ul>
                     </div>
+                    
                     <div class="card-body">
-                        <!-- Loading State -->
-                        <div id="loadingServices" class="text-center py-5">
-                            <div class="spinner-border text-primary mb-3" role="status">
-                                <span class="visually-hidden">Loading...</span>
+                        <div class="tab-content" id="servicesProductsTabContent">
+                            <!-- SERVICES TAB -->
+                            <div class="tab-pane fade show active" id="services" role="tabpanel" aria-labelledby="services-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="bi bi-grid me-1"></i>Services Collection
+                                    </h6>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary btn-sm" onclick="addServices()">
+                                            <i class="bi bi-plus-circle me-1"></i>Add New Service
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadServices()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Loading State -->
+                                <div id="loadingServices" class="text-center py-5">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="text-muted">Loading services...</div>
+                                </div>
+                                
+                                <!-- Services Container -->
+                                <div class="row g-4" id="services_container" style="display: none;">
+                                    <!-- Services will be loaded here -->
+                                </div>
+                                
+                                <!-- No Data State -->
+                                <div id="noServices" class="text-center py-5" style="display: none;">
+                                    <i class="bi bi-leaf fs-1 text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Services Found</h5>
+                                    <p class="text-muted">Start by adding your first service to the collection.</p>
+                                </div>
                             </div>
-                            <div class="text-muted">Loading services...</div>
-                        </div>
-                        
-                        <!-- Services Container -->
-                        <div class="row g-4" id="services_container" style="display: none;">
-                            <!-- Services will be loaded here -->
-                        </div>
-                        
-                        <!-- No Data State -->
-                        <div id="noServices" class="text-center py-5" style="display: none;">
-                            <i class="bi bi-leaf fs-1 text-muted mb-3"></i>
-                            <h5 class="text-muted">No Services Found</h5>
-                            <p class="text-muted">Start by adding your first service to the collection.</p>
+                            
+                            <!-- PRODUCTS TAB -->
+                            <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="m-0 font-weight-bold text-success">
+                                        <i class="bi bi-box-seam me-1"></i>Products Collection
+                                    </h6>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-success btn-sm" onclick="addProducts()">
+                                            <i class="bi bi-plus-circle me-1"></i>Add New Product
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadProducts()">
+                                            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Loading State -->
+                                <div id="loadingProducts" class="text-center py-5">
+                                    <div class="spinner-border text-success mb-3" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <div class="text-muted">Loading products...</div>
+                                </div>
+                                
+                                <!-- Products Container -->
+                                <div class="row g-4" id="products_container" style="display: none;">
+                                    <!-- Products will be loaded here -->
+                                </div>
+                                
+                                <!-- No Data State -->
+                                <div id="noProducts" class="text-center py-5" style="display: none;">
+                                    <i class="bi bi-box-seam fs-1 text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Products Found</h5>
+                                    <p class="text-muted">Start by adding your first product to the collection.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,12 +102,27 @@
     </div>
 
 <script>
-    let servicesData = [];
+    // Use window to avoid redeclaration errors when modal reloads
+    window.servicesData = window.servicesData || [];
+    window.productsData = window.productsData || [];
     
-    $(document).ready(function() {
-        loadServices();
-    });
+    // Prevent multiple initialization
+    if (!window.servicesProductsPageInitialized) {
+        window.servicesProductsPageInitialized = true;
+        
+        $(document).ready(function() {
+            loadServices();
+            
+            // Load products when tab is clicked
+            $('#products-tab').on('click', function() {
+                if (window.productsData.length === 0) {
+                    loadProducts();
+                }
+            });
+        });
+    }
 
+    // ============= SERVICES FUNCTIONS =============
     function loadServices() {
         // Show loading state
         $('#loadingServices').show();
@@ -68,9 +141,9 @@
                 
                 if (result === 'nodata' || !result || result.length === 0) {
                     $('#noServices').show();
-                    servicesData = [];
+                    window.servicesData = [];
                 } else {
-                    servicesData = result;
+                    window.servicesData = result;
                     renderServices(result);
                     $('#services_container').show();
                 }
@@ -97,7 +170,7 @@
 
             html += `
                 <div class="col-xl-4 col-lg-6 col-md-6 mb-4" data-service-id="${service.id}">
-                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative service-card">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative service-card border-primary">
                         <div class="position-relative">
                             <img src="${imageSrc}" 
                                 class="card-img-top" 
@@ -182,15 +255,146 @@
             }
         });
     }
+
+    // ============= PRODUCTS FUNCTIONS =============
+    function loadProducts() {
+        // Show loading state
+        $('#loadingProducts').show();
+        $('#products_container').hide();
+        $('#noProducts').hide();
+        
+        $.ajax({
+            url: '../controller/product_contr.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'fetch_products'
+            },
+            success: function(result) {
+                $('#loadingProducts').hide();
+                
+                if (result.status === 'success' && result.data && result.data.length > 0) {
+                    window.productsData = result.data;
+                    renderProducts(result.data);
+                    $('#products_container').show();
+                } else {
+                    $('#noProducts').show();
+                    window.productsData = [];
+                }
+            },
+            error: function() {
+                $('#loadingProducts').hide();
+                $('#noProducts').show();
+                Swal.fire('Error!', 'Failed to load products.', 'error');
+            }
+        });
+    }
+    
+    function renderProducts(products) {
+        let html = '';
+        products.forEach(product => {
+            let imageSrc = product.product_image || '../vendor/images/default_product.png';
+            if (product.product_image && !product.product_image.startsWith('http') && !product.product_image.startsWith('data:image')) {
+                imageSrc = `data:image/png;base64,${product.product_image}`;
+            }
+
+            html += `
+                <div class="col-xl-4 col-lg-6 col-md-6 mb-4" data-product-id="${product.productid}">
+                    <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden position-relative product-card border-success">
+                        <div class="position-relative">
+                            <img src="${imageSrc}" 
+                                class="card-img-top" 
+                                style="height: 220px; object-fit: cover;" 
+                                alt="${product.product_name}"
+                                onerror="this.src='../vendor/images/default_product.png'">
+                            <div class="position-absolute bottom-0 start-0 end-0 bg-gradient-dark p-2">
+                                <span class="badge bg-success">${product.product_category}</span>
+                                <span class="badge bg-info ms-1">Stock: ${product.stock_quantity}</span>
+                            </div>
+                            <!-- Action Buttons - Top Right -->
+                            <div class="position-absolute top-0 end-0 p-2">
+                                <div class="d-flex flex-column gap-2">
+                                    <button type="button" class="btn btn-light btn-action" onclick="editProduct(${product.productid})" title="Edit Product">
+                                        <i class="bi bi-pencil-square text-success"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-light btn-action" onclick="deleteProduct(${product.productid})" title="Delete Product">
+                                        <i class="bi bi-trash3 text-danger"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title mb-2 text-dark">${product.product_name}</h5>
+                            <p class="card-text text-muted small mb-3" style="line-height: 1.4;">
+                                ${product.product_description ? (product.product_description.length > 80 ? product.product_description.substring(0, 80) + '...' : product.product_description) : 'No description available'}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="h5 text-success fw-bold mb-0">₱${parseFloat(product.product_price).toLocaleString()}</span>
+                                    <small class="text-muted d-block">per item</small>
+                                </div>
+                                <div class="text-end">
+                                    <small class="text-muted">Stock</small>
+                                    <div class="fw-semibold ${product.stock_quantity < 10 ? 'text-warning' : 'text-success'}">${product.stock_quantity}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        $('#products_container').html(html);
+    }
+
+    function addProducts() {
+        showGlobalModal('modal/admin_modal-manage-products.php');
+    }
+
+    function editProduct(id) {
+        showGlobalModal('modal/admin_modal-manage-products.php?productid=' + id);
+    }
+
+    function deleteProduct(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This product will be permanently deleted.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Delete'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../controller/product_contr.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'delete_product',
+                        productid: id
+                    },
+                    success: function(response) {
+                        if (response.status === 'success') {
+                            Swal.fire('Deleted!', 'The product has been deleted.', 'success');
+                            loadProducts();
+                        } else {
+                            Swal.fire('Error!', 'Failed to delete the product.', 'error');
+                        }
+                    }
+                });
+            }
+        });
+    }
 </script>
 
 <style>
-    .service-card {
+    .service-card, .product-card {
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         border-width: 2px !important;
     }
     
-    .service-card:hover {
+    .service-card:hover, .product-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
     }
@@ -215,11 +419,43 @@
         transition: transform 0.3s ease;
     }
     
-    .service-card:hover .card-img-top {
+    .service-card:hover .card-img-top,
+    .product-card:hover .card-img-top {
         transform: scale(1.05);
     }
     
-    /* Custom scrollbar for services container */
+    .btn-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.9;
+    }
+    
+    .btn-action:hover {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-radius: 0;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background-color: transparent;
+        border-bottom: 3px solid #0d6efd;
+        font-weight: 600;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        background-color: rgba(0,0,0,0.05);
+    }
+    
+    /* Custom scrollbar for containers */
     .card-body {
         scrollbar-width: thin;
         scrollbar-color: #dee2e6 transparent;
@@ -242,75 +478,14 @@
         background: #adb5bd;
     }
     
-    /* Loading animation */
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-    
-    .spinner-border {
-        animation: pulse 2s infinite;
-    }
-    
-    /* Badge styling */
-    .badge {
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-    
-    /* Action Buttons Styling - Top Right Overlay */
-    .btn-action {
-        width: 32px;
-        height: 32px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(4px);
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .btn-action:hover {
-        transform: scale(1.1);
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-    
-    .btn-action i {
-        font-size: 0.875rem;
-    }
-    
-    .btn-action:focus {
-        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
-    }
-    
-    /* Ensure proper column layout for action buttons only */
-    .position-absolute .d-flex.flex-column {
-        align-items: center;
-    }
-
-    /* Responsive adjustments */
     @media (max-width: 768px) {
-        .service-card:hover {
-            transform: none;
+        .btn-group {
+            flex-direction: column;
         }
         
-        .card-img-top {
-            height: 180px !important;
-        }
-        
-        .btn-action {
-            width: 36px;
-            height: 36px;
-        }
-        
-        .btn-action:hover {
-            transform: none;
+        .btn-group .btn {
+            border-radius: 0.375rem !important;
+            margin-bottom: 0.25rem;
         }
     }
 </style>

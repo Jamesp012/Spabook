@@ -1,6 +1,6 @@
 <!-- Accepted bookings will be loaded here dynamically -->
-<div id="booking-accepted-container">
-  <div class="text-center p-4">
+<div id="booking-accepted-container" style="max-height: 80vh; overflow-y: auto;">
+  <div class="text-center p-4" >
     <div class="spinner-border text-primary" role="status">
       <span class="visually-hidden">Loading...</span>
     </div>
@@ -12,25 +12,45 @@
   $(document).ready(function () {
     loadAcceptedBookings();
     
-    // Handle View button click
-    $(document).on('click', '.btn-view', function (e) {
+    // Handle Manage Services button click
+    $(document).on('click', '.btn-manage-services', function (e) {
       e.preventDefault();
       const bookingid = $(this).data('bookingid');
-      showGlobalModal('./modal/admin_modal-booking-details.php', { bookingid: bookingid });
+      console.log('🔧 Opening service management for booking:', bookingid);
+      showGlobalModal('../modal/admin_modal-booking-services.php', { bookingid: bookingid });
     });
   });
   
   function loadAcceptedBookings() {
+    console.log('Loading accepted bookings...');
     $.ajax({
       url: '../controller/booking_contr.php',
       type: 'POST',
       data: { action: 'get_admin_booking_accepted' },
       dataType: 'json',
       success: function(response) {
-        renderAcceptedBookings(response);
+        console.log('Accepted bookings response:', response);
+        
+        // Check if we have bookings in the response
+        if (response && response.bookings && Array.isArray(response.bookings)) {
+          renderAcceptedBookings(response.bookings);
+        } else if (response && response.status === 'nodata') {
+          // Handle no data case
+          $('#booking-accepted-container').html(`
+            <div class="text-center p-4">
+              <i class="bi bi-check-circle" style="font-size: 3rem; color: #198754;"></i>
+              <h5 class="mt-3 text-muted">No Accepted Bookings</h5>
+              <p class="text-muted">There are no accepted bookings at the moment.</p>
+            </div>
+          `);
+        } else {
+          // Handle other response formats
+          renderAcceptedBookings(response);
+        }
       },
       error: function(xhr, status, error) {
         console.error('Error loading accepted bookings:', error);
+        console.error('Response text:', xhr.responseText);
         $('#booking-accepted-container').html(`
           <div class="alert alert-danger text-center">
             <i class="bi bi-exclamation-triangle"></i>
@@ -44,7 +64,22 @@
   function renderAcceptedBookings(bookings) {
     const container = $('#booking-accepted-container');
     
-    if (bookings.status === 'nodata' || bookings.length === 0) {
+    console.log('Accepted bookings data:', bookings);
+    
+    // Check if bookings is an object with status property
+    if (bookings && bookings.status === 'nodata') {
+      container.html(`
+        <div class="text-center p-4">
+          <i class="bi bi-check-circle" style="font-size: 3rem; color: #198754;"></i>
+          <h5 class="mt-3 text-muted">No Accepted Bookings</h5>
+          <p class="text-muted">There are no accepted bookings at the moment.</p>
+        </div>
+      `);
+      return;
+    }
+    
+    // Check if bookings is an array with length 0
+    if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
       container.html(`
         <div class="text-center p-4">
           <i class="bi bi-check-circle" style="font-size: 3rem; color: #198754;"></i>
@@ -81,7 +116,10 @@
             </div>
             <!-- Action Buttons -->
             <div class="col-auto d-flex flex-row gap-2">
-              <button class="btn btn-primary btn-view px-4" data-bookingid="${booking.bookingid}">View</button>
+              <button class="btn btn-primary btn-manage-services px-4" data-bookingid="${booking.bookingid}">
+                <i class="bi bi-list-check me-1"></i>
+                Manage Services
+              </button>
             </div>
           </div>
           <!-- Mobile/Tablet Compact Version -->
@@ -103,7 +141,10 @@
             </div>
             <!-- Action Buttons -->
             <div class="d-flex flex-row flex-sm-column gap-1 ms-sm-2 mt-2 mt-sm-0">
-              <button class="btn btn-primary btn-view btn-sm px-3" data-bookingid="${booking.bookingid}">View</button>
+              <button class="btn btn-primary btn-manage-services btn-sm px-3" data-bookingid="${booking.bookingid}">
+                <i class="bi bi-list-check me-1"></i>
+                Services
+              </button>
             </div>
           </div>
         </div>

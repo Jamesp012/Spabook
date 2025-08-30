@@ -14,7 +14,7 @@
                 <a href="#" class="app_sidebar_link" data-content="user_progress-tracker.php"><i class="pe-2 fa-solid fa-arrow-up-right-dots"></i>Progress Tracker</a>
             </li>
             <li class="app_sidebar_item">
-                <a href="#" class="app_sidebar_link" data-content="user_services.php"><i class="pe-2 fa-solid fa-hand-sparkles"></i>Services</a>
+                <a href="#" class="app_sidebar_link" data-content="user_services.php"><i class="pe-2 fa-solid fa-hand-sparkles"></i>Services & Products</a>
             </li>
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_history.php"><i class="pe-2 bi bi-clock-history"></i>History</a>

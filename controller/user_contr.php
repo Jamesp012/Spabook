@@ -1,4 +1,9 @@
 <?php
+// Ensure session is started for all user operations
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Run the test
 if (isset($_POST['action'])) {
     date_default_timezone_set('Asia/Manila');
@@ -14,6 +19,53 @@ if (isset($_POST['action'])) {
         case 'login':
             $id = trim($_POST['id']);
             echo $User->login($php_fetch, 'users', $id);
+            break;
+
+        case 'therapist_login':
+            echo json_encode(['error' => 'Endpoint removed']);
+            break;
+
+        case 'get_current_user':
+            // Get current user ID from session
+            if (isset($_SESSION['user_id'])) {
+                echo json_encode(['status' => 'success', 'user_id' => $_SESSION['user_id']]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'No active session']);
+            }
+            break;
+
+        case 'update_user_role':
+            $user_id = trim($_POST['id']);
+            $new_role = trim($_POST['role']);
+            echo $User->updateUserRole($php_update, 'users', $user_id, $new_role);
+            break;
+
+        case 'fetch_unified_users':
+            echo $User->fetchUnifiedUsers($php_fetch, 'users');
+            break;
+
+        case 'delete_user':
+            $user_id = trim($_POST['user_id']);
+            echo $User->deleteUser($php_update, 'users', $user_id);
+            break;
+
+        case 'add_therapist_user':
+            $first_name = trim($_POST['first_name']);
+            $last_name = trim($_POST['last_name']);
+            $email = trim($_POST['email']);
+            $password = trim($_POST['password']);
+            $contact = trim($_POST['contact_number'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+            $specialties = trim($_POST['specialties'] ?? '');
+            $experience = intval($_POST['experience'] ?? 0);
+            $certification = trim($_POST['certification'] ?? '');
+            $bio = trim($_POST['bio'] ?? '');
+            $is_active = isset($_POST['is_active']);
+
+            echo $User->addTherapistUser(
+                $php_insert, 'users', $first_name, $last_name, $email, $password,
+                $contact, $address, $specialties, $experience, $certification, $bio, $is_active
+            );
             break;
 
         case 'get_user_profile':

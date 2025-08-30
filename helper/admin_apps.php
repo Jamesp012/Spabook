@@ -22,13 +22,16 @@
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-check2-square"></i>Booking Accepted</a>
             </li>
             <li class="app_sidebar_item" data-content="admin_manage-services.php" id="admin_manage_services">
-                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-leaf"></i>Manage Services</a>
-            </li>
-            <li class="app_sidebar_item" data-content="admin_manage-therapists.php" id="admin_manage_therapists">
-                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people-fill"></i>Manage Therapists</a>
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-leaf"></i>Manage Services & Products</a>
             </li>
             <li class="app_sidebar_item" data-content="admin_manage-users.php" id="admin_manage_users">
-                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people"></i>Manage Users</a>
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people"></i>User Management</a>
+            </li>
+            <li class="app_sidebar_item" data-content="admin_sales_report.php" id="admin_sales_report">
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-graph-up-arrow"></i>Sales Report</a>
+            </li>
+            <li class="app_sidebar_item" data-content="admin_billing.php" id="admin_billing">
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-receipt"></i>Billing</a>
             </li>
         </ul>
     </div>
