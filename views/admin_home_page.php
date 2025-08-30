@@ -422,3 +422,54 @@
         };
     });
 </script>
+
+<style>
+    /* Responsive Table Heights */
+    .table-body-scroll {
+        border-top: 1px solid #dee2e6;
+        overflow-y: auto;
+        /* Dynamic height: Full viewport minus header, nav, footer, and padding */
+        max-height: calc(100vh - 200px);
+        /* Minimum height to prevent too small tables */
+        min-height: 300px;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767px) {
+        .table-body-scroll {
+            /* Smaller height on mobile to save space */
+            max-height: calc(100vh - 250px);
+            min-height: 250px;
+        }
+    }
+    
+    @media (min-width: 1400px) {
+        .table-body-scroll {
+            /* More space on large screens */
+            max-height: calc(100vh - 180px);
+            min-height: 400px;
+        }
+    }
+    
+    .table-body-scroll .table {
+        margin-bottom: 0;
+    }
+    
+    .table-body-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .table-body-scroll::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+    
+    .table-body-scroll::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+    
+    .table-body-scroll::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+</style>

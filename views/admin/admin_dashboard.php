@@ -98,6 +98,85 @@
     width: 1rem;
     height: 1rem;
   }
+  
+  /* Pagination customization */
+  .pagination {
+    margin-top: 1rem;
+    margin-bottom: 0;
+  }
+  
+  .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+  
+  .page-link {
+    color: #0d6efd;
+  }
+  
+  .page-link:hover {
+    color: #0a58ca;
+  }
+  
+  @media (max-width: 768px) {
+    .pagination {
+      justify-content: center;
+    }
+    
+    .page-link {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+  }
+  
+  /* Responsive Table Heights */
+  .table-body-scroll {
+    border-top: 1px solid #dee2e6;
+    overflow-y: auto;
+    /* Dynamic height: Full viewport minus header, nav, footer, and padding */
+    max-height: calc(100vh - 200px);
+    /* Minimum height to prevent too small tables */
+    min-height: 300px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 767px) {
+    .table-body-scroll {
+      /* Smaller height on mobile to save space */
+      max-height: calc(100vh - 250px);
+      min-height: 250px;
+    }
+  }
+  
+  @media (min-width: 1400px) {
+    .table-body-scroll {
+      /* More space on large screens */
+      max-height: calc(100vh - 180px);
+      min-height: 400px;
+    }
+  }
+  
+  .table-body-scroll .table {
+    margin-bottom: 0;
+  }
+  
+  .table-body-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .table-body-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .table-body-scroll::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+  
+  .table-body-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
 </style>
 
 <div class="dashboard-view">
@@ -177,10 +256,14 @@
           <thead class="table-secondary" id="table_header">
             <!-- Dynamic headers will be inserted here -->
           </thead>
-          <tbody id="table_body">
-            <!-- Dynamic data will be inserted here -->
-          </tbody>
         </table>
+        <div class="table-body-scroll">
+          <table class="table table-striped w-100">
+            <tbody id="table_body">
+              <!-- Dynamic data will be inserted here -->
+            </tbody>
+          </table>
+        </div>
       </div>
       
       <!-- Recovery Actions Container -->
