@@ -1,0 +1,18 @@
+Table: booking_details
+Data: Array
+(
+    [booking_id] => 7
+    [service_id] => 75
+    [quantity] => 1
+    [price] => 1000
+    [therapist_id] => 
+    [person_number] => 
+    [booking_date] => 2025-08-18
+    [booking_time] => 10:00
+)
+
+Result: Array
+(
+    [error] => HTTP Error: 400
+    [response] => {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'booking_date' column of 'booking_details' in the schema cache"}
+)
