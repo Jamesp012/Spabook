@@ -1,7 +1,7 @@
 <?php
 require_once '../config/credentials.php';
-$headers = getallheaders();
-$jwt = str_replace('Bearer ', '', $headers['Authorization'] ?? '');
+$body = json_decode(file_get_contents('php://input'), true);
+$jwt = $body['token'] ?? '';
 
 if (!$jwt) {
     http_response_code(401);
@@ -21,8 +21,6 @@ $response = curl_exec($ch);
 curl_close($ch);
 
 $user = json_decode($response, true);
-
-
 
 if (isset($user['error'])) {
     http_response_code(401);

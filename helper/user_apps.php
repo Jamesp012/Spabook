@@ -14,7 +14,7 @@
                 <a href="#" class="app_sidebar_link" data-content="user_progress-tracker.php"><i class="pe-2 fa-solid fa-arrow-up-right-dots"></i>Progress Tracker</a>
             </li>
             <li class="app_sidebar_item">
-                <a href="#" class="app_sidebar_link" data-content="user_services.php"><i class="pe-2 fa-solid fa-hand-sparkles"></i>Services</a>
+                <a href="#" class="app_sidebar_link" data-content="user_services.php"><i class="pe-2 fa-solid fa-hand-sparkles"></i>Services & Products</a>
             </li>
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_history.php"><i class="pe-2 bi bi-clock-history"></i>History</a>
@@ -22,14 +22,48 @@
             <li class="app_sidebar_item">
                 <a href="#" class="app_sidebar_link" data-content="user_notification.php"><i class="pe-2 bi bi-bell"></i>Notification</a>
             </li>
+
         </ul>
     </div>
     <div class="footer-box px-4 pt-3 pb-4">
+        <ul class="list-unstyled px-2" id="profileSkeleton">
+            <li class="app_sidebar_item">
+                <a href="#" class="app_sidebar_link d-flex align-items-center placeholder-glow">
+                    <!-- Circle -->
+                    <span class="me-2 rounded-circle bg-secondary placeholder"
+                        style="width:32px;height:32px;display:inline-block;"></span>
+                    <!-- Name bar -->
+                    <span style="width:200px;">
+                        <span class="d-inline-block bg-secondary placeholder w-100 rounded-2"
+                            style="height:2rem;"></span>
+                    </span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- REAL PROFILE ─ hidden until data arrives -->
+        <ul class="list-unstyled px-2 d-none" id="profileItem">
+            <li class="app_sidebar_item">
+                <a href="#" class="app_sidebar_link d-flex align-items-center" data-content="user_profile.php">
+                    <span class="profile-img-nav rounded-circle me-2"
+                        style="width:32px; height:32px; display:inline-block; overflow:hidden; background:#fff;">
+                        <img id="navProfileImage"
+                            src=""
+                            alt="Profile"
+                            style="width:100%; height:100%; object-fit:cover;">
+                    </span>
+                    <span id="navProfileName" class="profile-name-nav fw-semibold" style="font-size:1rem;"></span>
+                </a>
+
+            </li>
+        </ul>
         <button class="btn px-3 py-1 text-white w-100 app_sidebar_logout_btn" id="logout-btn">
             <i class="bi bi-box-arrow-left"></i> Logout
         </button>
     </div>
 </nav>
+
+
 
 <!-- 🟩 Content container: nav + content below it -->
 <div class="app_content_container flex-grow-1">
@@ -42,11 +76,10 @@
     </nav>
 
     <!-- 🔷 Page content will be injected here -->
-    <div class="app_content_body p-4" id="app_content_body">
+    <div class="app_content_body p-4 overflow-hidden" id="app_content_body">
         <!-- AJAX-loaded content will appear here -->
     </div>
 </div>
-
 <script src="../vendor/js/jquery.min.js"></script>
 <script src="../vendor/Bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -55,6 +88,11 @@
         $('.app_sidebar_nav ul li.active').removeClass('active');
         $(this).addClass('active');
         $('.app_content_title').text($(this).text().trim());
+
+        // Auto-hide sidebar on mobile when navigating
+        if (window.innerWidth < 768) {
+            $('.app_sidebar_nav').removeClass('active');
+        }
     });
 
     // Sidebar toggle open
@@ -69,9 +107,19 @@
     });
 </script>
 <script type="module">
-
     $('#logout-btn').on('click', async () => {
-        await supabase.auth.signOut();
-        window.location.href = '../index.php';
+        const {
+            data: sessionData,
+            error
+        } = await supabase.auth.getSession();
+
+        if (sessionData.session) {
+            await supabase.auth.refreshSession(); // refresh if needed
+            await supabase.auth.signOut();
+            window.location.href = '../index.php';
+        } else {
+            console.warn('No active session');
+            window.location.href = '../index.php';
+        }
     });
 </script>
