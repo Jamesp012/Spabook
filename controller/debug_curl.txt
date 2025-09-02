@@ -2453,3 +2453,38 @@ HTTP Code: 200
 CURL Error: 
 Response: []
 
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=user_id&user_id=eq.689f731f-0cc1-4a1f-b6e3-b4e1a651f093
+HTTP Code: 200
+CURL Error: 
+Response: [{"user_id":"689f731f-0cc1-4a1f-b6e3-b4e1a651f093"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=role&user_id=eq.689f731f-0cc1-4a1f-b6e3-b4e1a651f093
+HTTP Code: 200
+CURL Error: 
+Response: [{"role":"User"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=user_id&user_id=eq.689f731f-0cc1-4a1f-b6e3-b4e1a651f093
+HTTP Code: 200
+CURL Error: 
+Response: [{"user_id":"689f731f-0cc1-4a1f-b6e3-b4e1a651f093"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=role&user_id=eq.689f731f-0cc1-4a1f-b6e3-b4e1a651f093
+HTTP Code: 200
+CURL Error: 
+Response: [{"role":"User"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=role&user_id=eq.689f731f-0cc1-4a1f-b6e3-b4e1a651f093
+HTTP Code: 200
+CURL Error: 
+Response: [{"role":"User"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=user_id&user_id=eq.95b9fbc8-d266-4ca1-86b4-b05896b92e97
+HTTP Code: 200
+CURL Error: 
+Response: [{"user_id":"95b9fbc8-d266-4ca1-86b4-b05896b92e97"}]
+
+URL: https://rijeyetpxumyxzggihre.supabase.co/rest/v1/users?select=role&user_id=eq.95b9fbc8-d266-4ca1-86b4-b05896b92e97
+HTTP Code: 200
+CURL Error: 
+Response: [{"role":"User"}]
+
