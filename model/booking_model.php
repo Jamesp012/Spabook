@@ -6,74 +6,21 @@ class BookingModel
     
     //! ============================== ADMIN BOOKING MANAGEMENT ==============================
     
-    public function getAdminBookingRequests($php_fetch, $bookings_table, $users_table, $booking_details_table, $services_table)
+    public function getAdminBookingRequests($php_fetch)
     {
         try {
             // Get all pending bookings directly
-            $bookings = $php_fetch($bookings_table, '*', ['booking_status' => 'Pending']);
+            $bookings = $php_fetch('booking', '*', ['booking_status' => 'Pending']);
             
-            // Log the result for debugging
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Pending bookings count: " . count($bookings) . "\n", FILE_APPEND);
+            // Log the result for debugging (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Pending bookings count: " . count($bookings) . "\n", FILE_APPEND);
             
             if (!$bookings || count($bookings) === 0) {
                 return ['status' => 'nodata'];
             }
             
             // Process the bookings
-            return $this->processBookings($bookings, $php_fetch, $users_table, $booking_details_table, $services_table);
-            
-            // Process the joined data into the expected structure
-            $bookings_map = [];
-            
-            foreach ($combined_data as $row) {
-                $bookingid = $row['bookingid'];
-                
-                // Initialize booking entry if it doesn't exist
-                if (!isset($bookings_map[$bookingid])) {
-                    $bookings_map[$bookingid] = [
-                        'bookingid' => $bookingid,
-                        'user_id' => $row['user_id'],
-                        'total_price' => $row['total_price'],
-                        'payment_status' => $row['payment_status'],
-                        'payment_img' => $row['payment_img'],
-                        'booking_status' => $row['booking_status'],
-                        'date_created' => $row['date_created'],
-                        'user' => [
-                            'full_name' => $row['full_name'],
-                            'email' => $row['email'],
-                            'contact_number' => $row['contact_number']
-                        ],
-                        'services' => []
-                    ];
-                }
-                
-                // Add service if it exists and isn't already added
-                if ($row['service_id'] && $row['service_name']) {
-                    $serviceExists = false;
-                    foreach ($bookings_map[$bookingid]['services'] as $service) {
-                        if ($service['name'] === $row['service_name'] && 
-                            $service['quantity'] === $row['quantity'] && 
-                            $service['price'] === $row['detail_price']) {
-                            $serviceExists = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!$serviceExists) {
-                        $bookings_map[$bookingid]['services'][] = [
-                            'name' => $row['service_name'],
-                            'quantity' => $row['quantity'],
-                            'price' => $row['detail_price'],
-                            'booking_date' => $row['booking_date'],
-                            'booking_time' => $row['booking_time']
-                        ];
-                    }
-                }
-            }
-            
-            // Convert map to array
-            $result = array_values($bookings_map);
-            return ['status' => 'success', 'bookings' => $result];
+            return $this->processBookings($bookings, $php_fetch);
             
         } catch (Exception $e) {
             error_log("Error fetching pending bookings: " . $e->getMessage());
@@ -118,7 +65,7 @@ class BookingModel
         return $imageData;
     }
     
-    public function processBookings($bookings, $php_fetch, $users_table, $booking_details_table, $services_table) 
+    public function processBookings($bookings, $php_fetch) 
     {
         $result = [];
         
@@ -127,16 +74,16 @@ class BookingModel
                 // Get user details
                 $user = null;
                 if (isset($booking['user_id']) && !empty($booking['user_id'])) {
-                    $user = $php_fetch($users_table, '*', ['user_id' => $booking['user_id']]);
+                    $user = $php_fetch('users', '*', ['user_id' => $booking['user_id']]);
                 }
                 
                 // Get booking details and services
-                $booking_details = $php_fetch($booking_details_table, '*', ['booking_id' => $booking['bookingid']]);
+                $booking_details = $php_fetch('booking_details', '*', ['booking_id' => $booking['bookingid']]);
                 
                 $services = [];
                 if ($booking_details) {
                     foreach ($booking_details as $detail) {
-                        $service = $php_fetch($services_table, '*', ['id' => $detail['service_id']]);
+                        $service = $php_fetch('services', '*', ['id' => $detail['service_id']]);
                         if ($service) {
                             $services[] = [
                                 'name' => $service[0]['service_name'],
@@ -177,183 +124,63 @@ class BookingModel
         return $result;
     }
     
-    public function getAdminBookingAccepted($php_fetch, $bookings_table, $users_table, $booking_details_table, $services_table)
+    public function getAdminBookingAccepted($php_fetch)
     {
         try {
             // Get all confirmed bookings directly
-            $bookings = $php_fetch($bookings_table, '*', ['booking_status' => 'Confirmed']);
+            $bookings = $php_fetch('booking', '*', ['booking_status' => 'Confirmed']);
             
-            // Log the result for debugging
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Confirmed bookings count: " . count($bookings) . "\n", FILE_APPEND);
+            // Log the result for debugging (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Confirmed bookings count: " . count($bookings) . "\n", FILE_APPEND);
             
             if (!$bookings || count($bookings) === 0) {
                 return ['status' => 'nodata'];
             }
             
             // Process the bookings
-            return $this->processBookings($bookings, $php_fetch, $users_table, $booking_details_table, $services_table);
-            
-            // Process the joined data into the expected structure
-            $bookings_map = [];
-            
-            foreach ($combined_data as $row) {
-                $bookingid = $row['bookingid'];
-                
-                // Initialize booking entry if it doesn't exist
-                if (!isset($bookings_map[$bookingid])) {
-                    $bookings_map[$bookingid] = [
-                        'bookingid' => $bookingid,
-                        'user_id' => $row['user_id'],
-                        'total_price' => $row['total_price'],
-                        'payment_status' => $row['payment_status'],
-                        'payment_img' => $row['payment_img'],
-                        'booking_status' => $row['booking_status'],
-                        'date_created' => $row['date_created'],
-                        'user' => [
-                            'full_name' => $row['full_name'],
-                            'email' => $row['email'],
-                            'contact_number' => $row['contact_number']
-                        ],
-                        'services' => []
-                    ];
-                }
-                
-                // Add service if it exists and isn't already added
-                if ($row['service_id'] && $row['service_name']) {
-                    $serviceExists = false;
-                    foreach ($bookings_map[$bookingid]['services'] as $service) {
-                        if ($service['name'] === $row['service_name'] && 
-                            $service['quantity'] === $row['quantity'] && 
-                            $service['price'] === $row['detail_price']) {
-                            $serviceExists = true;
-                            break;
-                        }
-                    }
-                    
-                    if (!$serviceExists) {
-                        $bookings_map[$bookingid]['services'][] = [
-                            'name' => $row['service_name'],
-                            'quantity' => $row['quantity'],
-                            'price' => $row['detail_price'],
-                            'booking_date' => $row['booking_date'],
-                            'booking_time' => $row['booking_time'],
-                            'detail_status' => $row['detail_status']
-                        ];
-                    }
-                }
-            }
-            
-            // Convert map to array
-            $result = array_values($bookings_map);
-            return ['status' => 'success', 'bookings' => $result];
+            return $this->processBookings($bookings, $php_fetch);
         } catch (Exception $e) {
             error_log("Error fetching accepted bookings: " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
         }
     }
     
-    public function getBookingDetailsForAdmin($php_fetch, $bookings_table, $users_table, $booking_details_table, $services_table, $bookingid)
+    public function getBookingDetailsForAdmin($php_fetch, $bookingid)
     {
         try {
-            // Log the function call
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - getBookingDetailsForAdmin called for booking ID: $bookingid\n", FILE_APPEND);
+            // Log the function call (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - getBookingDetailsForAdmin called for booking ID: $bookingid\n", FILE_APPEND);
             
             // Validate the booking ID
             if (!$bookingid || !is_numeric($bookingid)) {
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Invalid booking ID: $bookingid\n", FILE_APPEND);
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Invalid booking ID: $bookingid\n", FILE_APPEND);
                 return ['status' => 'error', 'message' => 'Invalid booking ID'];
             }
             
             // Get booking data directly
-            $booking_data = $php_fetch($bookings_table, '*', ['bookingid' => $bookingid]);
+            $booking_data = $php_fetch('booking', '*', ['bookingid' => $bookingid]);
             
-            // Log the booking data result
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Booking data result: " . json_encode($booking_data) . "\n", FILE_APPEND);
+            // Log the booking data result (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Booking data result: " . json_encode($booking_data) . "\n", FILE_APPEND);
             
             if (!$booking_data || count($booking_data) === 0) {
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Booking not found with ID: $bookingid\n", FILE_APPEND);
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Booking not found with ID: $bookingid\n", FILE_APPEND);
                 return ['status' => 'error', 'message' => 'Booking not found'];
             }
             
             // Process the booking using the same method as other booking functions
-            $processed = $this->processBookings($booking_data, $php_fetch, $users_table, $booking_details_table, $services_table);
+            $processed = $this->processBookings($booking_data, $php_fetch);
             
-            // Log the processed result
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Processed booking result: " . json_encode($processed) . "\n", FILE_APPEND);
+            // Log the processed result (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Processed booking result: " . json_encode($processed) . "\n", FILE_APPEND);
             
             if (!$processed || count($processed) === 0) {
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Failed to process booking with ID: $bookingid\n", FILE_APPEND);
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Failed to process booking with ID: $bookingid\n", FILE_APPEND);
                 return ['status' => 'error', 'message' => 'Failed to process booking details'];
             }
             
             // Return the first (and only) booking from the processed results
             return $processed[0];
-            
-            // Log the services result
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Services result: " . json_encode($services) . "\n", FILE_APPEND);
-            
-            // Extract booking data from the first row
-            $first_row = $combined_data[0];
-            $booking = [
-                'bookingid' => $first_row['bookingid'],
-                'user_id' => $first_row['user_id'],
-                'total_price' => $first_row['total_price'],
-                'payment_status' => $first_row['payment_status'],
-                'payment_img' => $first_row['payment_img'],
-                'booking_status' => $first_row['booking_status'],
-                'date_created' => $first_row['date_created']
-            ];
-            
-            // Extract user data
-            $user = null;
-            if ($first_row['user_id'] && $first_row['full_name']) {
-                $user = [
-                    'full_name' => $first_row['full_name'],
-                    'email' => $first_row['email'],
-                    'contact_number' => $first_row['contact_number']
-                ];
-            }
-            
-            // Process services
-            $services = [];
-            $processed_details = [];
-            
-            foreach ($combined_data as $row) {
-                if ($row['service_id'] && $row['service_name'] && !in_array($row['bookingdetailsid'], $processed_details)) {
-                    $services[] = [
-                        'name' => $row['service_name'],
-                        'description' => $row['service_description'] ?? 'No description available',
-                        'duration' => $row['per_minute'] ?? 0,
-                        'quantity' => $row['quantity'],
-                        'price' => $row['detail_price'],
-                        'booking_date' => $row['booking_date'],
-                        'booking_time' => $row['booking_time'],
-                        'detail_status' => $row['detail_status'],
-                        'therapist_id' => $row['therapist_id'],
-                        'person_number' => $row['person_number']
-                    ];
-                    
-                    $processed_details[] = $row['bookingdetailsid'];
-                }
-            }
-            
-            // Prepare the final result with default values for missing fields
-            $result = [
-                'bookingid' => $booking['bookingid'] ?? 'Unknown',
-                'user_name' => ($user && isset($user['full_name'])) ? $user['full_name'] : 'Unknown User',
-                'user_email' => ($user && isset($user['email'])) ? $user['email'] : 'No email provided',
-                'user_phone' => ($user && isset($user['contact_number'])) ? $user['contact_number'] : 'No phone provided',
-                'total_price' => $booking['total_price'] ?? 0,
-                'booking_date' => $booking['date_created'] ?? date('Y-m-d H:i:s'),
-                'booking_status' => $booking['booking_status'] ?? 'Unknown',
-                'payment_img' => $booking['payment_img'] ?? null,
-                'services' => $services
-            ];
-            
-            // Log the final result
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Final result: " . json_encode($result) . "\n", FILE_APPEND);
-            
-            return $result;
         } catch (Exception $e) {
             error_log("Error fetching booking details for admin: " . $e->getMessage());
             return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
@@ -371,12 +198,12 @@ class BookingModel
         
         $insert = $php_insert($table, $data);
 
-        // Debug output
-        file_put_contents('debug_insert.txt', print_r($insert, true));
+        // Debug output (disabled in production)
+        // file_put_contents('debug_insert.txt', print_r($insert, true));
 
         // Check if $insert is an array or not
         if (!is_array($insert)) {
-            file_put_contents('debug_error.txt', "Insert returned non-array:\n" . print_r($insert, true));
+            // file_put_contents('debug_error.txt', "Insert returned non-array:\n" . print_r($insert, true));
             return ['status' => 'error', 'message' => 'Insert failed: non-array result'];
         }
 
@@ -575,17 +402,17 @@ class BookingModel
         }
     }
     
-    public function getBookingServicesForCompletion($php_fetch, $bookings_table, $users_table, $booking_details_table, $services_table, $bookingid)
+    public function getBookingServicesForCompletion($php_fetch, $bookingid)
     {
         try {
             // Get booking information
-            $booking = $php_fetch($bookings_table, '*', ['bookingid' => $bookingid]);
+            $booking = $php_fetch('booking', '*', ['bookingid' => $bookingid]);
             if (empty($booking)) {
                 return ['status' => 'error', 'message' => 'Booking not found'];
             }
 
             // Get user information
-            $user = $php_fetch($users_table, 'full_name', ['user_id' => $booking[0]['user_id']]);
+            $user = $php_fetch('users', 'full_name', ['user_id' => $booking[0]['user_id']]);
             $booking[0]['user_name'] = $user[0]['full_name'] ?? 'Unknown User';
 
             // Get booking details with services

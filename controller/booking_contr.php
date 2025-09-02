@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // date_created will be set automatically by Supabase DEFAULT NOW()
             ]);
 
-            file_put_contents('debug_booking.txt', print_r($bookingData, true));
+            // file_put_contents('debug_booking.txt', print_r($bookingData, true));
 
             if (isset($bookingData['bookingid'])) {
                 $bookingId = $bookingData['bookingid'];
@@ -113,9 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 // Create notification for user if notification system is available
                 if ($notificationTableExists) {
-                    // Get user name for admin notification
-                    $userQuery = "SELECT first_name, last_name FROM users WHERE user_id = '$user_id'";
-                    $userData = $php_fetch($userQuery);
+                    // Get user name for admin notification using parameterized query
+                    $userData = $php_fetch('users', 'first_name, last_name', ['user_id' => $user_id]);
                     $userName = isset($userData[0]) ? $userData[0]['first_name'] . ' ' . $userData[0]['last_name'] : 'A customer';
                     
                     // Create user notification
@@ -350,7 +349,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // This is a frequently accessed endpoint that's expensive to compute
                 $cacheKey = "admin_booking_requests";
                 $result = Cache::remember($cacheKey, function() use ($BookingModel, $php_fetch) {
-                    return $BookingModel->getAdminBookingRequests($php_fetch, 'booking', 'users', 'booking_details', 'services');
+                    return $BookingModel->getAdminBookingRequests($php_fetch);
                 }, 30);
                 
                 response($result);
@@ -365,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Cache admin accepted bookings for 30 seconds
                 $cacheKey = "admin_booking_accepted";
                 $result = Cache::remember($cacheKey, function() use ($BookingModel, $php_fetch) {
-                    return $BookingModel->getAdminBookingAccepted($php_fetch, 'booking', 'users', 'booking_details', 'services');
+                    return $BookingModel->getAdminBookingAccepted($php_fetch);
                 }, 30);
                 
                 response($result);
@@ -378,25 +377,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'get_booking_details_admin':
             $bookingid = $_POST['bookingid'] ?? null;
             
-            // Log the request
-            file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - get_booking_details_admin request for booking ID: $bookingid\n", FILE_APPEND);
+            // Log the request (disabled in production)
+            // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - get_booking_details_admin request for booking ID: $bookingid\n", FILE_APPEND);
             
             if (!$bookingid) {
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error: Booking ID is required\n", FILE_APPEND);
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error: Booking ID is required\n", FILE_APPEND);
                 response(['status' => 'error', 'message' => 'Booking ID is required']);
             }
             
             try {
                 // Get booking details directly without caching for debugging
-                $result = $BookingModel->getBookingDetailsForAdmin($php_fetch, 'booking', 'users', 'booking_details', 'services', $bookingid);
+                $result = $BookingModel->getBookingDetailsForAdmin($php_fetch, $bookingid);
                 
-                // Log the result
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - get_booking_details_admin result: " . json_encode($result) . "\n", FILE_APPEND);
+                // Log the result (disabled in production)
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - get_booking_details_admin result: " . json_encode($result) . "\n", FILE_APPEND);
                 
                 response($result);
             } catch (Exception $e) {
-                // Log the error
-                file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error in get_booking_details_admin: " . $e->getMessage() . "\n", FILE_APPEND);
+                // Log the error (disabled in production)
+                // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error in get_booking_details_admin: " . $e->getMessage() . "\n", FILE_APPEND);
                 response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
             }
             break;
@@ -463,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 response(['status' => 'error', 'message' => 'Booking ID is required']);
             }
             
-            $result = $BookingModel->getBookingServicesForCompletion($php_fetch, 'booking', 'users', 'booking_details', 'services', $bookingid);
+            $result = $BookingModel->getBookingServicesForCompletion($php_fetch, $bookingid);
             response($result);
             break;
 
@@ -542,6 +541,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Invalidate admin booking caches
             Cache::delete("admin_booking_requests");
             Cache::delete("admin_booking_accepted");
+            Cache::delete("booking_details_admin_$bookingid");
+            
+            response(json_decode($result, true));
+            break;
+
+        case 'complete_booking':
+            $bookingid = $_POST['bookingid'] ?? null;
+            if (!$bookingid) {
+                response(['status' => 'error', 'message' => 'Booking ID is required']);
+            }
+            
+            // Get user_id for the booking
+            $bookingData = $php_fetch('booking', 'user_id', ['bookingid' => $bookingid]);
+            
+            // Update booking status to Completed
+            $result = $BookingModel->updateBookingStatus($php_update, 'booking', $bookingid, 'Completed');
+            
+            // Update booking updated_at timestamp
+            $php_update('booking', ['updated_at' => date('Y-m-d H:i:s')], ['bookingid' => $bookingid]);
+            
+            // Create or update invoice to mark as paid
+            $invoice = $php_fetch('invoices', '*', ['booking_id' => $bookingid]);
+            if ($invoice && count($invoice) > 0) {
+                // Update existing invoice
+                $php_update('invoices', [
+                    'payment_status' => 'Paid',
+                    'updated_at' => date('Y-m-d H:i:s')
+                ], ['booking_id' => $bookingid]);
+            } else {
+                // Create new invoice if not exists
+                $bookingDetails = $php_fetch('booking', '*', ['bookingid' => $bookingid]);
+                if ($bookingDetails && count($bookingDetails) > 0) {
+                    $booking = $bookingDetails[0];
+                    $php_insert('invoices', [
+                        'booking_id' => $bookingid,
+                        'user_id' => $booking['user_id'],
+                        'subtotal' => $booking['total_price'],
+                        'total' => $booking['total_price'],
+                        'payment_status' => 'Paid',
+                        'issued_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+            }
+            
+            // Create notification for the user if booking exists and notification system is available
+            if ($notificationTableExists && isset($bookingData[0]['user_id'])) {
+                $userId = $bookingData[0]['user_id'];
+                createBookingStatusNotification($userId, $bookingid, 'Completed');
+                
+                // Invalidate user's booking cache
+                Cache::delete("user_bookings_$userId");
+            }
+            
+            // Invalidate admin booking caches
+            Cache::delete("admin_booking_requests");
+            Cache::delete("admin_booking_accepted");
+            Cache::delete("admin_booking_history");
             Cache::delete("booking_details_admin_$bookingid");
             
             response(json_decode($result, true));

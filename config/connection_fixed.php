@@ -8,11 +8,11 @@ if (!file_exists($logsDir)) {
     mkdir($logsDir, 0755, true);
 }
 
-// Log function for debugging
+// Log function for debugging (disabled in production)
 function logDebug($message) {
-    $logFile = __DIR__ . '/../logs/supabase_debug.log';
-    $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($logFile, "[$timestamp] $message\n", FILE_APPEND);
+    // $logFile = __DIR__ . '/../logs/supabase_debug.log';
+    // $timestamp = date('Y-m-d H:i:s');
+    // file_put_contents($logFile, "[$timestamp] $message\n", FILE_APPEND);
 }
 
 // Shared function to call Supabase API

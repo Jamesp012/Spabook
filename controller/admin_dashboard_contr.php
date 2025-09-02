@@ -1,6 +1,6 @@
 <?php
-// Debug file to see what's happening
-file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Admin dashboard controller called\n", FILE_APPEND);
+// Debug file to see what's happening (disabled in production)
+// file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Admin dashboard controller called\n", FILE_APPEND);
 
 require_once __DIR__ . '/../config/connection.php';
 require_once __DIR__ . '/../model/booking_model.php';
@@ -17,8 +17,8 @@ function jsonErrorHandler($errno, $errstr, $errfile, $errline) {
         'code' => $errno
     ];
     
-    // Log the error
-    file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error: $errstr in $errfile on line $errline\n", FILE_APPEND);
+    // Log the error (disabled in production)
+    // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Error: $errstr in $errfile on line $errline\n", FILE_APPEND);
     
     echo json_encode($error);
     exit;
@@ -33,8 +33,8 @@ register_shutdown_function(function() {
     if ($error !== null && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
         header('Content-Type: application/json');
         
-        // Log the error
-        file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Fatal Error: {$error['message']} in {$error['file']} on line {$error['line']}\n", FILE_APPEND);
+        // Log the error (disabled in production)
+        // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Fatal Error: {$error['message']} in {$error['file']} on line {$error['line']}\n", FILE_APPEND);
         
         echo json_encode([
             'status' => 'error',
@@ -48,8 +48,8 @@ register_shutdown_function(function() {
 $BookingModel = new BookingModel();
 
 function response($data) {
-    // Log the response data
-    file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Response: " . json_encode($data) . "\n", FILE_APPEND);
+    // Log the response data (disabled in production)
+    // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - Response: " . json_encode($data) . "\n", FILE_APPEND);
     
     echo json_encode($data);
     exit;
@@ -107,8 +107,8 @@ function calculateRecoveryPotential($booking) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Log the POST data
-        file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - POST data: " . json_encode($_POST) . "\n", FILE_APPEND);
+        // Log the POST data (disabled in production)
+        // file_put_contents(__DIR__ . '/../logs/debug.log', date('Y-m-d H:i:s') . " - POST data: " . json_encode($_POST) . "\n", FILE_APPEND);
         
         $action = $_POST['action'] ?? null;
 
@@ -208,8 +208,9 @@ function getDashboardStats() {
         $completedBookings = $php_fetch('booking', 'COUNT(*) as count', ['booking_status' => 'Completed']);
         $completedBookingsCount = $completedBookings[0]['count'] ?? 0;
         
-        // Get cancelled bookings
-        $cancelledBookings = $php_fetch('booking', 'COUNT(*) as count', ['booking_status' => 'Cancelled']);
+        // Get cancelled/rejected bookings
+        $cancelledQuery = "SELECT COUNT(*) as count FROM booking WHERE booking_status IN ('Cancelled', 'Rejected')";
+        $cancelledBookings = $php_fetch($cancelledQuery);
         $cancelledBookingsCount = $cancelledBookings[0]['count'] ?? 0;
         
         // Calculate recovery rate (completed vs total)
@@ -339,6 +340,26 @@ function getTotalBookings() {
                 }
             }
             
+            // Determine correct payment status based on booking status
+            $payment_status = 'Unpaid'; // Default
+            if ($booking['booking_status'] === 'Confirmed' || $booking['booking_status'] === 'Completed') {
+                $payment_status = 'Paid';
+            } else if ($booking['booking_status'] === 'Pending') {
+                $payment_status = 'Unpaid';
+            }
+            
+            // Check if invoice exists for more accurate payment status (with safe access)
+            $invoiceResult = $php_fetch('invoices', 'payment_status', ['booking_id' => $booking['bookingid']]);
+            if (is_array($invoiceResult) && (!isset($invoiceResult['error']))) {
+                // Typical Supabase response: array of rows
+                if (isset($invoiceResult[0]) && is_array($invoiceResult[0]) && isset($invoiceResult[0]['payment_status'])) {
+                    $payment_status = $invoiceResult[0]['payment_status'];
+                // Defensive: sometimes a single row may be returned as an associative array
+                } elseif (isset($invoiceResult['payment_status'])) {
+                    $payment_status = $invoiceResult['payment_status'];
+                }
+            }
+            
             $result[] = [
                 'bookingid' => $booking['bookingid'],
                 'user_name' => $user ? $user['full_name'] : 'Unknown User',
@@ -348,7 +369,7 @@ function getTotalBookings() {
                 'total_price' => $booking['total_price'],
                 'booking_date' => date('M d, Y g:i A', strtotime($booking['date_created'] ?? 'now')),
                 'booking_status' => $booking['booking_status'],
-                'payment_status' => isset($booking['payment_status']) && $booking['payment_status'] ? 'Paid' : 'Unpaid',
+                'payment_status' => $payment_status,
                 'payment_img' => $booking['payment_img'] ?? null
             ];
         }
@@ -385,19 +406,16 @@ function getAppointmentHistory() {
         // Calculate offset
         $offset = ($page - 1) * $limit;
         
-        // Get total count of completed and cancelled bookings
-        $completedCountResult = $php_fetch('booking', 'COUNT(*) as total', ['booking_status' => 'Completed']);
-        $cancelledCountResult = $php_fetch('booking', 'COUNT(*) as total', ['booking_status' => 'Cancelled']);
-        
-        $completedCount = $completedCountResult[0]['total'] ?? 0;
-        $cancelledCount = $cancelledCountResult[0]['total'] ?? 0;
-        $totalCount = $completedCount + $cancelledCount;
+        // Get total count of historical bookings (final states: Completed, Cancelled, Rejected)
+        $historyQuery = "SELECT COUNT(*) as total FROM booking WHERE booking_status IN ('Completed', 'Cancelled', 'Rejected')";
+        $historyCountResult = $php_fetch($historyQuery);
+        $totalCount = $historyCountResult[0]['total'] ?? 0;
         
         // Calculate total pages
         $totalPages = ceil($totalCount / $limit);
         
         // Get paginated history bookings
-        $query = "SELECT * FROM booking WHERE booking_status = 'Completed' OR booking_status = 'Cancelled' ORDER BY date_created DESC LIMIT $limit OFFSET $offset";
+        $query = "SELECT * FROM booking WHERE booking_status IN ('Completed', 'Cancelled', 'Rejected') ORDER BY date_created DESC LIMIT $limit OFFSET $offset";
         $allHistoryBookings = $php_fetch($query);
         
         if (empty($allHistoryBookings)) {
@@ -445,6 +463,20 @@ function getAppointmentHistory() {
             // Determine completion date (use updated date if available, otherwise creation date)
             $completionDate = $booking['updated_at'] ?? $booking['date_created'] ?? date('Y-m-d H:i:s');
             
+            // Determine correct payment status based on booking status
+            $payment_status = 'Unpaid'; // Default
+            if ($booking['booking_status'] === 'Completed') {
+                $payment_status = 'Paid';
+            } else if ($booking['booking_status'] === 'Cancelled' || $booking['booking_status'] === 'Rejected') {
+                $payment_status = 'Unpaid';
+            }
+            
+            // Check if invoice exists for more accurate payment status
+            $invoice = $php_fetch('invoices', 'payment_status', ['booking_id' => $booking['bookingid']]);
+            if ($invoice && count($invoice) > 0) {
+                $payment_status = $invoice[0]['payment_status'];
+            }
+            
             $result[] = [
                 'bookingid' => $booking['bookingid'],
                 'user_name' => $user ? $user['full_name'] : 'Unknown User',
@@ -453,7 +485,7 @@ function getAppointmentHistory() {
                 'total_price' => $booking['total_price'],
                 'completion_date' => date('M d, Y g:i A', strtotime($completionDate)),
                 'booking_status' => $booking['booking_status'],
-                'payment_status' => isset($booking['payment_status']) && $booking['payment_status'] ? 'Paid' : 'Unpaid',
+                'payment_status' => $payment_status,
                 'duration' => calculateSessionDuration($booking['date_created'], $completionDate)
             ];
         }
@@ -490,8 +522,9 @@ function getRecoveryData() {
         // Calculate offset
         $offset = ($page - 1) * $limit;
         
-        // Get total count of recoverable bookings
-        $recoverableCountResult = $php_fetch('booking', 'COUNT(*) as total', ['booking_status' => 'Cancelled']);
+        // Get total count of recoverable bookings (Cancelled and Rejected)
+        $recoverableQuery = "SELECT COUNT(*) as total FROM booking WHERE booking_status IN ('Cancelled', 'Rejected')";
+        $recoverableCountResult = $php_fetch($recoverableQuery);
         $recoverableCount = $recoverableCountResult[0]['total'] ?? 0;
         
         // Get total count of recently recovered bookings (last 30 days)
@@ -507,7 +540,7 @@ function getRecoveryData() {
         $recoveredTotalPages = ceil($recoveredCount / $limit);
         
         // Get paginated recoverable bookings
-        $recoverableQuery = "SELECT * FROM booking WHERE booking_status = 'Cancelled' ORDER BY date_created DESC LIMIT $limit OFFSET $offset";
+        $recoverableQuery = "SELECT * FROM booking WHERE booking_status IN ('Cancelled', 'Rejected') ORDER BY date_created DESC LIMIT $limit OFFSET $offset";
         $recoverableBookings = $php_fetch($recoverableQuery);
         
         // Get paginated recently recovered bookings
