@@ -83,10 +83,17 @@
 
 <script>
 $(document).ready(function() {
-    // Check if we're editing an existing product
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('productid');
-    
+    // Detect product ID from either query string or global modalData (when loaded via AJAX)
+    let productId = null;
+    try {
+        const urlParams = new URLSearchParams(window.location.search || '');
+        productId = urlParams.get('productid');
+    } catch (e) { /* ignore */ }
+
+    if (!productId && window.modalData && window.modalData.productid) {
+        productId = window.modalData.productid;
+    }
+
     if (productId) {
         loadProductForEdit(productId);
     }
@@ -238,9 +245,20 @@ function submitProductData(formData) {
         success: function(result) {
             if (result.status === 'success') {
                 Swal.fire('Success!', result.message, 'success').then(() => {
-                    $('#manageProductModal').modal('hide');
+                    // Hide the appropriate modal (global or standalone)
+                    if ($('#globalModal').length > 0 && $('#globalModal').hasClass('show')) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('globalModal'));
+                        if (modal) modal.hide();
+                    } else if ($('#manageProductModal').length > 0) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('manageProductModal'));
+                        if (modal) modal.hide();
+                    }
+                    
+                    // Refresh products list if function exists
                     if (typeof loadProducts === 'function') {
                         loadProducts();
+                    } else if (window.parent && typeof window.parent.loadProducts === 'function') {
+                        window.parent.loadProducts();
                     }
                 });
             } else {
@@ -263,14 +281,35 @@ function removeImage() {
     $('#previewImage').attr('src', '');
 }
 
-// Clean up when modal is hidden
-$('#manageProductModal').on('hidden.bs.modal', function() {
-    $('#productForm')[0].reset();
-    $('#imagePreview').hide();
-    $('#previewImage').attr('src', '');
-    $('#modalTitle').text('Add New Product');
-    $('#saveButtonText').text('Add Product');
-    $('#actionType').val('add_product');
-    $('#productId').val('');
-});
+// Clean up when modal is hidden - handle both global and standalone modals
+function cleanupProductModal() {
+    try {
+        const form = document.getElementById('productForm');
+        if (form) form.reset();
+        
+        const imagePreview = $('#imagePreview');
+        if (imagePreview.length) imagePreview.hide();
+        
+        const previewImage = $('#previewImage');
+        if (previewImage.length) previewImage.attr('src', '');
+        
+        const modalTitle = $('#modalTitle');
+        if (modalTitle.length) modalTitle.text('Add New Product');
+        
+        const saveButtonText = $('#saveButtonText');
+        if (saveButtonText.length) saveButtonText.text('Add Product');
+        
+        const actionType = $('#actionType');
+        if (actionType.length) actionType.val('add_product');
+        
+        const productId = $('#productId');
+        if (productId.length) productId.val('');
+    } catch (e) {
+        console.warn('Modal cleanup warning:', e);
+    }
+}
+
+// Attach cleanup to both possible modals
+$(document).on('hidden.bs.modal', '#manageProductModal', cleanupProductModal);
+$(document).on('hidden.bs.modal', '#globalModal', cleanupProductModal);
 </script>

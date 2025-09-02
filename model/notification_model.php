@@ -134,8 +134,8 @@ class NotificationModel {
      * @return int The number of unread notifications
      */
     public function getUnreadCount($php_fetch, $table, $user_id) {
-        $query = "SELECT COUNT(*) as count FROM $table WHERE user_id = '$user_id' AND is_read = false";
-        $result = $php_fetch($query);
+        // Use parameterized query to prevent SQL injection
+        $result = $php_fetch($table, 'COUNT(*) as count', ['user_id' => $user_id, 'is_read' => false]);
         
         if (isset($result[0]['count'])) {
             return $result[0]['count'];

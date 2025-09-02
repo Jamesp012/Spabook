@@ -1,10 +1,9 @@
 <?php
 class Product {
     
-    public function fetchProducts($php_fetch, $table) {
+    public function fetchProducts($php_fetch) {
         try {
-            $query = "SELECT * FROM $table WHERE is_active = true ORDER BY created_at DESC";
-            $result = $php_fetch($query);
+            $result = $php_fetch('products', '*', ['is_active' => true]);
             
             if ($result && count($result) > 0) {
                 return json_encode([
@@ -26,7 +25,7 @@ class Product {
         }
     }
     
-    public function addProduct($php_insert, $table, $product_name, $product_description, $product_price, $product_category, $stock_quantity, $product_image) {
+    public function addProduct($php_insert, $product_name, $product_description, $product_price, $product_category, $stock_quantity, $product_image) {
         try {
             $data = [
                 'product_name' => $product_name,
@@ -43,7 +42,7 @@ class Product {
                 $data['product_image'] = $product_image;
             }
             
-            $result = $php_insert($table, $data);
+            $result = $php_insert('products', $data);
             
             if ($result) {
                 return json_encode([
@@ -65,7 +64,7 @@ class Product {
         }
     }
     
-    public function updateProduct($php_update, $table, $productid, $product_name, $product_description, $product_price, $product_category, $stock_quantity, $product_image) {
+    public function updateProduct($php_update, $productid, $product_name, $product_description, $product_price, $product_category, $stock_quantity, $product_image) {
         try {
             $data = [
                 'product_name' => $product_name,
@@ -80,8 +79,7 @@ class Product {
                 $data['product_image'] = $product_image;
             }
             
-            $condition = "productid = $productid";
-            $result = $php_update($table, $data, $condition);
+            $result = $php_update('products', $data, ['productid' => $productid]);
             
             if ($result) {
                 return json_encode([
@@ -103,7 +101,7 @@ class Product {
         }
     }
     
-    public function deleteProduct($php_update, $table, $productid) {
+    public function deleteProduct($php_update, $productid) {
         try {
             // Soft delete by setting is_active to false
             $data = [
@@ -111,8 +109,7 @@ class Product {
                 'updated_at' => date('Y-m-d H:i:s')
             ];
             
-            $condition = "productid = $productid";
-            $result = $php_update($table, $data, $condition);
+            $result = $php_update('products', $data, ['productid' => $productid]);
             
             if ($result) {
                 return json_encode([
@@ -134,10 +131,9 @@ class Product {
         }
     }
     
-    public function getProductById($php_fetch, $table, $productid) {
+    public function getProductById($php_fetch, $productid) {
         try {
-            $query = "SELECT * FROM $table WHERE productid = $productid AND is_active = true";
-            $result = $php_fetch($query);
+            $result = $php_fetch('products', '*', ['productid' => $productid, 'is_active' => true]);
             
             if ($result && count($result) > 0) {
                 return json_encode([
@@ -159,40 +155,14 @@ class Product {
         }
     }
     
-    public function fetchProductCategories($php_fetch, $table) {
-        try {
-            $query = "SELECT * FROM $table WHERE is_active = true ORDER BY category_name ASC";
-            $result = $php_fetch($query);
-            
-            if ($result && count($result) > 0) {
-                return json_encode([
-                    'status' => 'success',
-                    'data' => $result
-                ]);
-            } else {
-                return json_encode([
-                    'status' => 'success',
-                    'data' => []
-                ]);
-            }
-        } catch (Exception $e) {
-            error_log("Error in fetchProductCategories: " . $e->getMessage());
-            return json_encode([
-                'status' => 'error',
-                'message' => 'Failed to fetch categories'
-            ]);
-        }
-    }
-    
-    public function updateProductStock($php_update, $table, $productid, $new_quantity) {
+    public function updateProductStock($php_update, $productid, $new_quantity) {
         try {
             $data = [
                 'stock_quantity' => $new_quantity,
                 'updated_at' => date('Y-m-d H:i:s')
             ];
             
-            $condition = "productid = $productid";
-            $result = $php_update($table, $data, $condition);
+            $result = $php_update('products', $data, ['productid' => $productid]);
             
             if ($result) {
                 return json_encode([

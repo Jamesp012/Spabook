@@ -12,7 +12,7 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab" aria-controls="products" aria-selected="false">
+                                <button class="nav-link" id="products-view-tab" data-bs-toggle="tab" data-bs-target="#products-view" type="button" role="tab" aria-controls="products-view" aria-selected="false">
                                     <i class="bi bi-box-seam me-2"></i>Products
                                 </button>
                             </li>
@@ -58,15 +58,15 @@
                                 </div>
                             </div>
                             
-                            <!-- PRODUCTS TAB -->
-                            <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
+                            <!-- VIEW PRODUCTS TAB -->
+                            <div class="tab-pane fade" id="products-view" role="tabpanel" aria-labelledby="products-view-tab">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="m-0 font-weight-bold text-success">
                                         <i class="bi bi-box-seam me-1"></i>Products Collection
                                     </h6>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-success btn-sm" onclick="addProducts()">
-                                            <i class="bi bi-plus-circle me-1"></i>Add New Product
+                                            <i class="bi bi-plus-circle me-1"></i>Add Products
                                         </button>
                                         <button type="button" class="btn btn-outline-secondary btn-sm" onclick="loadProducts()">
                                             <i class="bi bi-arrow-clockwise me-1"></i>Refresh
@@ -94,6 +94,7 @@
                                     <p class="text-muted">Start by adding your first product to the collection.</p>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -113,8 +114,8 @@
         $(document).ready(function() {
             loadServices();
             
-            // Load products when tab is clicked
-            $('#products-tab').on('click', function() {
+            // Load products when view products tab is clicked
+            $('#products-view-tab').on('click', function() {
                 if (window.productsData.length === 0) {
                     loadProducts();
                 }
@@ -257,7 +258,19 @@
     }
 
     // ============= PRODUCTS FUNCTIONS =============
+    // Track loading state to prevent multiple simultaneous requests
+    if (typeof window.isLoadingProducts === 'undefined') {
+        window.isLoadingProducts = false;
+    }
+    
     function loadProducts() {
+        // Prevent multiple simultaneous requests
+        if (window.isLoadingProducts) {
+            return;
+        }
+        
+        window.isLoadingProducts = true;
+        
         // Show loading state
         $('#loadingProducts').show();
         $('#products_container').hide();
@@ -272,6 +285,7 @@
             },
             success: function(result) {
                 $('#loadingProducts').hide();
+                window.isLoadingProducts = false;
                 
                 if (result.status === 'success' && result.data && result.data.length > 0) {
                     window.productsData = result.data;
@@ -285,6 +299,7 @@
             error: function() {
                 $('#loadingProducts').hide();
                 $('#noProducts').show();
+                window.isLoadingProducts = false;
                 Swal.fire('Error!', 'Failed to load products.', 'error');
             }
         });
@@ -304,11 +319,14 @@
                         <div class="position-relative">
                             <img src="${imageSrc}" 
                                 class="card-img-top" 
-                                style="height: 220px; object-fit: cover;" 
+                                style="height: 220px; object-fit: cover; transition: opacity 0.3s ease;" 
                                 alt="${product.product_name}"
-                                onerror="this.src='../vendor/images/default_product.png'">
+                                loading="lazy"
+                                onload="this.style.opacity='1'"
+                                onerror="this.src='../vendor/images/default_product.png'; this.style.opacity='1';"
+                                onloadstart="this.style.opacity='0.7'">
                             <div class="position-absolute bottom-0 start-0 end-0 bg-gradient-dark p-2">
-                                <span class="badge bg-success">${product.product_category}</span>
+                                <span class="badge bg-success">${product.category || 'General'}</span>
                                 <span class="badge bg-info ms-1">Stock: ${product.stock_quantity}</span>
                             </div>
                             <!-- Action Buttons - Top Right -->
@@ -325,18 +343,18 @@
                         </div>
 
                         <div class="card-body">
-                            <h5 class="card-title mb-2 text-dark">${product.product_name}</h5>
-                            <p class="card-text text-muted small mb-3" style="line-height: 1.4;">
-                                ${product.product_description ? (product.product_description.length > 80 ? product.product_description.substring(0, 80) + '...' : product.product_description) : 'No description available'}
+                            <h5 class="card-title mb-2 text-dark" style="min-height: 1.5em;">${product.product_name}</h5>
+                            <p class="card-text text-muted small mb-3" style="line-height: 1.4; min-height: 3.6em; overflow: hidden;">
+                                ${(product.product_description || product.description) ? ((product.product_description || product.description).length > 80 ? (product.product_description || product.description).substring(0, 80) + '...' : (product.product_description || product.description)) : 'No description available'}
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div>
-                                    <span class="h5 text-success fw-bold mb-0">₱${parseFloat(product.product_price).toLocaleString()}</span>
+                                    <span class="h5 text-success fw-bold mb-0">₱${parseFloat(product.product_price || product.price || 0).toLocaleString()}</span>
                                     <small class="text-muted d-block">per item</small>
                                 </div>
                                 <div class="text-end">
                                     <small class="text-muted">Stock</small>
-                                    <div class="fw-semibold ${product.stock_quantity < 10 ? 'text-warning' : 'text-success'}">${product.stock_quantity}</div>
+                                    <div class="fw-semibold ${product.stock_quantity < 10 ? 'text-warning' : 'text-success'}">${product.stock_quantity || 0}</div>
                                 </div>
                             </div>
                         </div>
@@ -344,48 +362,146 @@
                 </div>
             `;
         });
-        $('#products_container').html(html);
+        // Use fade-in animation to prevent jarring content replacement
+        const $container = $('#products_container');
+        $container.fadeOut(150, function() {
+            $container.html(html).fadeIn(300);
+        });
     }
 
     function addProducts() {
-        showGlobalModal('modal/admin_modal-manage-products.php');
+        showGlobalModal('modal/admin_modal-manage-products-global.php');
     }
 
     function editProduct(id) {
-        showGlobalModal('modal/admin_modal-manage-products.php?productid=' + id);
+        showGlobalModal('modal/admin_modal-manage-products-global.php', { productid: id });
     }
 
     function deleteProduct(id) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "This product will be permanently deleted.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Delete'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '../controller/product_contr.php',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        action: 'delete_product',
-                        productid: id
-                    },
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            Swal.fire('Deleted!', 'The product has been deleted.', 'success');
-                            loadProducts();
-                        } else {
-                            Swal.fire('Error!', 'Failed to delete the product.', 'error');
-                        }
+        // First get product details to show in confirmation
+        $.ajax({
+            url: '../controller/product_contr.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'get_product_by_id',
+                productid: id
+            },
+            success: function(result) {
+                let productName = 'this product';
+                if (result.status === 'success' && result.data && result.data.product_name) {
+                    productName = result.data.product_name;
+                }
+                
+                // Show confirmation dialog with product name
+                Swal.fire({
+                    title: 'Delete Product?',
+                    html: `Are you sure you want to delete <strong>"${productName}"</strong>?<br><small class="text-muted">This action cannot be undone.</small>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="bi bi-trash me-1"></i>Delete Product',
+                    cancelButtonText: '<i class="bi bi-x-circle me-1"></i>Cancel',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then((confirmResult) => {
+                    if (confirmResult.isConfirmed) {
+                        performDelete(id, productName);
+                    }
+                });
+            },
+            error: function() {
+                // If we can't get product details, still allow deletion
+                Swal.fire({
+                    title: 'Delete Product?',
+                    text: 'Are you sure you want to delete this product? This action cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: '<i class="bi bi-trash me-1"></i>Delete Product',
+                    cancelButtonText: '<i class="bi bi-x-circle me-1"></i>Cancel',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then((confirmResult) => {
+                    if (confirmResult.isConfirmed) {
+                        performDelete(id, 'product');
                     }
                 });
             }
         });
     }
+    
+    function performDelete(id, productName) {
+        // Show loading state
+        Swal.fire({
+            title: 'Deleting...',
+            text: 'Please wait while we delete the product.',
+            icon: 'info',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Perform the deletion
+        $.ajax({
+            url: '../controller/product_contr.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'delete_product',
+                productid: id
+            },
+            success: function(result) {
+                // Handle different response formats
+                let isSuccess = false;
+                let message = '';
+                
+                if (typeof result === 'string') {
+                    isSuccess = result === 'success';
+                    message = isSuccess ? 'Product deleted successfully' : 'Failed to delete product';
+                } else if (typeof result === 'object' && result !== null) {
+                    isSuccess = result.status === 'success';
+                    message = result.message || (isSuccess ? 'Product deleted successfully' : 'Failed to delete product');
+                }
+                
+                if (isSuccess) {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: `"${productName}" has been successfully deleted.`,
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Refresh the products list
+                        loadProducts();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Delete Failed',
+                        text: message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Delete product error:', {xhr, status, error});
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Failed to delete the product due to a connection error. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
+
 </script>
 
 <style>
@@ -416,7 +532,22 @@
     }
     
     .card-img-top {
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        background-color: #f8f9fa;
+    }
+    
+    /* Prevent layout shifts during image loading */
+    .product-card .position-relative {
+        min-height: 220px;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Smooth fade-in for products container */
+    #products_container {
+        transition: opacity 0.3s ease;
     }
     
     .service-card:hover .card-img-top,

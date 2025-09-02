@@ -1,12 +1,4 @@
 <div class="container-fluid" style="max-height: calc(100vh - 130px); overflow-y: auto;">
-    <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0"><i class="bi bi-spa me-2"></i>Services & Products</h4>
-        <button class="btn btn-outline-primary btn-sm" onclick="refreshData()">
-            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
-        </button>
-    </div>
-
     <!-- Tab Navigation -->
     <ul class="nav nav-tabs mb-4" id="servicesProductsTabs" role="tablist">
         <li class="nav-item" role="presentation">
@@ -151,7 +143,12 @@ function renderServices(services) {
                                     <span class="fw-bold text-primary h6 mb-0">₱${parseFloat(service.price).toLocaleString()}</span>
                                     <div class="small text-muted">${service.per_minute} minutes</div>
                                 </div>
-                                <button class="btn btn-primary btn-sm" onclick="bookService(${service.id})">
+                                <button class="btn btn-primary btn-sm"
+                                        data-id="${service.id}"
+                                        data-name="${(service.service_name || '').replace(/\"/g, '&quot;').replace(/'/g, '&#39;')}"
+                                        data-price="${service.price}"
+                                        data-image="${imageSrc}"
+                                        onclick="bookService(this)">
                                     <i class="bi bi-calendar-plus me-1"></i>Book
                                 </button>
                             </div>
@@ -242,9 +239,13 @@ function renderProducts(products) {
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Stock: ${product.stock_quantity}</small>
-                                <button class="btn btn-success btn-sm ${product.stock_quantity <= 0 ? 'disabled' : ''}" 
-                                        onclick="purchaseProduct(${product.productid})"
-                                        ${product.stock_quantity <= 0 ? 'disabled' : ''}>
+                                <button class="btn btn-success btn-sm ${product.stock_quantity <= 0 ? 'disabled' : ''}"
+                                        data-id="${product.productid}"
+                                        data-name="${(product.product_name || '').replace(/\"/g, '&quot;').replace(/'/g, '&#39;')}"
+                                        data-price="${product.product_price}"
+                                        data-image="${imageSrc}"
+                                        ${product.stock_quantity <= 0 ? 'disabled' : ''}
+                                        onclick="purchaseProduct(this)">
                                     <i class="bi bi-cart-plus me-1"></i>
                                     ${product.stock_quantity <= 0 ? 'Sold Out' : 'Add to Cart'}
                                 </button>
@@ -259,34 +260,36 @@ function renderProducts(products) {
 }
 
 // ============= INTERACTION FUNCTIONS =============
-function bookService(serviceId) {
-    // This should integrate with your existing booking modal
-    // For now, we'll show a simple message
-    Swal.fire({
-        title: 'Book Service',
-        text: 'This will open the booking modal for service ID: ' + serviceId,
-        icon: 'info',
-        confirmButtonText: 'OK'
+function bookService(buttonEl) {
+    // Read dataset from button
+    const $btn = $(buttonEl);
+    const data = {
+        id: $btn.data('id'),
+        name: $btn.data('name'),
+        price: parseFloat($btn.data('price')) || 0,
+        image: $btn.data('image') || ''
+    };
+
+    // Use global modal with booking UI
+    showGlobalModal('../views/modal/user_modal-booking.php', data, function () {
+        // Optional callback if needed when modal is ready
     });
-    
-    // Uncomment and modify based on your existing booking system:
-    // showGlobalModal('modal/user_modal-booking.php', { service_id: serviceId });
 }
 
-function purchaseProduct(productId) {
-    // This should integrate with your cart/checkout system
-    // For now, we'll show a simple message
-    Swal.fire({
-        title: 'Add to Cart',
-        text: 'This will add product ID ' + productId + ' to your cart.',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Add to Cart',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Here you would integrate with your cart system
-            Swal.fire('Added!', 'Product has been added to your cart.', 'success');
+function purchaseProduct(buttonEl) {
+    const $btn = $(buttonEl);
+    const data = {
+        id: $btn.data('id'),
+        name: $btn.data('name'),
+        price: parseFloat($btn.data('price')) || 0,
+        image: $btn.data('image') || ''
+    };
+
+    // Use global modal for product purchase/confirmation
+    showGlobalModal('../views/modal/user_modal-payment.php', data, function () {
+        // You can initialize product-specific handlers here if needed
+        if (typeof onProductPurchaseModalReady === 'function') {
+            onProductPurchaseModalReady(data);
         }
     });
 }

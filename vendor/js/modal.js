@@ -15,22 +15,80 @@ function showGlobalModal(contentUrl, params = {}, callback = null) {
 
   $.get(contentUrl, function (data) {
     try {
-      $('#globalModalContent').html(data);
+      // Clear any existing content first
+      $('#globalModalContent').empty();
+      
+      // Normalize content: if a full modal is returned, extract its .modal-content
+      const temp = document.createElement('div');
+      temp.innerHTML = data;
+      let injected = false;
+
+      // Prefer a full modal wrapper -> extract inner modal-content
+      const fullModal = temp.querySelector('.modal');
+      if (fullModal) {
+        const innerContent = fullModal.querySelector('.modal-content');
+        if (innerContent) {
+          // Clone the content to avoid moving DOM elements
+          const clonedContent = innerContent.cloneNode(true);
+          $('#globalModalContent').append(clonedContent);
+          injected = true;
+        }
+      }
+
+      // If no full modal wrapper, but modal-content exists, inject it
+      if (!injected) {
+        const modalContentOnly = temp.querySelector('.modal-content');
+        if (modalContentOnly) {
+          const clonedContent = modalContentOnly.cloneNode(true);
+          $('#globalModalContent').append(clonedContent);
+          injected = true;
+        }
+      }
+
+      // Fallback: inject raw data
+      if (!injected) {
+        $('#globalModalContent').html(data);
+      }
+
+      // Store modal data for scripts to access
       window.modalData = params;
+
+      // Execute any scripts included in fetched HTML so inline modal JS works
+      try {
+        const scripts = temp.querySelectorAll('script');
+        scripts.forEach((script) => {
+          const newScript = document.createElement('script');
+          // copy attributes (e.g., type, src)
+          [...script.attributes].forEach(attr => newScript.setAttribute(attr.name, attr.value));
+          if (script.src) {
+            newScript.src = script.src;
+            newScript.async = false;
+            document.body.appendChild(newScript);
+          } else {
+            newScript.textContent = script.textContent;
+            document.body.appendChild(newScript);
+          }
+          // Remove the script after execution to avoid duplicates
+          setTimeout(() => {
+            try { newScript.remove(); } catch(e) {}
+          }, 100);
+        });
+      } catch (e) {
+        console.warn('Modal script execution warning:', e);
+      }
 
       setTimeout(() => {
         try {
           if (typeof onGlobalModalReady === 'function') {
             onGlobalModalReady();
           }
-
           if (typeof callback === 'function') {
-            callback(); // ✅ finally run it
+            callback();
           }
         } catch (callbackError) {
           console.error('Modal callback error:', callbackError);
         }
-      }, 10);
+      }, 50);
     } catch (modalError) {
       console.error('Modal loading error:', modalError);
       $('#globalModalContent').html(`

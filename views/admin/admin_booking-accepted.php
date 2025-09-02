@@ -19,6 +19,17 @@
       console.log('🔧 Opening service management for booking:', bookingid);
       showGlobalModal('../modal/admin_modal-booking-services.php', { bookingid: bookingid });
     });
+
+    // Handle Complete Booking button click
+    $(document).on('click', '.btn-complete-booking', function (e) {
+      e.preventDefault();
+      const bookingid = $(this).data('bookingid');
+      const userName = $(this).data('username');
+      
+      if (confirm(`Are you sure you want to mark ${userName}'s booking as completed? This will move it to appointment history.`)) {
+        completeBooking(bookingid, $(this));
+      }
+    });
   });
   
   function loadAcceptedBookings() {
@@ -120,6 +131,10 @@
                 <i class="bi bi-list-check me-1"></i>
                 Manage Services
               </button>
+              <button class="btn btn-success btn-complete-booking px-4" data-bookingid="${booking.bookingid}" data-username="${booking.user_name}">
+                <i class="bi bi-check-circle me-1"></i>
+                Complete
+              </button>
             </div>
           </div>
           <!-- Mobile/Tablet Compact Version -->
@@ -145,6 +160,10 @@
                 <i class="bi bi-list-check me-1"></i>
                 Services
               </button>
+              <button class="btn btn-success btn-complete-booking btn-sm px-3" data-bookingid="${booking.bookingid}" data-username="${booking.user_name}">
+                <i class="bi bi-check-circle me-1"></i>
+                Complete
+              </button>
             </div>
           </div>
         </div>
@@ -152,6 +171,62 @@
     });
     
     container.html(html);
+  }
+
+  function completeBooking(bookingid, button) {
+    const originalText = button.text();
+    const bookingCard = $(`#booking-${bookingid}`);
+    
+    // Disable all buttons in this booking card
+    bookingCard.find('button').prop('disabled', true);
+    button.text('Completing...').addClass('btn-warning').removeClass('btn-success');
+    
+    $.ajax({
+      url: '../controller/booking_contr.php',
+      type: 'POST',
+      data: { 
+        action: 'complete_booking',
+        bookingid: bookingid
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.status === 'success') {
+          // Show success animation
+          bookingCard.addClass('border-success').css('background-color', '#d4edda');
+          
+          // Show success message
+          alert('✅ Booking completed successfully! It has been moved to appointment history.');
+          
+          // Remove the booking card with animation after 1 second
+          setTimeout(() => {
+            bookingCard.fadeOut(500, function() {
+              $(this).remove();
+              // Check if no more bookings exist
+              if ($('#booking-accepted-container .container-sm').length === 0) {
+                $('#booking-accepted-container').html(`
+                  <div class="text-center p-4">
+                    <i class="bi bi-check-circle" style="font-size: 3rem; color: #198754;"></i>
+                    <h5 class="mt-3 text-muted">No Accepted Bookings</h5>
+                    <p class="text-muted">There are no accepted bookings at the moment.</p>
+                  </div>
+                `);
+              }
+            });
+          }, 1000);
+        } else {
+          alert('❌ Failed to complete booking. Please try again.');
+          // Restore button state
+          bookingCard.find('button').prop('disabled', false);
+          button.text(originalText).removeClass('btn-warning').addClass('btn-success');
+        }
+      },
+      error: function() {
+        alert('❌ Network error. Please try again.');
+        // Restore button state
+        bookingCard.find('button').prop('disabled', false);
+        button.text(originalText).removeClass('btn-warning').addClass('btn-success');
+      }
+    });
   }
 </script>
 

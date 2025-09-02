@@ -18,6 +18,10 @@
     var currentPage = 1;
     var currentLimit = 10;
     var currentAction = 'get_total_bookings';
+    // Track the latest in-flight AJAX to avoid overlapping renders
+    var currentAjax = null;
+    // Guard against stale responses overriding newer ones
+    var currentRequestId = 0;
     
     // Global functions for dashboard
     
@@ -35,6 +39,7 @@
         currentPage = page;
         currentLimit = limit;
         currentAction = 'get_total_bookings';
+        const requestId = ++currentRequestId;
         
         // Show loading state
         $('#dashboard_loading').show();
@@ -42,7 +47,11 @@
         $('#recovery_actions_container').hide();
         $('#dashboard_empty_state').hide();
         
-        $.ajax({
+        // Abort any previous request to prevent multiple tables rendering
+        if (currentAjax && currentAjax.readyState !== 4) {
+            try { currentAjax.abort(); } catch (e) {}
+        }
+        currentAjax = $.ajax({
             url: '../controller/admin_dashboard_contr.php',
             type: 'POST',
             dataType: 'json',
@@ -52,6 +61,7 @@
                 limit: limit
             },
             success: function(response) {
+                if (requestId !== currentRequestId) return; // ignore stale responses
                 console.log('Total bookings response:', response);
                 $('#dashboard_loading').hide();
                 
@@ -74,26 +84,10 @@
                 }
             },
             error: function(xhr, status, error) {
+                if (status === 'abort' || requestId !== currentRequestId) return; // ignore aborted/stale
                 $('#dashboard_loading').hide();
                 $('#dashboard_empty_state').show();
                 console.error('Error loading total bookings:', error);
-                console.error('Status:', status);
-                console.error('Response text:', xhr.responseText);
-                
-                // Try to parse the error response
-                try {
-                    if (xhr.responseText) {
-                        const errorResponse = JSON.parse(xhr.responseText);
-                        console.error('Parsed error response:', errorResponse);
-                        
-                        // If there's a specific error message, you could display it
-                        if (errorResponse.message) {
-                            console.error('Server error message:', errorResponse.message);
-                        }
-                    }
-                } catch (e) {
-                    console.error('Could not parse error response as JSON');
-                }
             }
         });
     }
@@ -103,8 +97,12 @@
         currentPage = page;
         currentLimit = limit;
         currentAction = 'get_appointment_history';
+        const requestId = ++currentRequestId;
         
-        $.ajax({
+        if (currentAjax && currentAjax.readyState !== 4) {
+            try { currentAjax.abort(); } catch (e) {}
+        }
+        currentAjax = $.ajax({
             url: '../controller/admin_dashboard_contr.php',
             type: 'POST',
             dataType: 'json',
@@ -114,6 +112,7 @@
                 limit: limit
             },
             success: function(response) {
+                if (requestId !== currentRequestId) return;
                 $('#dashboard_loading').hide();
                 
                 if (response.status === 'success' && response.data.length > 0) {
@@ -123,6 +122,7 @@
                 }
             },
             error: function(xhr, status, error) {
+                if (status === 'abort' || requestId !== currentRequestId) return;
                 $('#dashboard_loading').hide();
                 $('#dashboard_empty_state').show();
                 console.error('Error loading appointment history:', error);
@@ -135,8 +135,12 @@
         currentPage = page;
         currentLimit = limit;
         currentAction = 'get_recovery_data';
+        const requestId = ++currentRequestId;
         
-        $.ajax({
+        if (currentAjax && currentAjax.readyState !== 4) {
+            try { currentAjax.abort(); } catch (e) {}
+        }
+        currentAjax = $.ajax({
             url: '../controller/admin_dashboard_contr.php',
             type: 'POST',
             dataType: 'json',
@@ -146,6 +150,7 @@
                 limit: limit
             },
             success: function(response) {
+                if (requestId !== currentRequestId) return;
                 $('#dashboard_loading').hide();
                 
                 if (response.status === 'success') {
@@ -155,6 +160,7 @@
                 }
             },
             error: function(xhr, status, error) {
+                if (status === 'abort' || requestId !== currentRequestId) return;
                 $('#dashboard_loading').hide();
                 $('#dashboard_empty_state').show();
                 console.error('Error loading recovery data:', error);
@@ -167,6 +173,11 @@
         // Show loading state
         showDashboardLoading();
         
+        // Clear current table to avoid multiple tables stacking
+        $('#dashboard_table_container').empty().hide();
+        $('#recovery_actions_container').hide();
+        $('#dashboard_empty_state').hide();
+
         // Call the appropriate function based on current action
         switch (currentAction) {
             case 'get_total_bookings':
@@ -191,9 +202,10 @@
             case 'Pending':
                 return 'bg-warning text-dark';
             case 'Cancelled':
+            case 'Rejected':
                 return 'bg-danger';
             case 'Completed':
-                return 'bg-info';
+                return 'bg-primary';
             default:
                 return 'bg-secondary';
         }
@@ -317,12 +329,10 @@
         // Add pagination
         const paginationHtml = generatePagination(pagination);
         $('#dashboard_table_container').html(`
-            <table id="dashboard_data_table" class="table table-striped w-100">
-                <thead class="table-secondary" id="table_header">${headers}</thead>
-            </table>
-            <div class="table-body-scroll">
-                <table class="table table-striped w-100">
-                    <tbody id="table_body">${rows}</tbody>
+            <div class="table-responsive">
+                <table id="dashboard_data_table" class="table table-striped w-100">
+                    <thead class="table-secondary">${headers}</thead>
+                    <tbody>${rows}</tbody>
                 </table>
             </div>
             ${paginationHtml}
@@ -367,12 +377,10 @@
         // Add pagination
         const paginationHtml = generatePagination(pagination);
         $('#dashboard_table_container').html(`
-            <table id="dashboard_data_table" class="table table-striped w-100">
-                <thead class="table-secondary" id="table_header">${headers}</thead>
-            </table>
-            <div class="table-body-scroll">
-                <table class="table table-striped w-100">
-                    <tbody id="table_body">${rows}</tbody>
+            <div class="table-responsive">
+                <table id="dashboard_data_table" class="table table-striped w-100">
+                    <thead class="table-secondary">${headers}</thead>
+                    <tbody>${rows}</tbody>
                 </table>
             </div>
             ${paginationHtml}
@@ -697,6 +705,16 @@
         
         // Reset to first page when changing dashboard type
         currentPage = 1;
+
+        // Clear containers before loading new section
+        $('#dashboard_table_container').empty().hide();
+        $('#recovery_actions_container').hide();
+        $('#dashboard_empty_state').hide();
+
+        // Abort any previous in-flight request
+        if (currentAjax && currentAjax.readyState !== 4) {
+            try { currentAjax.abort(); } catch (e) {}
+        }
         
         switch (type) {
             case 'Bookings':
@@ -837,18 +855,13 @@
                 `;
             });
             
-            $('#table_header').html(headers);
-            $('#table_body').html(rows);
-            
             // Add pagination
             const paginationHtml = generatePagination(pagination);
             $('#dashboard_table_container').html(`
-                <table id="dashboard_data_table" class="table table-striped w-100">
-                    <thead class="table-secondary" id="table_header">${headers}</thead>
-                </table>
-                <div class="table-body-scroll">
-                    <table class="table table-striped w-100">
-                        <tbody id="table_body">${rows}</tbody>
+                <div class="table-responsive">
+                    <table id="dashboard_data_table" class="table table-striped w-100">
+                        <thead class="table-secondary">${headers}</thead>
+                        <tbody>${rows}</tbody>
                     </table>
                 </div>
                 ${paginationHtml}
@@ -894,12 +907,10 @@
             // Add pagination
             const paginationHtml = generatePagination(pagination);
             $('#dashboard_table_container').html(`
-                <table id="dashboard_data_table" class="table table-striped w-100">
-                    <thead class="table-secondary" id="table_header">${headers}</thead>
-                </table>
-                <div class="table-body-scroll">
-                    <table class="table table-striped w-100">
-                        <tbody id="table_body">${rows}</tbody>
+                <div class="table-responsive">
+                    <table id="dashboard_data_table" class="table table-striped w-100">
+                        <thead class="table-secondary">${headers}</thead>
+                        <tbody>${rows}</tbody>
                     </table>
                 </div>
                 ${paginationHtml}
@@ -1018,8 +1029,9 @@
         function getStatusClass(status) {
             switch(status) {
                 case 'Confirmed': return 'bg-success';
-                case 'Pending': return 'bg-warning';
-                case 'Cancelled': return 'bg-danger';
+                case 'Pending': return 'bg-warning text-dark';
+                case 'Cancelled':
+                case 'Rejected': return 'bg-danger';
                 case 'Completed': return 'bg-primary';
                 default: return 'bg-secondary';
             }
@@ -1079,8 +1091,8 @@
 </script>
 
 <style>
-    /* Responsive Table Heights */
-    .table-body-scroll {
+    /* Fixed Table Column Alignment */
+    .table-responsive {
         border-top: 1px solid #dee2e6;
         overflow-y: auto;
         /* Dynamic height: Full viewport minus header, nav, footer, and padding */
@@ -1089,42 +1101,72 @@
         min-height: 300px;
     }
     
+    /* Ensure table columns maintain proper width alignment */
+    .table-responsive .table th,
+    .table-responsive .table td {
+        min-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Specific column widths for better alignment */
+    .table-responsive .table th:nth-child(1),
+    .table-responsive .table td:nth-child(1) { min-width: 150px; } /* Client */
+    .table-responsive .table th:nth-child(2),
+    .table-responsive .table td:nth-child(2) { min-width: 200px; } /* Services */
+    .table-responsive .table th:nth-child(3),
+    .table-responsive .table td:nth-child(3) { min-width: 120px; } /* Date & Time */
+    .table-responsive .table th:nth-child(4),
+    .table-responsive .table td:nth-child(4) { min-width: 100px; } /* Status */
+    .table-responsive .table th:nth-child(5),
+    .table-responsive .table td:nth-child(5) { min-width: 100px; } /* Amount */
+    .table-responsive .table th:nth-child(6),
+    .table-responsive .table td:nth-child(6) { min-width: 100px; } /* Payment */
+    
     /* Responsive adjustments */
     @media (max-width: 767px) {
-        .table-body-scroll {
+        .table-responsive {
             /* Smaller height on mobile to save space */
             max-height: calc(100vh - 250px);
             min-height: 250px;
         }
+        
+        /* Allow text wrapping on mobile */
+        .table-responsive .table th,
+        .table-responsive .table td {
+            white-space: normal;
+            min-width: 80px;
+        }
     }
     
     @media (min-width: 1400px) {
-        .table-body-scroll {
+        .table-responsive {
             /* More space on large screens */
             max-height: calc(100vh - 180px);
             min-height: 400px;
         }
     }
     
-    .table-body-scroll .table {
+    .table-responsive .table {
         margin-bottom: 0;
     }
     
-    .table-body-scroll::-webkit-scrollbar {
+    .table-responsive::-webkit-scrollbar {
         width: 8px;
     }
     
-    .table-body-scroll::-webkit-scrollbar-track {
+    .table-responsive::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 4px;
     }
     
-    .table-body-scroll::-webkit-scrollbar-thumb {
+    .table-responsive::-webkit-scrollbar-thumb {
         background: #c1c1c1;
         border-radius: 4px;
     }
     
-    .table-body-scroll::-webkit-scrollbar-thumb:hover {
+    .table-responsive::-webkit-scrollbar-thumb:hover {
         background: #a8a8a8;
     }
 </style>
