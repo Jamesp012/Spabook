@@ -25,12 +25,12 @@ class User
         try {
             // Since multi-condition queries fail, get all therapists first then filter by email in PHP
             $therapists = $php_fetch($table, '*', ['role' => 'Therapist']);
-            
+
             // Check if query was successful
             if (isset($therapists['error'])) {
                 return json_encode(['error' => 'Database error occurred']);
             }
-            
+
             // Find therapist by email
             $user_data = null;
             if (is_array($therapists)) {
@@ -41,21 +41,21 @@ class User
                     }
                 }
             }
-            
+
             if ($user_data) {
                 // Check password (using default for now)
                 $default_password = 'therapist123';
-                
+
                 if ($password === $default_password) {
                     // Start session and set therapist data
                     if (session_status() == PHP_SESSION_NONE) {
                         session_start();
                     }
-                    
+
                     $_SESSION['therapist_id'] = $user_data['user_id'];
                     $_SESSION['therapist_name'] = $user_data['full_name'];
                     $_SESSION['therapist_email'] = $user_data['email'];
-                    
+
                     // Update last login time
                     try {
                         $php_update($table, ['updated_at' => date('c')], ['user_id' => $user_data['user_id']]);
@@ -63,7 +63,7 @@ class User
                         // Log but don't fail login for this
                         error_log('Failed to update therapist login time: ' . $e->getMessage());
                     }
-                    
+
                     return json_encode('Therapist');
                 } else {
                     return json_encode(['error' => 'Invalid email or password']);
@@ -172,19 +172,34 @@ class User
     {
         try {
             $users = $php_fetch($table, '*');
-            
+            $item_data = array();
+            $all_users = [];
+            $user_role = [];
+            $admin_rode = [];
+            $therapist_role = [];
             if (is_array($users) && count($users) > 0) {
                 // For each user, if they're a therapist, get their services info
                 foreach ($users as &$user) {
-                    if ($user['role'] === 'Therapist') {
-                        // This would be enhanced later to get actual therapist services
-                        $user['therapist_services'] = 'Massage, Spa Treatments';
-                        $user['is_active'] = true; // Default active for now
-                    } else {
-                        $user['is_active'] = true; // All regular users are active by default
+                    $all_users[] = $user;
+                    switch ($user['role']) {
+                        case 'User':
+                            $user_role[] = $user;
+                            break;
+                        case 'Admin':
+                            $admin_rode[] = $user;
+                            break;
+                        case 'Therapist':
+                            $therapist_role[] = $user;
+                            break;
                     }
                 }
-                return json_encode($users);
+                $item_data = array(
+                    'all_users' => $all_users,
+                    'admin' => $admin_rode,
+                    'therapist' => $therapist_role,
+                    'regular_user' => $user_role
+                );
+                return json_encode($item_data);
             } else {
                 return json_encode([]);
             }
@@ -200,7 +215,7 @@ class User
             // Soft delete by setting role to 'deleted' or actually delete
             // For now, let's actually delete the user
             $result = $php_update($table, ['role' => 'deleted'], ['user_id' => $user_id]);
-            
+
             if ($result) {
                 return json_encode(['status' => 'success', 'message' => 'User deleted successfully']);
             } else {
@@ -216,13 +231,13 @@ class User
         try {
             // Generate a UUID for the user (you might want to use a proper UUID generator)
             $user_id = uniqid('therapist_', true);
-            
+
             // Hash the password
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            
+
             // Create full name
             $full_name = trim($first_name . ' ' . $last_name);
-            
+
             // Prepare user data for database insertion
             $userData = [
                 'user_id' => $user_id,
@@ -239,7 +254,7 @@ class User
             ];
 
             $result = $php_insert($table, $userData);
-            
+
             if (isset($result['error'])) {
                 // Check for duplicate email
                 if (strpos($result['error'], 'duplicate') !== false || strpos($result['error'], 'unique') !== false) {
@@ -247,13 +262,12 @@ class User
                 }
                 return json_encode(['status' => 'error', 'message' => 'Failed to create therapist account: ' . $result['error']]);
             }
-            
+
             return json_encode([
-                'status' => 'success', 
+                'status' => 'success',
                 'message' => 'Therapist account created successfully',
                 'user_id' => $user_id
             ]);
-            
         } catch (Exception $e) {
             error_log('Error in addTherapistUser: ' . $e->getMessage());
             return json_encode(['status' => 'error', 'message' => 'Database error occurred']);

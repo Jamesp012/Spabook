@@ -5,18 +5,18 @@
             <i class="bi bi-arrow-clockwise me-1"></i>Refresh
         </button>
     </div>
-    
+
     <div id="loading-history" class="text-center py-4" style="display: none;">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
         <div class="mt-2 text-muted">Loading your booking history...</div>
     </div>
-    
+
     <div id="history-list" class="history-list mt-2">
         <!-- History items will be loaded here -->
     </div>
-    
+
     <div id="no-history" class="text-center py-5" style="display: none;">
         <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
         <div class="mt-3 text-muted">
@@ -53,20 +53,20 @@
         border-left: 4px solid transparent;
         transition: all 0.2s ease;
     }
-    
+
     .history-item:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transform: translateY(-1px);
     }
-    
+
     .history-item.status-confirmed {
         border-left-color: #28a745;
     }
-    
+
     .history-item.status-completed {
         border-left-color: #007bff;
     }
-    
+
     .history-item.status-cancelled {
         border-left-color: #dc3545;
     }
@@ -79,22 +79,22 @@
         align-items: center;
     }
 
-    .history-item-content > div {
+    .history-item-content>div {
         margin-bottom: 4px;
         min-width: 180px;
         text-align: left;
     }
-    
+
     .service-name {
         font-weight: 600;
         color: #2c3e50;
     }
-    
+
     .booking-date {
         color: #6c757d;
         font-size: 0.9rem;
     }
-    
+
     .booking-status {
         display: inline-block;
         padding: 4px 8px;
@@ -103,27 +103,27 @@
         font-weight: 600;
         text-transform: uppercase;
     }
-    
+
     .status-confirmed {
         background-color: #d4edda;
         color: #155724;
     }
-    
+
     .status-completed {
         background-color: #d1ecf1;
         color: #0c5460;
     }
-    
+
     .status-cancelled {
         background-color: #f8d7da;
         color: #721c24;
     }
-    
+
     .status-pending {
         background-color: #fff3cd;
         color: #856404;
     }
-    
+
     .invoice-summary {
         margin-top: 12px;
         padding: 12px;
@@ -132,24 +132,24 @@
         border-radius: 6px;
         font-size: 0.85rem;
     }
-    
+
     .invoice-meta {
         display: flex;
-        justify-content-between;
+        justify-content: space-between;
         margin-bottom: 8px;
         color: #6c757d;
     }
-    
+
     .invoice-items {
         margin-bottom: 8px;
     }
-    
+
     .invoice-item {
         display: flex;
-        justify-content-between;
+        justify-content: space-between;
         padding: 2px 0;
     }
-    
+
     .invoice-total {
         display: flex;
         justify-content: between;
@@ -166,7 +166,7 @@
             font-size: 1rem;
             padding: 14px 16px;
         }
-        
+
         .history-item-content {
             flex-direction: column;
             gap: 8px;
@@ -177,7 +177,7 @@
             padding: 0 5px;
         }
 
-        .history-item-content > div {
+        .history-item-content>div {
             min-width: unset;
             width: 100%;
         }
@@ -186,50 +186,52 @@
 
 <script src="../../vendor/js/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-    let currentUserId = null;
-    
-    function peso(v) { 
-        return '₱' + Number(v).toLocaleString('en-PH', {minimumFractionDigits: 2}); 
-    }
-    
-    function getStatusClass(status) {
-        return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
-    }
-    
-    function formatDate(dateString) {
-        if (!dateString) return 'N/A';
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-PH', { 
-                year: 'numeric', 
-                month: 'short', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
+    $(document).ready(function() {
+        let currentUserId = null;
+
+        function peso(v) {
+            return '₱' + Number(v).toLocaleString('en-PH', {
+                minimumFractionDigits: 2
             });
-        } catch (e) {
-            return dateString;
         }
-    }
-    
-    function loadInvoice(bookingId, container) {
-        $.post('../../controller/booking_contr.php', { 
-            action: 'get_invoice_by_booking', 
-            booking_id: bookingId 
-        }, function(res) {
-            if (res.status === 'success') {
-                const inv = res.invoice;
-                const items = res.items || [];
-                
-                const itemsHtml = items.map(item => `
+
+        function getStatusClass(status) {
+            return 'status-' + status.toLowerCase().replace(/\s+/g, '-');
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-PH', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        function loadInvoice(bookingId, container) {
+            $.post('../../controller/booking_contr.php', {
+                action: 'get_invoice_by_booking',
+                booking_id: bookingId
+            }, function(res) {
+                if (res.status === 'success') {
+                    const inv = res.invoice;
+                    const items = res.items || [];
+
+                    const itemsHtml = items.map(item => `
                     <div class="invoice-item">
                         <span>${item.description || ('Service #' + item.service_id)}</span>
                         <span>${peso(item.line_total)}</span>
                     </div>
                 `).join('');
-                
-                const invoiceHtml = `
+
+                    const invoiceHtml = `
                     <div class="invoice-summary">
                         <div class="invoice-meta">
                             <span>Invoice #${inv.invoice_id}</span>
@@ -244,32 +246,32 @@ $(document).ready(function() {
                         </div>
                     </div>
                 `;
-                
-                $(container).append(invoiceHtml);
-            }
-        }, 'json').fail(function() {
-            console.log('Failed to load invoice for booking ' + bookingId);
-        });
-    }
-    
-    function loadUserHistory(userId) {
-        $('#loading-history').show();
-        $('#history-list').empty();
-        $('#no-history').hide();
-        
-        $.post('../../controller/booking_contr.php', { 
-            action: 'get_user_bookings', 
-            user_id: userId 
-        }, function(res) {
-            $('#loading-history').hide();
-            
-            if (res.status === 'success' && res.data && res.data.length > 0) {
-                const bookings = res.data;
-                
-                bookings.forEach(function(booking) {
-                    const statusClass = getStatusClass(booking.booking_status);
-                    
-                    const historyItem = $(`
+
+                    $(container).append(invoiceHtml);
+                }
+            }, 'json').fail(function() {
+                console.log('Failed to load invoice for booking ' + bookingId);
+            });
+        }
+
+        function loadUserHistory(userId) {
+            $('#loading-history').show();
+            $('#history-list').empty();
+            $('#no-history').hide();
+
+            $.post('../../controller/booking_contr.php', {
+                action: 'get_user_bookings',
+                user_id: userId
+            }, function(res) {
+                $('#loading-history').hide();
+
+                if (res.status === 'success' && res.data && res.data.length > 0) {
+                    const bookings = res.data;
+
+                    bookings.forEach(function(booking) {
+                        const statusClass = getStatusClass(booking.booking_status);
+
+                        const historyItem = $(`
                         <div class="history-item ${statusClass}" data-booking-id="${booking.bookingid}">
                             <div class="history-item-content">
                                 <div>
@@ -287,71 +289,75 @@ $(document).ready(function() {
                             </div>
                         </div>
                     `);
-                    
-                    $('#history-list').append(historyItem);
-                    
-                    // Load invoice for this booking if it's completed or confirmed
-                    if (booking.booking_status === 'Completed' || booking.booking_status === 'Confirmed') {
-                        loadInvoice(booking.bookingid, historyItem[0]);
-                    }
-                });
-            } else {
+
+                        $('#history-list').append(historyItem);
+
+                        // Load invoice for this booking if it's completed or confirmed
+                        if (booking.booking_status === 'Completed' || booking.booking_status === 'Confirmed') {
+                            loadInvoice(booking.bookingid, historyItem[0]);
+                        }
+                    });
+                } else {
+                    $('#no-history').show();
+                }
+            }, 'json').fail(function() {
+                $('#loading-history').hide();
                 $('#no-history').show();
+                Swal.fire('Error', 'Failed to load booking history', 'error');
+            });
+        }
+
+        function getCurrentUserId() {
+            // Try to get user ID from session or local storage
+            // This should match how the user ID is stored in your authentication system
+            return new Promise((resolve, reject) => {
+                // First try to get from supabase session
+                if (typeof supabase !== 'undefined') {
+                    supabase.auth.getSession().then(({
+                        data: {
+                            session
+                        }
+                    }) => {
+                        if (session && session.user) {
+                            resolve(session.user.id);
+                        } else {
+                            reject('No active session');
+                        }
+                    });
+                } else {
+                    // Fallback: try to get from a global variable or make an API call
+                    $.post('../../controller/user_contr.php', {
+                        action: 'get_current_user'
+                    }, function(res) {
+                        if (res.status === 'success' && res.user_id) {
+                            resolve(res.user_id);
+                        } else {
+                            reject('Unable to get user ID');
+                        }
+                    }, 'json').fail(function() {
+                        reject('Network error getting user ID');
+                    });
+                }
+            });
+        }
+
+        // Event handlers
+        $('#refresh-history').on('click', function() {
+            if (currentUserId) {
+                loadUserHistory(currentUserId);
             }
-        }, 'json').fail(function() {
+        });
+
+        // Initialize
+        getCurrentUserId().then(function(userId) {
+            currentUserId = userId;
+            loadUserHistory(userId);
+        }).catch(function(error) {
+            console.error('Error getting user ID:', error);
             $('#loading-history').hide();
             $('#no-history').show();
-            Swal.fire('Error', 'Failed to load booking history', 'error');
+            $('#no-history .text-muted h6').text('Unable to load history');
+            $('#no-history .text-muted p').text('Please try logging out and logging back in.');
         });
-    }
-    
-    function getCurrentUserId() {
-        // Try to get user ID from session or local storage
-        // This should match how the user ID is stored in your authentication system
-        return new Promise((resolve, reject) => {
-            // First try to get from supabase session
-            if (typeof supabase !== 'undefined') {
-                supabase.auth.getSession().then(({data: {session}}) => {
-                    if (session && session.user) {
-                        resolve(session.user.id);
-                    } else {
-                        reject('No active session');
-                    }
-                });
-            } else {
-                // Fallback: try to get from a global variable or make an API call
-                $.post('../../controller/user_contr.php', { 
-                    action: 'get_current_user' 
-                }, function(res) {
-                    if (res.status === 'success' && res.user_id) {
-                        resolve(res.user_id);
-                    } else {
-                        reject('Unable to get user ID');
-                    }
-                }, 'json').fail(function() {
-                    reject('Network error getting user ID');
-                });
-            }
-        });
-    }
-    
-    // Event handlers
-    $('#refresh-history').on('click', function() {
-        if (currentUserId) {
-            loadUserHistory(currentUserId);
-        }
     });
-    
-    // Initialize
-    getCurrentUserId().then(function(userId) {
-        currentUserId = userId;
-        loadUserHistory(userId);
-    }).catch(function(error) {
-        console.error('Error getting user ID:', error);
-        $('#loading-history').hide();
-        $('#no-history').show();
-        $('#no-history .text-muted h6').text('Unable to load history');
-        $('#no-history .text-muted p').text('Please try logging out and logging back in.');
-    });
-});
 </script>

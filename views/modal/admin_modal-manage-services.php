@@ -79,17 +79,17 @@
         $('#' + field).addClass('is-valid').removeClass('is-invalid');
         $('#' + field).next().html();
     }
-    
+
     // Modal specific code
     var serviceid = '<?= isset($_GET['serviceid']) ? $_GET['serviceid'] : '' ?>';
-    
+
     // Define global functions
     function addNewServices() {
         if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration')) {
             // Get the image data
             let imageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
             let currentSrc = $('#service_image').attr('src');
-            
+
             // Only use the image if it's not the default image or a relative path
             if (currentSrc && !currentSrc.includes('default_product.png') && currentSrc.startsWith('data:')) {
                 imageData = currentSrc;
@@ -97,7 +97,7 @@
             } else {
                 console.log('📷 Using default image (no custom image uploaded)');
             }
-            
+
             // Log the data being sent
             const formData = {
                 action: 'add_service',
@@ -107,7 +107,7 @@
                 price: $('#servicePrice').val(),
                 duration: $('#serviceDuration').val()
             };
-            
+
             console.log('📤 Sending service data:', {
                 action: formData.action,
                 name: formData.name,
@@ -117,7 +117,7 @@
                 imageLength: formData.image ? formData.image.length : 0,
                 imageType: formData.image ? (formData.image.startsWith('data:') ? 'base64' : 'other') : 'none'
             });
-            
+
             $.ajax({
                 url: '../controller/booking_services_contr.php',
                 type: 'POST',
@@ -153,19 +153,19 @@
                 success: function(response) {
                     console.log('Raw response:', response);
                     console.log('Response type:', typeof response);
-                    
+
                     // Handle both JSON string and direct string responses
                     let result = response;
                     if (typeof response === 'string') {
                         try {
                             result = JSON.parse(response);
-                        } catch(e) {
+                        } catch (e) {
                             result = response;
                         }
                     }
-                    
+
                     console.log('Parsed result:', result);
-                    
+
                     if (result === 'success') {
                         Swal.fire({
                             icon: 'success',
@@ -199,7 +199,11 @@
                         title: 'Network Error',
                         html: '<strong>Status:</strong> ' + status + '<br><strong>Error:</strong> ' + error + '<br><strong>Response:</strong> ' + xhr.responseText
                     });
-                    console.log('AJAX Error:', {xhr, status, error});
+                    console.log('AJAX Error:', {
+                        xhr,
+                        status,
+                        error
+                    });
                 }
             });
         }
@@ -210,15 +214,15 @@
             // Get the image data (same logic as add function)
             let imageData = $('#service_image').attr('src');
             let currentSrc = $('#service_image').attr('src');
-            
+
             console.log('🔄 Update mode - current image src:', currentSrc);
             console.log('🔄 Is base64?', currentSrc && currentSrc.startsWith('data:'));
-            
+
             // Use the current src, whether it's a URL or base64
             if (!currentSrc) {
                 imageData = '../vendor/images/default_product.png';
             }
-            
+
             // Log the data being sent for update
             const formData = {
                 action: 'update_service',
@@ -229,7 +233,7 @@
                 price: $('#servicePrice').val(),
                 duration: $('#serviceDuration').val()
             };
-            
+
             console.log('📤 Sending update data:', {
                 action: formData.action,
                 serviceid: formData.serviceid,
@@ -240,7 +244,7 @@
                 imageLength: formData.image ? formData.image.length : 0,
                 imageType: formData.image ? (formData.image.startsWith('data:') ? 'base64' : 'url') : 'none'
             });
-            
+
             $.ajax({
                 url: '../controller/booking_services_contr.php',
                 type: 'POST',
@@ -276,20 +280,20 @@
                 success: function(response) {
                     console.log('✅ Update service response:', response);
                     console.log('Response type:', typeof response);
-                    
+
                     // Handle both JSON string and direct string responses
                     let result = response;
                     if (typeof response === 'string') {
                         try {
                             result = JSON.parse(response);
-                        } catch(e) {
+                        } catch (e) {
                             result = response;
                         }
                     }
-                    
+
                     console.log('Parsed result:', result);
-                    
-                    if (result === 'success') {
+
+                    if (result.status === 'success') {
                         Swal.fire({
                             icon: 'success',
                             title: 'Service Updated Successfully',
@@ -301,31 +305,31 @@
                         if (typeof loadServices === 'function') {
                             loadServices();
                         }
-                    } else if (result === 'duplicate') {
+                    } else if (result.status === 'duplicate') {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Duplicate Service Name',
                             text: 'A service with this name already exists. Please choose a different name.'
                         });
-                    } else if (result === 'notfound') {
+                    } else if (result.status === 'notfound') {
                         Swal.fire({
                             icon: 'error',
                             title: 'Service Not Found',
                             text: 'The service you are trying to update no longer exists.'
                         });
-                    } else if (result === 'image_upload_failed') {
+                    } else if (result.status === 'image_upload_failed') {
                         Swal.fire({
                             icon: 'error',
                             title: 'Image Upload Failed',
                             text: 'Failed to upload the new image. Please try again or use a different image.'
                         });
-                    } else if (result === 'database_error') {
+                    } else if (result.status === 'database_error') {
                         Swal.fire({
                             icon: 'error',
                             title: 'Database Error',
                             text: 'There was a problem updating the service in the database. Please check the server logs.'
                         });
-                    } else if (result === 'exception_error') {
+                    } else if (result.status === 'exception_error') {
                         Swal.fire({
                             icon: 'error',
                             title: 'Server Error',
@@ -346,12 +350,16 @@
                         title: 'Network Error',
                         html: '<strong>Status:</strong> ' + status + '<br><strong>Error:</strong> ' + error + '<br><strong>Response:</strong> ' + xhr.responseText
                     });
-                    console.log('Update AJAX Error:', {xhr, status, error});
+                    console.log('Update AJAX Error:', {
+                        xhr,
+                        status,
+                        error
+                    });
                 }
             });
         }
     }
-    
+
     // Initialize based on serviceid
     if (serviceid != '') {
         // Update mode - change title and button visibility
@@ -391,20 +399,20 @@
         if (file) {
             // Show loading while processing image
             $('#uploadOverlay').html('<div class="spinner-border spinner-border-sm text-white me-2"></div>Processing...').css('opacity', '1');
-            
+
             console.log('📁 Image file selected:', {
                 name: file.name,
                 size: (file.size / 1024).toFixed(2) + ' KB',
                 type: file.type
             });
-            
+
             var reader = new FileReader();
             reader.onload = function(e) {
                 $('#service_image').attr('src', e.target.result);
                 $('#uploadOverlay').html('Image uploaded successfully! Click to change').css('opacity', '0');
-                
+
                 console.log('✅ Image loaded as base64, length:', e.target.result.length);
-                
+
                 // Show success feedback briefly
                 $('#uploadOverlay').css('opacity', '1');
                 setTimeout(() => {
@@ -417,7 +425,11 @@
 
     // Hover effects for image upload  
     $('.position-relative.rounded-3').hover(
-        function() { $('#uploadOverlay').css('opacity', '1'); },
-        function() { $('#uploadOverlay').css('opacity', '0'); }
+        function() {
+            $('#uploadOverlay').css('opacity', '1');
+        },
+        function() {
+            $('#uploadOverlay').css('opacity', '0');
+        }
     );
 </script>
