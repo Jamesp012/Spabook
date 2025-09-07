@@ -19,27 +19,28 @@ if (isset($_POST['action'])) {
                 echo json_encode(['status' => 'error', 'message' => 'Missing required fields: image, name, price, duration']);
                 break;
             }
-            
+
             $imagebase64 = $_POST['image'];
             $name = trim($_POST['name']);
             $description = trim($_POST['description'] ?? '');
             $price = floatval($_POST['price']);
             $duration = intval($_POST['duration']);
-            
+            $commission = floatval($_POST['commission']);
+
             if (empty($name)) {
                 echo json_encode(['status' => 'error', 'message' => 'Service name cannot be empty']);
                 break;
             }
-            
+
             $cleanName = str_replace(' ', '_', $name);
             $imageupload = uploadProfileImage($imagebase64, $cleanName, 'services_images');
-            
+
             if ($imageupload === false) {
                 echo json_encode(['status' => 'error', 'message' => 'Image upload failed']);
                 break;
             }
-            
-            echo $bookingServices->addService($php_fetch, $php_insert, $imageupload, $name, $description, $price, $duration);
+
+            echo $bookingServices->addService($php_fetch, $php_insert, $imageupload, $name, $description, $price, $duration, $commission);
             break;
 
         case 'update_service':
@@ -47,21 +48,22 @@ if (isset($_POST['action'])) {
                 echo json_encode(['status' => 'error', 'message' => 'Missing required fields: serviceid, name, price, duration']);
                 break;
             }
-            
+
             $serviceid = intval($_POST['serviceid']);
             $imagebase64 = $_POST['image'] ?? '';
             $name = trim($_POST['name']);
             $description = trim($_POST['description'] ?? '');
             $price = floatval($_POST['price']);
             $duration = intval($_POST['duration']);
-            
+            $commission = floatval($_POST['commission'] ?? 0);
+
             if (empty($name)) {
                 echo json_encode(['status' => 'error', 'message' => 'Service name cannot be empty']);
                 break;
             }
-            
+
             $cleanName = str_replace(' ', '_', $name);
-            
+
             // Handle image update logic
             if ($imagebase64 && strpos($imagebase64, 'data:') === 0) {
                 // New image uploaded (base64 data)
@@ -74,8 +76,8 @@ if (isset($_POST['action'])) {
                 // No new image or existing URL - keep the current image
                 $imageupload = $imagebase64; // Use existing image URL
             }
-            
-            echo $bookingServices->updateService($php_fetch, $php_update, $serviceid, $imageupload, $name, $description, $price, $duration);
+
+            echo $bookingServices->updateService($php_fetch, $php_update, $serviceid, $imageupload, $name, $description, $price, $duration, $commission);
             break;
 
         case 'delete_service':
@@ -83,17 +85,17 @@ if (isset($_POST['action'])) {
                 echo json_encode(['status' => 'error', 'message' => 'Service ID is required']);
                 break;
             }
-            
+
             $serviceid = intval($_POST['serviceid']);
             echo $bookingServices->deleteService($php_delete, $serviceid);
             break;
-            
+
         case 'get_service_by_id':
             if (empty($_POST['serviceid'])) {
                 echo json_encode(['status' => 'error', 'message' => 'Service ID is required']);
                 break;
             }
-            
+
             $serviceid = intval($_POST['serviceid']);
             echo $bookingServices->getServiceById($php_fetch, $serviceid);
             break;
@@ -107,7 +109,7 @@ if (isset($_POST['action'])) {
                 echo json_encode([]);
             }
             break;
-            
+
         default:
             echo json_encode(['status' => 'error', 'message' => 'Invalid action']);
             break;

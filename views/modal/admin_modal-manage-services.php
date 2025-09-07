@@ -44,6 +44,13 @@
             <input type="number" class="form-control" id="serviceDuration" name="duration" min="1" placeholder="e.g., 60" required>
             <div class="invalid-feedback"></div>
         </div>
+
+        <!-- Commission  -->
+        <div class="col-md-6">
+            <label for="serviceCommission" class="form-label fw-semibold">Commission (₱)</label>
+            <input type="number" class="form-control" id="serviceCommission" name="commission" min="1" placeholder="e.g., 30" required>
+            <div class="invalid-feedback"></div>
+        </div>
     </div>
 </div>
 
@@ -85,7 +92,7 @@
 
     // Define global functions
     function addNewServices() {
-        if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration')) {
+        if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration', 'serviceCommission')) {
             // Get the image data
             let imageData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
             let currentSrc = $('#service_image').attr('src');
@@ -105,7 +112,8 @@
                 name: $('#serviceName').val(),
                 description: $('#serviceDescription').val(),
                 price: $('#servicePrice').val(),
-                duration: $('#serviceDuration').val()
+                duration: $('#serviceDuration').val(),
+                commission: $('#serviceCommission').val()
             };
 
             console.log('📤 Sending service data:', {
@@ -210,7 +218,7 @@
     }
 
     function updateServices() {
-        if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration')) {
+        if (inputValidation('serviceName', 'serviceDescription', 'servicePrice', 'serviceDuration', 'serviceCommission')) {
             // Get the image data (same logic as add function)
             let imageData = $('#service_image').attr('src');
             let currentSrc = $('#service_image').attr('src');
@@ -231,19 +239,9 @@
                 name: $('#serviceName').val(),
                 description: $('#serviceDescription').val(),
                 price: $('#servicePrice').val(),
-                duration: $('#serviceDuration').val()
+                duration: $('#serviceDuration').val(),
+                commission: $('#serviceCommission').val()
             };
-
-            console.log('📤 Sending update data:', {
-                action: formData.action,
-                serviceid: formData.serviceid,
-                name: formData.name,
-                description: formData.description,
-                price: formData.price,
-                duration: formData.duration,
-                imageLength: formData.image ? formData.image.length : 0,
-                imageType: formData.image ? (formData.image.startsWith('data:') ? 'base64' : 'url') : 'none'
-            });
 
             $.ajax({
                 url: '../controller/booking_services_contr.php',
@@ -278,9 +276,6 @@
                     });
                 },
                 success: function(response) {
-                    console.log('✅ Update service response:', response);
-                    console.log('Response type:', typeof response);
-
                     // Handle both JSON string and direct string responses
                     let result = response;
                     if (typeof response === 'string') {
@@ -382,6 +377,7 @@
                     $('#servicePrice').val(result.price);
                     $('#serviceDuration').val(result.per_minute);
                     $('#service_image').attr('src', result.service_picture);
+                    $('#serviceCommission').val(result.commission);
                 }
             }
         });
