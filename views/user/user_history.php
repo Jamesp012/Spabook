@@ -71,6 +71,10 @@
         border-left-color: #dc3545;
     }
 
+    .history-item.status-rejected {
+        border-left-color: #dc3545;
+    }
+
     .history-item-content {
         flex: 1;
         display: flex;
@@ -115,6 +119,11 @@
     }
 
     .status-cancelled {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-rejected {
         background-color: #f8d7da;
         color: #721c24;
     }
@@ -184,7 +193,6 @@
     }
 </style>
 
-<script src="../../vendor/js/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
         let currentUserId = null;
@@ -216,7 +224,7 @@
         }
 
         function loadInvoice(bookingId, container) {
-            $.post('../../controller/booking_contr.php', {
+            $.post('../controller/booking_contr.php', {
                 action: 'get_invoice_by_booking',
                 booking_id: bookingId
             }, function(res) {
@@ -259,8 +267,8 @@
             $('#history-list').empty();
             $('#no-history').hide();
 
-            $.post('../../controller/booking_contr.php', {
-                action: 'get_user_bookings',
+            $.post('../controller/booking_contr.php', {
+                action: 'get_user_booking_history',
                 user_id: userId
             }, function(res) {
                 $('#loading-history').hide();
@@ -326,7 +334,7 @@
                     });
                 } else {
                     // Fallback: try to get from a global variable or make an API call
-                    $.post('../../controller/user_contr.php', {
+                    $.post('../controller/user_contr.php', {
                         action: 'get_current_user'
                     }, function(res) {
                         if (res.status === 'success' && res.user_id) {

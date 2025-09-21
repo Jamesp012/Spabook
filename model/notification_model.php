@@ -88,28 +88,38 @@ class NotificationModel {
      * @return array The result of the update operation
      */
     public function markAllAsRead($php_update, $table, $user_id) {
-        // For complex filters like this, we need to modify the connection.php approach
-        // or use a custom query. For now, let's use a workaround:
+        // Use a custom query for better performance
+        global $baseUrl, $apiKey;
         
-        // First, get all unread notifications for the user
-        global $php_fetch;
-        $unreadNotifications = $php_fetch($table, '*', ['user_id' => $user_id, 'is_read' => 'false']);
+        $url = "$baseUrl/$table?user_id=eq.$user_id&is_read=eq.false";
         
-        $results = [];
+        $headers = [
+            "apikey: $apiKey",
+            "Authorization: Bearer $apiKey",
+            "Content-Type: application/json",
+            "Prefer: return=representation"
+        ];
         
-        // Then update each notification individually
-        if (!empty($unreadNotifications)) {
-            foreach ($unreadNotifications as $notification) {
-                $result = $php_update(
-                    $table,
-                    ['is_read' => true, 'read_at' => 'NOW()'],
-                    ['notificationid' => $notification['notificationid']]
-                );
-                $results[] = $result;
-            }
+        $data = [
+            'is_read' => true,
+            'read_at' => date('c') // ISO 8601 format
+        ];
+        
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($httpCode >= 200 && $httpCode < 300) {
+            return json_decode($response, true);
+        } else {
+            return ['error' => 'Failed to mark all as read', 'response' => $response];
         }
-        
-        return $results;
     }
     
     /**

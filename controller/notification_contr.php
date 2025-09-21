@@ -174,6 +174,21 @@ function createAdminBookingNotification($booking_id, $user_name) {
     return $results;
 }
 
+// Check if notification table exists before processing requests
+try {
+    $tableCheck = $php_fetch("SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'notification'
+    ) as exists");
+    
+    if (!isset($tableCheck[0]['exists']) || $tableCheck[0]['exists'] !== true) {
+        response(['status' => 'error', 'message' => 'Notification table does not exist. Please create the notification table first.']);
+    }
+} catch (Exception $e) {
+    response(['status' => 'error', 'message' => 'Database connection error: ' . $e->getMessage()]);
+}
+
 // Handle API requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;

@@ -28,7 +28,7 @@
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-people"></i>User Management</a>
             </li>
             <li class="app_sidebar_item" data-content="admin_sales_report.php" id="admin_sales_report">
-                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-graph-up-arrow"></i>Sales Report</a>
+                <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-graph-up-arrow"></i>Sales & Commission</a>
             </li>
             <li class="app_sidebar_item" data-content="admin_billing.php" id="admin_billing">
                 <a href="#" class="app_sidebar_link"><i class="pe-2 bi bi-receipt"></i>Billing</a>
@@ -52,9 +52,7 @@
             <div class="dropdown" id="notificationDropdownWrapper">
                 <button class="btn position-relative me-2" style="background: none;" id="notificationBell">
                     <i class="fa-regular fa-bell fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="font-size:10px;">
-                        3
-                    </span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="font-size:10px; display:none;"></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end p-0 shadow" style="min-width: 340px; max-width: 400px; max-height: 400px; overflow-y: auto;" id="notificationDropdown">
                     <div class="d-flex justify-content-between align-items-center px-3 pt-2 pb-1 border-bottom">
@@ -146,157 +144,17 @@
     </script>
     <script>
         $(document).ready(function() {
-            // Sample notifications
-            let notifications = [{
-                    id: 1,
-                    message: "New booking request from Jane Doe.",
-                    read: false
-                },
-                {
-                    id: 2,
-                    message: "Payment received from Juan Dela Cruz.",
-                    read: false
-                },
-                {
-                    id: 3,
-                    message: "Booking #1234 has been accepted.",
-                    read: true
-                },
-                {
-                    id: 4,
-                    message: "User Maria Santos updated her profile.",
-                    read: false
-                }
-            ];
-
+            // Production: notifications loaded via API in vendor/js/notifications.js
             function renderNotifications() {
-                const $list = $('#notificationList');
-                $list.empty();
-                let unreadCount = 0;
-                notifications.forEach(n => {
-                    if (!n.read) unreadCount++;
-                    $list.append(`
-                <li class="list-group-item d-flex align-items-center ${n.read ? '' : 'bg-light'} border-0 border-bottom" data-id="${n.id}">
-                    <span class="me-2">
-                        ${n.read 
-                            ? '<i class="bi bi-dot text-secondary"></i>' 
-                            : '<i class="bi bi-dot text-primary"></i>'}
-                    </span>
-                    <span class="flex-grow-1 ${n.read ? 'text-muted' : 'fw-bold'}">${n.message}</span>
-                    ${n.read ? '<span class="badge bg-secondary ms-2">Read</span>' : '<span class="badge bg-primary ms-2">Unread</span>'}
-                </li>
-            `);
-                });
-                // Update badge
-                if (unreadCount > 0) {
-                    $('#notificationBadge').text(unreadCount).show();
-                } else {
-                    $('#notificationBadge').hide();
-                }
+                // no-op: handled by NotificationManager
             }
-
-            // Show dropdown and render notifications when bell is clicked
-            $('#notificationBell').on('click', function() {
-                setTimeout(renderNotifications, 100); // slight delay to ensure dropdown is open
-            });
-
-            // Mark as read on click
-            $('#notificationList').on('click', 'li', function(e) {
-                const id = $(this).data('id');
-                notifications = notifications.map(n => n.id === id ? {
-                    ...n,
-                    read: true
-                } : n);
-                renderNotifications();
-                e.stopPropagation(); // Prevent dropdown from closing
-            });
-
-            // Clear read messages
-            $('#clearReadBtn').on('click', function(e) {
-                notifications = notifications.filter(n => !n.read);
-                renderNotifications();
-                e.stopPropagation(); // Prevent dropdown from closing
-            });
-
-            // Initial badge update
-            renderNotifications();
+            // Ensure badge hidden by default
+            $('#notificationBadge').hide();
         });
     </script>
     <script>
         $(document).ready(function() {
-            // Sample notifications
-            let notifications = [{
-                    id: 1,
-                    message: "New booking request from Jane Doe.",
-                    read: false
-                },
-                {
-                    id: 2,
-                    message: "Payment received from Juan Dela Cruz.",
-                    read: false
-                },
-                {
-                    id: 3,
-                    message: "Booking #1234 has been accepted.",
-                    read: true
-                },
-                {
-                    id: 4,
-                    message: "User Maria Santos updated her profile.",
-                    read: false
-                }
-            ];
-
-            function renderNotificationsModal() {
-                const $list = $('#notificationListModal');
-                $list.empty();
-                let unreadCount = 0;
-                notifications.forEach(n => {
-                    if (!n.read) unreadCount++;
-                    $list.append(`
-                <li class="list-group-item d-flex align-items-center ${n.read ? '' : 'bg-light'} border-0 border-bottom" data-id="${n.id}">
-                    <span class="me-2">
-                        ${n.read 
-                            ? '<i class="bi bi-dot text-secondary"></i>' 
-                            : '<i class="bi bi-dot text-primary"></i>'}
-                    </span>
-                    <span class="flex-grow-1 ${n.read ? 'text-muted' : 'fw-bold'}">${n.message}</span>
-                    ${n.read ? '<span class="badge bg-secondary ms-2">Read</span>' : '<span class="badge bg-primary ms-2">Unread</span>'}
-                </li>
-            `);
-                });
-                // Update badge
-                if (unreadCount > 0) {
-                    $('#notificationBadge').text(unreadCount).show();
-                } else {
-                    $('#notificationBadge').hide();
-                }
-            }
-
-            // Show modal and render notifications when bell is clicked
-            $('#notificationBell').on('click', function() {
-                renderNotificationsModal();
-                var modal = new bootstrap.Modal(document.getElementById('notificationModal'));
-                modal.show();
-            });
-
-            // Mark as read on click
-            $('#notificationListModal').on('click', 'li', function(e) {
-                const id = $(this).data('id');
-                notifications = notifications.map(n => n.id === id ? {
-                    ...n,
-                    read: true
-                } : n);
-                renderNotificationsModal();
-            });
-
-            // Clear read messages
-            $('#clearReadBtnModal').on('click', function(e) {
-                notifications = notifications.filter(n => !n.read);
-                renderNotificationsModal();
-            });
-
-            // Initial badge update
-            renderNotificationsModal();
+            // Production: modal notifications handled by NotificationManager
+            $('#notificationBadge').hide();
         });
     </script>

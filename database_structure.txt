@@ -1,0 +1,130 @@
+SpaBook Supabase Database Structure
+
+Tables and Columns
+
+1) users
+- user_id: uuid PRIMARY KEY
+- full_name: text
+- email: text UNIQUE
+- role: text -- e.g., Admin | User | Therapist | deleted
+- contact_number: text
+- address or user_address: text
+- profile_picture: text
+- is_email_verified: boolean
+- agreed_to_terms: boolean
+- created_at: timestamp
+- updated_at: timestamp
+
+2) booking (aka bookings in some migrations)
+- bookingid: bigserial PRIMARY KEY
+- user_id: uuid REFERENCES users(user_id)
+- total_price: numeric(12,2) DEFAULT 0
+- booking_status: varchar(50) DEFAULT 'Pending'
+- payment_status: boolean DEFAULT false
+- payment_img: text
+- date_created: timestamp DEFAULT now()
+- updated_at: timestamp DEFAULT now()
+
+3) booking_details
+- bookingdetailsid: bigserial PRIMARY KEY
+- booking_id: bigint REFERENCES booking(bookingid) ON DELETE CASCADE
+- service_id: bigint REFERENCES services(id)
+- quantity: integer DEFAULT 1
+- price: numeric(12,2) DEFAULT 0
+- booking_date: date
+- booking_time: time
+- status: text
+
+4) services (aka booking_services in MANUAL_DATABASE_FIX)
+- id: bigserial PRIMARY KEY
+- service_name: varchar(255) NOT NULL
+- description: text
+- price: numeric(12,2) NOT NULL DEFAULT 0
+- per_minute: integer DEFAULT 60
+- service_picture: text
+- is_active: boolean DEFAULT true
+- created_at: timestamp DEFAULT now()
+- updated_at: timestamp DEFAULT now()
+
+5) notification
+- notificationid: serial PRIMARY KEY
+- user_id: uuid REFERENCES users(user_id) ON DELETE CASCADE
+- title: varchar(255) NOT NULL
+- message: text
+- type: varchar(50) -- 'info' | 'warning' | 'error' | 'success'
+- is_read: boolean DEFAULT false
+- created_at: timestamptz DEFAULT current_timestamp
+- read_at: timestamptz
+- metadata: jsonb
+
+6) products
+- productid: bigserial PRIMARY KEY
+- product_name: varchar(255) NOT NULL
+- product_description: text
+- product_price: numeric(12,2) NOT NULL DEFAULT 0
+- product_image: text
+- product_category: varchar(100) DEFAULT 'General'
+- stock_quantity: integer DEFAULT 0
+- is_active: boolean DEFAULT true
+- created_at: timestamp DEFAULT now()
+- updated_at: timestamp DEFAULT now()
+
+7) product_categories
+- categoryid: bigserial PRIMARY KEY
+- category_name: varchar(100) UNIQUE NOT NULL
+- category_description: text
+- is_active: boolean DEFAULT true
+- created_at: timestamp DEFAULT now()
+
+8) invoices
+- invoice_id: bigserial PRIMARY KEY
+- booking_id: bigint UNIQUE REFERENCES booking(bookingid)
+- user_id: bigint -- (if using uuid in booking, align type to uuid)
+- subtotal: numeric(12,2) DEFAULT 0
+- discount: numeric(12,2) DEFAULT 0
+- total: numeric(12,2) DEFAULT 0
+- payment_status: text DEFAULT 'Unpaid'
+- payment_method: text
+- issued_at: timestamp DEFAULT now()
+- updated_at: timestamp DEFAULT now()
+
+9) invoice_items
+- item_id: bigserial PRIMARY KEY
+- invoice_id: bigint REFERENCES invoices(invoice_id) ON DELETE CASCADE
+- booking_detail_id: bigint
+- service_id: bigint
+- description: text
+- quantity: int DEFAULT 1
+- unit_price: numeric(12,2) DEFAULT 0
+- line_total: numeric(12,2) DEFAULT 0
+
+10) therapist_commissions
+- commission_id: bigserial PRIMARY KEY
+- booking_detail_id: bigint NOT NULL
+- therapist_id: bigint NOT NULL
+- hours: numeric(10,2) DEFAULT 0
+- rate_per_hour: numeric(12,2) DEFAULT 50.00
+- commission_amount: numeric(12,2) DEFAULT 0
+- computed_at: timestamp DEFAULT now()
+- UNIQUE (booking_detail_id, therapist_id)
+
+11) therapist (legacy/MySQL style in one migration)
+- therapistid: bigserial PRIMARY KEY
+- therapist_name: text
+- service_id: bigint
+- therapist_desc: text
+- is_active: boolean DEFAULT true
+- updated_at: timestamp
+
+Indexes and Constraints (high-level)
+- booking: idx_booking_user_id, idx_booking_status, idx_booking_date_created, idx_booking_payment_status, idx_booking_combined
+- booking_details: idx_booking_details_booking_id, idx_booking_details_service_id, idx_booking_details_therapist_id, idx_booking_details_booking_date, idx_booking_details_booking_time, idx_booking_details_status
+- services/booking_services: idx_services_category_id, idx_services_price, idx_services_status, idx_booking_services_active, idx_booking_services_name
+- users: idx_users_role, idx_users_email, idx_users_name
+- notification: idx_notification_user_id, idx_notification_is_read, idx_notification_created_at, idx_notification_type, idx_notification_combined
+- invoices/invoice_items/therapist_commissions: indexes per their migrations
+
+Notes
+- Some SQL files refer to tables as booking vs bookings and services vs booking_services. Align names consistently in Supabase (recommend: booking, booking_details, services).
+- Types should be consistent: user_id is uuid across users, booking, notification. Update invoices.user_id to uuid if needed.
+- Enable RLS and policies on notification as per notification_table.sql.

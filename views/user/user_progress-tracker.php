@@ -249,6 +249,19 @@ function displayEmptyState() {
     $('#journey-section').hide();
     $('#no-notes-state').show();
     $('#notes-count').text('0 notes');
+    
+    // Show a helpful message for new users
+    $('#therapist-notes-container').html(`
+        <div class="text-center py-4">
+            <i class="bi bi-calendar-check display-4 text-muted"></i>
+            <h5 class="mt-3 text-muted">Welcome to Your Progress Tracker!</h5>
+            <p class="text-muted">Once you complete your first treatment session, your progress and therapist notes will appear here.</p>
+            <a href="../user/user_services.php" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>
+                Book Your First Session
+            </a>
+        </div>
+    `);
 }
 
 console.log('📊 User Progress Tracker initialized');

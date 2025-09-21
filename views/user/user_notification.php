@@ -92,6 +92,40 @@
     .notification-item.error {
         border-left-color: #dc3545; /* Bootstrap danger */
     }
+    
+    /* Special styling for booking-related notifications */
+    .notification-item[data-booking-id] {
+        border-left-width: 6px;
+    }
+    
+    .notification-item .booking-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+    
+    .notification-item .reminder-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
 
     .notification-item:hover {
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
@@ -257,20 +291,56 @@
                         renderNotifications(filteredNotifications);
                     } else {
                         console.error('Error loading notifications:', response.message);
-                        $('#notificationList').html(`
-                            <div class="alert alert-danger">
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                Error loading notifications. Please try again later.
-                            </div>
-                        `);
+                        
+                        // Check if it's a table missing error
+                        if (response.message && response.message.includes('table does not exist')) {
+                            $('#notificationList').html(`
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <h5>Notification System Setup Required</h5>
+                                    <p>The notification table needs to be created in your database.</p>
+                                    <p><strong>Quick Fix:</strong></p>
+                                    <ol>
+                                        <li>Open your Supabase Dashboard</li>
+                                        <li>Go to SQL Editor</li>
+                                        <li>Run the notification table creation script</li>
+                                    </ol>
+                                    <a href="test_table_creation.php" class="btn btn-primary btn-sm" target="_blank">
+                                        <i class="bi bi-tools me-1"></i>Test & Setup Guide
+                                    </a>
+                                </div>
+                            `);
+                        } else {
+                            $('#notificationList').html(`
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    Error loading notifications: ${response.message}
+                                </div>
+                            `);
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('AJAX error:', error);
+                    console.error('Status:', status);
+                    console.error('Response:', xhr.responseText);
+                    
+                    let errorMessage = 'Error connecting to the server.';
+                    let helpLink = '';
+                    
+                    if (xhr.status === 404) {
+                        errorMessage = 'Notification controller not found. Please check file paths.';
+                    } else if (xhr.status === 500) {
+                        errorMessage = 'Server error. This is likely due to the notification table not existing.';
+                        helpLink = '<a href="test_table_creation.php" class="btn btn-warning btn-sm mt-2" target="_blank"><i class="bi bi-tools me-1"></i>Setup Guide</a>';
+                    }
+                    
                     $('#notificationList').html(`
                         <div class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            Error connecting to the server. Please check your connection and try again.
+                            <h6>${errorMessage}</h6>
+                            <small>Status: ${status} | Error: ${error}</small>
+                            ${helpLink}
                         </div>
                     `);
                 }
@@ -300,8 +370,11 @@
                     `;
                 }
                 
+                const bookingIdAttr = notification.metadata && notification.metadata.booking_id ? 
+                    `data-booking-id="${notification.metadata.booking_id}"` : '';
+                
                 html += `
-                    <div class="notification-item ${unreadClass} ${typeClass}" data-id="${notification.notificationid}" onclick="toggleNotification(this)">
+                    <div class="notification-item ${unreadClass} ${typeClass}" data-id="${notification.notificationid}" ${bookingIdAttr} onclick="toggleNotification(this)">
                         <button class="notification-close" onclick="deleteNotification(event, ${notification.notificationid})">&times;</button>
                         <div>
                             <div class="d-flex justify-content-between align-items-start">

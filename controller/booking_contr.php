@@ -39,6 +39,172 @@ function response($data) {
     exit;
 }
 
+/**
+ * Create a booking status notification for the user
+ */
+function createBookingStatusNotification($user_id, $booking_id, $status) {
+    global $php_insert, $notificationTableExists;
+    
+    if (!$notificationTableExists) return;
+    
+    $titles = [
+        'Pending' => 'Booking Request Submitted',
+        'Confirmed' => 'Booking Confirmed! 🎉',
+        'Rejected' => 'Booking Request Declined',
+        'Cancelled' => 'Booking Cancelled',
+        'Completed' => 'Spa Session Completed ✨'
+    ];
+    
+    $messages = [
+        'Pending' => "Your booking request #$booking_id has been submitted and is awaiting admin approval. We'll notify you once it's reviewed.",
+        'Confirmed' => "Great news! Your booking #$booking_id has been confirmed. Get ready for your relaxing spa experience!",
+        'Rejected' => "We're sorry, but your booking request #$booking_id could not be confirmed at this time. Please contact us for alternative options.",
+        'Cancelled' => "Your booking #$booking_id has been cancelled. If you didn't request this, please contact our support team.",
+        'Completed' => "Thank you for choosing our spa! Your session from booking #$booking_id has been completed. We hope you enjoyed your experience!"
+    ];
+    
+    $types = [
+        'Pending' => 'info',
+        'Confirmed' => 'success',
+        'Rejected' => 'warning',
+        'Cancelled' => 'warning',
+        'Completed' => 'success'
+    ];
+    
+    $php_insert('notification', [
+        'user_id' => $user_id,
+        'title' => $titles[$status] ?? "Booking Update",
+        'message' => $messages[$status] ?? "Your booking #$booking_id status has been updated to: $status",
+        'type' => $types[$status] ?? 'info',
+        'metadata' => json_encode(['booking_id' => $booking_id, 'status' => $status])
+    ]);
+}
+
+/**
+ * Create a notification for admin about new booking
+ */
+function createAdminBookingNotification($booking_id, $user_name) {
+    global $php_fetch, $php_insert, $notificationTableExists;
+    
+    if (!$notificationTableExists) return;
+    
+    // Get all admin users
+    $admins = $php_fetch('users', 'user_id', ['role' => 'Admin']);
+    
+    foreach ($admins as $admin) {
+        $php_insert('notification', [
+            'user_id' => $admin['user_id'],
+            'title' => 'New Booking Request',
+            'message' => "$user_name has submitted a new booking request #$booking_id that requires your review.",
+            'type' => 'info',
+            'metadata' => json_encode(['booking_id' => $booking_id, 'type' => 'admin_new_booking'])
+        ]);
+    }
+}
+
+/**
+ * Create appointment reminder notifications (1 day and 1 hour before)
+ */
+function createAppointmentReminders() {
+    global $php_fetch, $php_insert, $notificationTableExists;
+    
+    if (!$notificationTableExists) return;
+    
+    date_default_timezone_set('Asia/Manila');
+    
+    // Get confirmed bookings that need reminders
+    $query = "
+        SELECT DISTINCT
+            b.bookingid,
+            b.user_id,
+            bd.booking_date,
+            bd.booking_time,
+            STRING_AGG(s.service_name, ', ') as services,
+            CONCAT(bd.booking_date, ' ', bd.booking_time) as appointment_datetime
+        FROM booking b
+        JOIN booking_details bd ON b.bookingid = bd.booking_id
+        JOIN services s ON bd.service_id = s.id
+        WHERE b.booking_status = 'Confirmed'
+            AND bd.booking_date IS NOT NULL
+            AND bd.booking_time IS NOT NULL
+            AND bd.booking_date >= CURRENT_DATE
+        GROUP BY b.bookingid, b.user_id, bd.booking_date, bd.booking_time
+    ";
+    
+    $upcomingBookings = $php_fetch($query);
+    
+    foreach ($upcomingBookings as $booking) {
+        $appointmentDateTime = strtotime($booking['appointment_datetime']);
+        $now = time();
+        $timeDiff = $appointmentDateTime - $now;
+        
+        $bookingId = $booking['bookingid'];
+        $userId = $booking['user_id'];
+        
+        // Check if we've already sent reminders for this booking
+        $existingReminders = $php_fetch('notification', 'notificationid', [
+            'user_id' => $userId,
+            'metadata' => json_encode(['booking_id' => $bookingId, 'type' => 'reminder'])
+        ]);
+        
+        // 1 day reminder (between 23-25 hours before)
+        if ($timeDiff >= 23 * 3600 && $timeDiff <= 25 * 3600) {
+            $dayReminderExists = false;
+            foreach ($existingReminders as $reminder) {
+                $reminderMeta = json_decode($reminder['metadata'] ?? '{}', true);
+                if (isset($reminderMeta['reminder_type']) && $reminderMeta['reminder_type'] === '1_day') {
+                    $dayReminderExists = true;
+                    break;
+                }
+            }
+            
+            if (!$dayReminderExists) {
+                $php_insert('notification', [
+                    'user_id' => $userId,
+                    'title' => 'Spa Appointment Tomorrow! 🌸',
+                    'message' => "Don't forget! You have a spa appointment tomorrow at " . date('g:i A', strtotime($booking['booking_time'])) . " for: " . $booking['services'] . ". We can't wait to pamper you!",
+                    'type' => 'info',
+                    'metadata' => json_encode([
+                        'booking_id' => $bookingId,
+                        'type' => 'reminder',
+                        'reminder_type' => '1_day',
+                        'appointment_date' => $booking['booking_date'],
+                        'appointment_time' => $booking['booking_time']
+                    ])
+                ]);
+            }
+        }
+        
+        // 1 hour reminder (between 50-70 minutes before)
+        if ($timeDiff >= 50 * 60 && $timeDiff <= 70 * 60) {
+            $hourReminderExists = false;
+            foreach ($existingReminders as $reminder) {
+                $reminderMeta = json_decode($reminder['metadata'] ?? '{}', true);
+                if (isset($reminderMeta['reminder_type']) && $reminderMeta['reminder_type'] === '1_hour') {
+                    $hourReminderExists = true;
+                    break;
+                }
+            }
+            
+            if (!$hourReminderExists) {
+                $php_insert('notification', [
+                    'user_id' => $userId,
+                    'title' => 'Spa Appointment in 1 Hour! ⏰',
+                    'message' => "Your spa appointment is in about 1 hour at " . date('g:i A', strtotime($booking['booking_time'])) . ". Time to start relaxing! Services: " . $booking['services'],
+                    'type' => 'warning',
+                    'metadata' => json_encode([
+                        'booking_id' => $bookingId,
+                        'type' => 'reminder',
+                        'reminder_type' => '1_hour',
+                        'appointment_date' => $booking['booking_date'],
+                        'appointment_time' => $booking['booking_time']
+                    ])
+                ]);
+            }
+        }
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? null;
 
@@ -176,8 +342,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $userId = $bookingData[0]['user_id'];
                 createBookingStatusNotification($userId, $bookingId, $newStatus);
                 
-                // Invalidate user's booking cache
+                // Invalidate user's booking caches
                 Cache::delete("user_bookings_$userId");
+                Cache::delete("user_booking_history_$userId");
             }
 
             // Auto-generate invoice on confirmation
@@ -342,6 +509,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             response($result);
             break;
 
+        case 'get_user_booking_history':
+            if (!isset($_POST['user_id'])) {
+                response(['status' => 'error', 'message' => 'Missing user_id']);
+            }
+            
+            $user_id = $_POST['user_id'];
+            
+            // Cache user booking history for 60 seconds (longer since history changes less frequently)
+            $cacheKey = "user_booking_history_$user_id";
+            $result = Cache::remember($cacheKey, function() use ($BookingModel, $php_fetch, $user_id) {
+                return $BookingModel->getUserBookingHistory($php_fetch, 'booking', $user_id);
+            }, 60);
+
+            response($result);
+            break;
+
         // Admin booking management actions
         case 'get_admin_booking_requests':
             try {
@@ -423,6 +606,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $totalCommission = $commRes[0]['total_commission'] ?? 0;
 
                 response(['status' => 'success', 'period' => $period, 'start' => $start, 'sales' => (float)$totalSales, 'commission' => (float)$totalCommission, 'net' => (float)$totalSales - (float)$totalCommission]);
+            } catch (Exception $e) {
+                response(['status' => 'error', 'message' => $e->getMessage()]);
+            }
+            break;
+
+        case 'get_therapist_commissions':
+            // Get detailed therapist commission data for the sales report
+            $period = $_POST['period'] ?? 'daily';
+            $now = date('Y-m-d');
+            $start = $now;
+            if ($period === 'weekly') { $start = date('Y-m-d', strtotime('monday this week')); }
+            if ($period === 'monthly') { $start = date('Y-m-01'); }
+            
+            try {
+                // Get therapist commission details with therapist names
+                $therapistQuery = "SELECT 
+                    t.therapistid as therapist_id,
+                    t.therapist_name as first_name,
+                    '' as last_name,
+                    COALESCE(SUM(tc.hours), 0) AS total_hours,
+                    COALESCE(SUM(tc.commission_amount), 0) AS total_commission,
+                    COUNT(DISTINCT CASE WHEN tc.booking_detail_id IS NOT NULL THEN tc.booking_detail_id END) AS services_rendered
+                FROM therapist t
+                LEFT JOIN therapist_commissions tc ON t.therapistid = tc.therapist_id
+                LEFT JOIN booking_details bd ON bd.bookingdetailsid = tc.booking_detail_id
+                LEFT JOIN booking b ON b.bookingid = bd.booking_id AND b.date_created >= '$start'
+                GROUP BY t.therapistid, t.therapist_name
+                ORDER BY total_commission DESC, t.therapist_name ASC";
+                
+                $therapistRes = $php_fetch($therapistQuery);
+                
+                response([
+                    'status' => 'success', 
+                    'period' => $period, 
+                    'start' => $start, 
+                    'therapists' => $therapistRes
+                ]);
             } catch (Exception $e) {
                 response(['status' => 'error', 'message' => $e->getMessage()]);
             }
@@ -646,6 +866,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log("Error in get_booked_times: " . $e->getMessage());
                 response(['status' => 'error', 'message' => 'Server error: ' . $e->getMessage()]);
             }
+            break;
+
+        case 'send_appointment_reminders':
+            // This can be called manually or via cron job
+            try {
+                createAppointmentReminders();
+                response(['status' => 'success', 'message' => 'Appointment reminders processed']);
+            } catch (Exception $e) {
+                response(['status' => 'error', 'message' => 'Error processing reminders: ' . $e->getMessage()]);
+            }
+            break;
+
+        case 'cancel_booking_user':
+            // Allow users to cancel their own pending bookings
+            $bookingid = $_POST['bookingid'] ?? null;
+            $user_id = $_POST['user_id'] ?? null;
+            
+            if (!$bookingid || !$user_id) {
+                response(['status' => 'error', 'message' => 'Booking ID and User ID are required']);
+            }
+            
+            // Verify the booking belongs to the user and is in a cancellable state
+            $bookingData = $php_fetch('booking', '*', ['bookingid' => $bookingid, 'user_id' => $user_id]);
+            
+            if (!$bookingData || count($bookingData) === 0) {
+                response(['status' => 'error', 'message' => 'Booking not found or access denied']);
+            }
+            
+            $currentStatus = strtolower($bookingData[0]['booking_status']);
+            if (!in_array($currentStatus, ['pending', 'confirmed'])) {
+                response(['status' => 'error', 'message' => 'Booking cannot be cancelled in its current state']);
+            }
+            
+            $result = $BookingModel->updateBookingStatus($php_update, 'booking', $bookingid, 'Cancelled');
+            
+            // Create notification for the user
+            if ($notificationTableExists) {
+                createBookingStatusNotification($user_id, $bookingid, 'Cancelled');
+                
+                // Invalidate user's booking cache
+                Cache::delete("user_bookings_$user_id");
+                Cache::delete("user_booking_history_$user_id");
+            }
+            
+            // Invalidate admin booking caches
+            Cache::delete("admin_booking_requests");
+            Cache::delete("admin_booking_accepted");
+            
+            response(json_decode($result, true));
             break;
 
         default:

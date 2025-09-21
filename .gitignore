@@ -181,6 +181,7 @@ backup.sql
 passwords.txt
 users.txt
 credentials.txt
+credential.txt
 
 # -----------------------------------------------------------------------------
 # Build & Distribution Files
